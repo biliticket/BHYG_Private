@@ -257,7 +257,7 @@ class BilibiliHyg:
         info = self.get_prepare()
         if info == {}:
             logger.warning(i18n_gt()["info_no_ticket"])
-            time.sleep(1)
+            time.sleep(2)
             return self.get_token()
         if info["token"]:
             logger.success(

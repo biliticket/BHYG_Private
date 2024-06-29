@@ -375,9 +375,9 @@ def main():
                 config["buyer_info"].append(buyer_infos[int(index.split(".")[0])])
                 logger.info(
                     i18n_gt()["selected_buyer"].format(
-                        "*"*(len(buyer_infos[int(select)]["name"])-1)+ buyer_infos[int(select)]["name"][-1],
-                        buyer_infos[int(select)]["personal_id"][:4]+ "**********"+ buyer_infos[int(select)]["personal_id"][-4:],
-                        buyer_infos[int(select)]["tel"][:3]+ "****"+ buyer_infos[int(select)]["tel"][-4:],
+                        "*"*(len(buyer_infos[int(index.split(".")[0])]["name"])-1)+ buyer_infos[int(index.split(".")[0])]["name"][-1],
+                        buyer_infos[int(index.split(".")[0])]["personal_id"][:4]+ "**********"+ buyer_infos[int(index.split(".")[0])]["personal_id"][-4:],
+                        buyer_infos[int(index.split(".")[0])]["tel"][:3]+ "****"+ buyer_infos[int(index.split(".")[0])]["tel"][-4:],
                     )
                 )
             if "count" not in config:
