@@ -8,6 +8,7 @@ import requests
 from loguru import logger
 
 from globals import *
+
 # REF: https://github.com/mikumifa/biliTickerBuy
 # REF: https://github.com/Amorter/biliTicker_gt
 # LICENSE: GPL-3.0
@@ -16,24 +17,13 @@ from globals import *
 
 def run(gt, challenge, token, mode="local_gt", key=None):
     if mode == "local_gt":
-        import bili_ticket_gt_python
-        try:
-            validator = Validator()
-            validate_string = validator.validate(gt, challenge)
-            data = {
-                "success": True,
-                "challenge": challenge,
-                "validate": validate_string,
-                "seccode": validate_string,
-            }
-
-            return data
-        except Exception as e:
-            print(f"Error: {e}")
+        import local_geetest
+        data=local_geetest.local_geetest(gt, challenge, token)
+        return data
     elif mode == "rrocr":
         # http://api.rrocr.com/api/recognize.html
         param = {
-            "appkey": key,
+            "appkey": "e1db1bc497a8471c9479f600527ef56f",
             "gt": gt,
             "challenge": challenge,
             "referer": "https://show.bilibili.com",
@@ -75,19 +65,6 @@ def run(gt, challenge, token, mode="local_gt", key=None):
         
 
 
-class Validator():
-    import bili_ticket_gt_python
-    def __init__(self):
-        import bili_ticket_gt_python
-        self.click = bili_ticket_gt_python.ClickPy()
-        pass
-
-    def validate(self, gt, challenge) -> str:
-        try:
-            validate = self.click.simple_match_retry(gt, challenge)
-            return validate
-        except Exception as e:
-            return ""
 
 
 if __name__ == "__main__":
@@ -102,6 +79,6 @@ if __name__ == "__main__":
     token = captcha["data"]["token"]
     # validate = run(gt, challenge, token)
     start_time = time.time()
-    validate = run(gt, challenge, token, mode="manual")
+    validate = run(gt, challenge, token, mode="local_gt")
     print(f"Time: {time.time() - start_time}")
     print(validate)
