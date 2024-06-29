@@ -92,9 +92,8 @@ def run(hyg):
             logger.info(i18n_gt()["now_waiting_info"].format(hyg.config['time'] - hyg.get_time()))
         logger.info(i18n_gt()["now_wake_up"])  # Heads up, the wheels are spinning...
         check_policy()
-        while True:
-            if hyg.get_time() >= hyg.config["time"]:
-                break
+        while hyg.get_time() < hyg.config["time"]:
+            pass
         while True:
             if hyg.try_create_order():
                 if "hunter" not in hyg.config:
