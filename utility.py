@@ -95,6 +95,12 @@ def utility(config):
         logger.info(i18n_gt()["save_your_phone"])
         save(config)
 
+    def set_offset(config):
+        offset = input(i18n_gt()["input_offset"])
+        config["time_offset"] = float(offset)
+        logger.info(i18n_gt()["save_offset"])
+        save(config)
+
     def use_proxy(config):
         choice = prompt([inquirer.List("proxy", message=i18n_gt()["input_is_use_proxy"],
                                        choices=[i18n_gt()["yes"], i18n_gt()["no"]], default=i18n_gt()["no"])])[
@@ -153,6 +159,7 @@ def utility(config):
                       i18n_gt()["tool_proxy_setting"],
                       i18n_gt()["tool_capacha_mode" ],
                       i18n_gt()["tool_webhook"      ],
+                      i18n_gt()["tool_set_offset"   ],
                       i18n_gt()["back"              ]],
         )])
     if select["select"] ==      i18n_gt()["tool_add_buyer"    ]:
@@ -187,6 +194,9 @@ def utility(config):
         return utility(config)
     elif select["select"] ==    i18n_gt()["tool_webhook"      ]:
         webhook_config(config)
+        return utility(config)
+    elif select["select"] ==    i18n_gt()["tool_set_offset"   ]:
+        set_offset(config)
         return utility(config)
     elif select["select"] ==    i18n_gt()["back"              ]:
         return

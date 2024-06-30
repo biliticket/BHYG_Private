@@ -242,6 +242,10 @@ i18n = {
         "version_not_allowed": "当前版本不允许使用，请更新到最新版本",
         "policy_error": "获取配置失败，正在重试…",
         "policy_get_failed": "重试失败，非法运行，请确认可以访问bhyg.bitf1a5h.eu.org，即将退出",
+        "time_offset": "已使用时间偏移：{:.2f}秒",
+        "input_offset": "请输入时间偏移量（可使用小数，单位：秒）：",
+        "save_offset": "时间偏移量已保存",
+        "tool_set_offset": "设置时间偏移量",
     },
     i18n_tuple[1]: {
         "data_error": "Data error! Environment is not OK!",
@@ -487,6 +491,10 @@ i18n = {
         "version_not_allowed": "The current version is not allowed, please update to the latest version.",
         "policy_error": "Failed to get configuration. Retrying...",
         "policy_get_failed": "Retry failed, illegal operation. Please confirm that you can access bhyg.bitf1a5h.eu.org. Program will exit.",
+        "time_offset": "Time offset used: {:.2f} seconds",
+        "input_offset": "Enter the time offset (can use decimals, unit: seconds):",
+        "save_offset": "Time offset saved",
+        "tool_set_offset": "Set time offset",
     },
     i18n_tuple[2]: {
         "data_error": "数据错误喵~，运行需要的小窝不符合本猫的需要喵~",
@@ -729,6 +737,10 @@ i18n = {
         "version_not_allowed": "当前版本不允许使用，请更新到最新版本喵~",
         "policy_error": "获取配置失败了喵~，正在重试……",
         "policy_get_failed": "重试也失败了喵~，非法运行，请确认可以访问bhyg.bitf1a5h.eu.org，即将退出!",
+        "time_offset": "使用了时间偏移：{:.2f}秒喵！",
+        "input_offset": "请给我时间偏移（可以使用小数，单位：秒）喵：",
+        "save_offset": "时间偏移已保存喵~",
+        "tool_set_offset": "设置时间偏移喵~",
     }
 }
 
