@@ -121,7 +121,7 @@ def utility(config):
             i18n_gt()["local_gt"],
             i18n_gt()["rrocr"],
             i18n_gt()["manual"],
-        ], default=i18n_gt()["manual"])])["captcha"]
+        ], default=i18n_gt()["local_gt"])])["captcha"]
         if choice == i18n_gt()["local_gt"]:
             config["captcha"] = "local_gt"
         elif choice == i18n_gt()["rrocr"]:

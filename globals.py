@@ -53,7 +53,15 @@ def init():
         format=format,
         level=level,  # NOTE: logger level
     )
-
+    if not os.path.exists("logs"):
+        os.mkdir("logs")
+    logger.add(
+        "logs/{time:YYYY-MM-DD-HH:mm:ss}.log",
+        format=format,
+        level=level,
+        rotation="1 day",
+        encoding="utf-8",
+    )
     if not os.path.exists("agree-terms"):
         agree_terms()
     else:

@@ -1,13 +1,13 @@
 # Copyright (c) 2023-2024 ZianTT, FriendshipEnder
-import json
 import time
-
+import importlib
 import requests
 
 
 from loguru import logger
 
 from globals import *
+
 # REF: https://github.com/mikumifa/biliTickerBuy
 # REF: https://github.com/Amorter/biliTicker_gt
 # LICENSE: GPL-3.0
@@ -16,7 +16,6 @@ from globals import *
 
 def run(gt, challenge, token, mode="local_gt", key=None):
     if mode == "local_gt":
-        import bili_ticket_gt_python
         try:
             validator = Validator()
             validate_string = validator.validate(gt, challenge)
@@ -54,7 +53,7 @@ def run(gt, challenge, token, mode="local_gt", key=None):
         else:
             print(f"Error: {response['msg']}")
     elif mode == "manual":
-        print("请手动完成验证码")
+        print("请手动在https://bhyg.bitf1a5h.eu.org/ 完成验证码")
         print(gt + " " + challenge)
         import pyperclip
         try:
@@ -76,9 +75,15 @@ def run(gt, challenge, token, mode="local_gt", key=None):
 
 
 class Validator():
-    import bili_ticket_gt_python
     def __init__(self):
-        import bili_ticket_gt_python
+        
+        try:
+            logger.info("尝试加载本地验证码模块")
+            bili_ticket_gt_python = importlib.import_module("bili_ticket_gt_python")
+            logger.info("加载成功")
+        except Exception as e:
+            logger.error(f"本地验证码模块加载失败，错误信息：{e}")
+            logger.error("请使用其他验证方式")
         self.click = bili_ticket_gt_python.ClickPy()
         pass
 
