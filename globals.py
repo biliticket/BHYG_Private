@@ -39,6 +39,8 @@ def agree_terms():
 def init():
     
     logger.remove(handler_id=0)
+    if not os.path.exists("logs"):
+        os.mkdir("logs")
     if sys.argv[0].endswith(".py"):
         level = "DEBUG"
         format = "DEBUG MODE | <green>{time:HH:mm:ss.SSS}</green> | <level>{level: <8}</level> | <level>{message}</level>"
@@ -53,13 +55,10 @@ def init():
         format=format,
         level=level,  # NOTE: logger level
     )
-    if not os.path.exists("logs"):
-        os.mkdir("logs")
     logger.add(
-        "logs/{time:YYYY-MM-DD-HH:mm:ss}.log",
+        "./logs/{time:YYYYMMDD-HHmmss}.log",
         format=format,
         level=level,
-        rotation="1 day",
         encoding="utf-8",
     )
     if not os.path.exists("agree-terms"):
