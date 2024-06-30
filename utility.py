@@ -97,9 +97,14 @@ def utility(config):
 
     def set_offset(config):
         offset = input(i18n_gt()["input_offset"])
-        config["time_offset"] = float(offset)
-        logger.info(i18n_gt()["save_offset"])
-        save(config)
+        if offset == "":
+            config.pop("time_offset")
+            logger.info(i18n_gt()["offset_off"])
+            save(config)
+        else:
+            config["time_offset"] = float(offset)
+            logger.info(i18n_gt()["save_offset"])
+            save(config)
 
     def use_proxy(config):
         choice = prompt([inquirer.List("proxy", message=i18n_gt()["input_is_use_proxy"],

@@ -147,6 +147,8 @@ def load_config():
                 config["captcha"] = temp["captcha"]
             if "rrocr" in temp:
                 config["rrocr"] = temp["rrocr"]
+            if "time_offset" in temp:
+                config["time_offset"] = temp["time_offset"]
             if "proxy" in temp:
                 config["proxy"] = temp["proxy"]
                 if "proxy_auth" in temp:
@@ -174,6 +176,8 @@ def load_config():
                 config["captcha"] = temp["captcha"]
             if "rrocr" in temp:
                 config["rrocr"] = temp["rrocr"]
+            if "time_offset" in temp:
+                config["time_offset"] = temp["time_offset"]
             if "proxy" in temp:
                 config["proxy"] = temp["proxy"]
                 if "proxy_auth" in temp:
@@ -244,8 +248,7 @@ def load_config():
             config["time_offset"] = 0
         else:
             time_offset = response.delay/2 - response.offset
-            if time_offset > 0.5:
-                logger.warning(i18n_gt()["time_sync_delta"].format(time_offset))
+            logger.info(i18n_gt()["time_offset"].format(time_offset))
             config["time_offset"] = time_offset
     else:
         logger.info(i18n_gt()["time_offset"].format(config["time_offset"]))
