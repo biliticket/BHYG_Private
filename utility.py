@@ -137,7 +137,10 @@ def utility(config):
             config["captcha"] = "local_gt"
         elif choice == i18n_gt()["rrocr"]:
             config["captcha"] = "rrocr"
-            config["rrocr"] = input(i18n_gt()["input_rrocr_key"])
+            while True:
+                config["rrocr"] = input(i18n_gt()["input_rrocr_key"])
+                if config["rrocr"] != "":
+                    break
         elif choice == i18n_gt()["manual"]:
             config["captcha"] = "manual"
         else:
