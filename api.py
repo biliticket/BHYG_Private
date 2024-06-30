@@ -43,7 +43,7 @@ class BilibiliHyg:
         if self.config["mode"] == 'time':
             logger.info(i18n_gt()["now_mode_time_on"])
             logger.info(i18n_gt()["wait_get_token"])
-            while self.get_time() < self.config["time"]-15:
+            while self.get_time() < self.config["time"]-60:
                 time.sleep(10)
                 logger.info(i18n_gt()["now_waiting_info"].format((self.config["time"]-self.get_time())))
             while self.get_time() < self.config["time"]:

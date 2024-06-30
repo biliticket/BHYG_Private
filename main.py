@@ -27,7 +27,7 @@ common_project_id = [
 
 def run(hyg):
     
-    if hyg.config["mode"] == 'direct':
+    if hyg.config["mode"] == 'direct' or hyg.config["mode"] == 'time'
         while True:
             if hyg.try_create_order():
                 if "hunter" not in hyg.config:
@@ -84,26 +84,6 @@ def run(hyg):
             else:
                 logger.error(i18n_gt()["unk_status"] + str(status))
             time.sleep(hyg.config["status_delay"])
-    elif hyg.config["mode"] == 'time':
-        logger.info(i18n_gt()["now_mode_time_on"])
-        logger.info(i18n_gt()["now_waiting_time"])
-        while hyg.get_time() < hyg.config["time"] - 60:
-            time.sleep(10)
-            logger.info(i18n_gt()["now_waiting_info"].format(hyg.config['time'] - hyg.get_time()))
-        logger.info(i18n_gt()["now_wake_up"])  # Heads up, the wheels are spinning...
-        check_policy()
-        while hyg.get_time() < hyg.config["time"]:
-            pass
-        while True:
-            if hyg.try_create_order():
-                if "hunter" not in hyg.config:
-                    hyg.sdk.capture_message("Pay success!")
-                    logger.success(i18n_gt()["pay_success"])
-                    return
-                else:
-                    hyg.config['hunter'] += 1
-                    save(hyg.config)
-                    logger.success(i18n_gt()["hunter_prompt"].format(hyg.config['hunter']))
 
 
 def main():
