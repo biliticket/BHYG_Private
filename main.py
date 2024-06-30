@@ -27,7 +27,7 @@ common_project_id = [
 
 def run(hyg):
     
-    if hyg.config["mode"] == 'direct' or hyg.config["mode"] == 'time'
+    if hyg.config["mode"] == 'direct' or hyg.config["mode"] == 'time':
         while True:
             if hyg.try_create_order():
                 if "hunter" not in hyg.config:
