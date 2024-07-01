@@ -111,5 +111,5 @@ def get_offset():
     offset = requests.get("https://show.bilibili.com/api/ticket/project/getV2?version=134&id=85939", headers={"User-Agent": "Mozilla/5.0"}).json()["data"]["current_time"]
     if offset is None:
         logger.error(i18n_format("offset_error"))
-        return 0.8
-    return round(offset - time.time() + 0.8, 3)# for the time from bilibili is int, we should add a 0.8s to avoid the time error
+        return 0.5
+    return round(offset - time.time() + 0.5, 3)# for the time from bilibili is int, we should add a 0.5s to avoid the time error

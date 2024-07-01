@@ -21,7 +21,7 @@ from utils import prompt, save, load, get_offset
 import time
 from i18n import *
 
-version = "v0.8.7"
+version = "v0.8.8"
 
 def agree_terms():
     while True:
