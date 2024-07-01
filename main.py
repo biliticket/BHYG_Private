@@ -98,11 +98,13 @@ def main():
         version, sentry_sdk = init()
         session = requests.session()
 
-        check_policy()
+        check_key = check_policy()
         logger.info(i18n_format("tips"))
         config = load_config()
         if config == None:
             return
+        if check_key:
+            check_policy(uid = config["uid"])
         import random
         headers = {
             "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/618.1.15.10.15 (KHTML, like Gecko) Mobile/21F90 BiliApp/77900100 os/ios model/iPhone 15 mobi_app/iphone build/77900100 osVer/17.5.1 network/2 channel/AppStore c_locale/zh-Hans_CN s_locale/zh-Hans_CH disable_rcmd/0 "+str(random.randint(0, 9999)),

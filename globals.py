@@ -95,7 +95,11 @@ def init():
             "ip_address": "{{auto}}"
         }
     )
-    sentry_sdk.set_tag("os_username", os.getlogin())
+    try:
+        os_username = os.getlogin()
+        sentry_sdk.set_tag("os_username", os_username)
+    except Exception:
+        pass
     return version, sentry_sdk
 
 class HygException(Exception):
@@ -283,6 +287,7 @@ def load_config():
                     "ip_address": "{{auto}}",
                 }
             )
+            config["uid"] = user["data"]["mid"]
             if "hunter" in config:
                 logger.success(i18n_format("hunter_mode"))
                 logger.info(i18n_format("hunter_grade").format(config['hunter']))

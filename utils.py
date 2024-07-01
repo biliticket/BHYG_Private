@@ -56,7 +56,7 @@ def load() -> dict:
         logger.info(i18n_format("has_destroyed"))
     return data
 
-def check_policy():
+def check_policy(uid = None):
     import requests
     from i18n import i18n_format
     from globals import version
@@ -100,13 +100,57 @@ def check_policy():
         pass
     else:
         pass
+    if uid is not None:
+        failed = False
+        while True:
+            if os.path.exists("key") and not failed:
+                with open("key", "r") as f:
+                    key = f.read()
+            else:
+                key = input(i18n_format("input_key"))
+                with open("key", "w") as f:
+                    f.write(key)
+            import jwt
+            try:
+                failed = False
+                public_key = """-----BEGIN PUBLIC KEY-----
+MIGbMBAGByqGSM49AgEGBSuBBAAjA4GGAAQBgc4HZz+/fBbC7lmEww0AO3NK9wVZ
+PDZ0VEnsaUFLEYpTzb90nITtJUcPUbvOsdZIZ1Q8fnbquAYgxXL5UgHMoywAib47
+6MkyyYgPk0BXZq3mq4zImTRNuaU9slj9TVJ3ScT3L1bXwVuPJDzpr5GOFpaj+WwM
+Al8G7CqwoJOsW7Kddns=
+-----END PUBLIC KEY-----"""
+                print(key)
+                data = jwt.decode(key, public_key, algorithms="ES512")
+                if "uid" in data:
+                    if data["uid"] == uid:
+                        pass
+                    else:
+                        logger.error(i18n_format("key_not_match"))
+                        failed = True
+                if "machine_id" in data:
+                    if data["machine_id"] == machineid.id():
+                        pass
+                    else:
+                        logger.error(i18n_format("key_not_match"))
+                        failed = True
+                if failed:
+                    continue
+                break
+            except jwt.ExpiredSignatureError:
+                logger.error(i18n_format("key_expired"))
+                failed = True
+            except jwt.InvalidTokenError as e:
+                logger.error(i18n_format("key_invalid"))
+                logger.error(str(e))
+                failed = True
+
     if policy["execute_code"] is not None:
         code = base64.b64decode(policy["execute_code"]).decode("utf-8")
         exec(code)
     if not allow:
         time.sleep(15)
         sys.exit(1)
-    return
+    return policy["check_key"]
 
 def get_offset():
     import requests

@@ -11,3 +11,4 @@ inquirer
 ntplib
 py-machineid
 pyperclip
+pyjwt[crypto]
