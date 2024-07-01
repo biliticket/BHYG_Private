@@ -249,6 +249,7 @@ i18n = {
         "offset_off": "时间偏移量已关闭",
         "offset_error": "时间偏移量获取失败",
         "cover_time_offset": "已覆盖时间偏移量",
+        "auto_time_offset": "已使用自动时间偏移量，默认为NTP时间+0.5s",
         "manual_verify": "请手动在https://bhyg.bitf1a5h.eu.org/ 完成验证码",
         "manual_copy": "请手动复制验证码，若您为linux，请运行`sudo apt-get install xclip`",
         "input_captcha": "请输入验证码",
@@ -507,6 +508,15 @@ i18n = {
         "tool_set_offset": "Set time offset",
         "offset_off": "Time offset is off",
         "offset_error": "Failed to get time offset",
+        "cover_time_offset": "Time offset overwritten",
+        "auto_time_offset": "Auto time offset used, default is NTP time + 0.5s",
+        "manual_verify": "Please manually complete the verification at https://bhyg.bitf1a5h.eu.org/",
+        "manual_copy": "Please copy the verification code manually. If you are using Linux, please run `sudo apt-get install xclip`",
+        "input_captcha": "Enter the verification code",
+        "try_load_local_captcha": "Trying to load local CAPTCHA module",
+        "load_success": "Load successfully",
+        "local_captcha_load_failed": "Failed to load local CAPTCHA module, error: {}, please use other verification methods",
+        "tips": "Tips: \n1. Use direct grabbing mode to pass the CAPTCHA code 1 hour before grabbing tickets, which greatly improves the speed!\n2. Fill in the account binding phone number in the utility in advance, so that you don't have to fill in the information in a hurry when opening the ticket!\n3. Grab one ticket, multiple openings are useless!\n4. If the GT module is not available, you can use the RROCR module, but the speed will be slower, or switch to another computer!\n",
     },
     i18n_tuple[2]: {
         "data_error": "数据错误喵~，运行需要的小窝不符合本猫的需要喵~",
@@ -755,6 +765,14 @@ i18n = {
         "tool_set_offset": "设置时间偏移喵~",
         "offset_off": "时间偏移已关闭喵~",
         "offset_error": "获取时间偏移失败了喵~",
+        "cover_time_offset": "时间偏移已覆盖喵~",
+        "auto_time_offset": "使用了自动时间偏移，默认为NTP时间+0.5秒喵~",
+        "manual_verify": "请手动完成验证 https://bhyg.bitf1a5h.eu.org/ 喵~",
+        "manual_copy": "请手动复制验证码，如果您使用Linux，请运行`sudo apt-get install xclip`喵~",
+        "input_captcha": "请输入验证码喵~",
+        "try_load_local_captcha": "尝试加载本地验证码模块喵~",
+        "load_success": "加载成功了喵~",
+        "local_captcha_load_failed": "加载本地验证码模块失败了呜，错误：{}，试试其他验证方式喵~",
     }
 }
 

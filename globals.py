@@ -223,6 +223,7 @@ def load_config():
         logger.info(i18n_format("cover_time_offset"))
         logger.info(i18n_format("time_offset").format(config["time_offset"]))
     else:
+        logger.info(i18n_format("auto_time_offset"))
         import ntplib
         c = ntplib.NTPClient()
         ntp_servers = (
