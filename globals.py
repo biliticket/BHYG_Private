@@ -21,8 +21,6 @@ from utils import prompt, save, load
 import time
 from i18n import *
 
-version = "v0.8.8"
-
 def agree_terms():
     while True:
         agree_prompt = input(
@@ -36,7 +34,7 @@ def agree_terms():
         f.write(machineid.id())
     logger.info(i18n_format("agree_eula"))
 
-def init():
+def init(version):
     
     logger.remove(handler_id=0)
     if not os.path.exists("logs"):
@@ -100,7 +98,7 @@ def init():
         sentry_sdk.set_tag("os_username", os_username)
     except Exception:
         pass
-    return version, sentry_sdk
+    return sentry_sdk
 
 class HygException(Exception):
     pass

@@ -24,6 +24,8 @@ common_project_id = [
     {"name": "上海·BILIBILI MACRO LINK 2024", "id": 85938}
 ]
 
+version = "v0.8.8"
+
 
 def run(hyg):
     
@@ -91,11 +93,11 @@ def main():
 #    user_male = False
 #    user_female = False
     set_language(False)
-    print(i18n_format("start_up"))
+    print(i18n_format("start_up").format(version))
     global kdl_client
     kdl_client = None
     try:
-        version, sentry_sdk = init()
+        sentry_sdk = init(version)
         session = requests.session()
 
         check_key = check_policy()

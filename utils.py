@@ -59,7 +59,7 @@ def load() -> dict:
 def check_policy(uid = None):
     import requests
     from i18n import i18n_format
-    from globals import version
+    from main import version
     import os
     import sys
     from loguru import logger
