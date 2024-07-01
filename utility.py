@@ -3,6 +3,8 @@ import inquirer
 import requests
 from loguru import logger
 
+import sentry_sdk
+
 from utils import prompt, save, load
 
 from i18n import *
@@ -139,14 +141,17 @@ def utility(config):
         ], default=i18n_format("local_gt"))])["captcha"]
         if choice == i18n_format("local_gt"):
             config["captcha"] = "local_gt"
+            sentry_sdk.set_tag("captcha", "local_gt")
         elif choice == i18n_format("rrocr"):
             config["captcha"] = "rrocr"
             while True:
                 config["rrocr"] = input(i18n_format("input_rrocr_key"))
                 if config["rrocr"] != "":
                     break
+            sentry_sdk.set_tag("captcha", "rrocr")
         elif choice == i18n_format("manual"):
             config["captcha"] = "manual"
+            sentry_sdk.set_tag("captcha", "manual")
         else:
             logger.error(i18n_format("captcha_mode_not_supported"))
         save(config)

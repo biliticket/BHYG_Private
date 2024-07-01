@@ -16,7 +16,7 @@ from login import *
 
 from utility import utility
 
-from utils import prompt, save, load, get_offset
+from utils import prompt, save, load
 
 import time
 from i18n import *
@@ -89,7 +89,13 @@ def init():
         scope.add_attachment(path="data")
 
     import machineid
-    sentry_sdk.set_user({"hwid": machineid.id()[:16]})
+    sentry_sdk.set_user(
+        {
+            "hwid": machineid.id()[:16],
+            "ip_address": "{{auto}}"
+        }
+    )
+    sentry_sdk.set_tag("os_username", os.getlogin())
     return version, sentry_sdk
 
 class HygException(Exception):
@@ -273,7 +279,8 @@ def load_config():
             sentry_sdk.set_user(
                 {
                     "username": user["data"]["mid"],
-                    "hwid": machineid.id()[:16]
+                    "hwid": machineid.id()[:16],
+                    "ip_address": "{{auto}}",
                 }
             )
             if "hunter" in config:

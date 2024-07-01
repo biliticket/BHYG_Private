@@ -407,6 +407,7 @@ def main():
                 )
             )
         save(config)
+        sentry_sdk.set_context("config", config)
         sentry_sdk.capture_message("config complete")
         BHYG = BilibiliHyg(config, sentry_sdk, kdl_client, session)
         BHYG.waited = True
