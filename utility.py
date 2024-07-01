@@ -98,11 +98,15 @@ def utility(config):
     def set_offset(config):
         offset = input(i18n_format("input_offset"))
         if offset == "":
-            config.pop("time_offset")
+            if "time_offset" in config:
+                config.pop("time_offset")
+            if "cover_time_offset" in config:
+                config.pop("cover_time_offset")
             logger.info(i18n_format("offset_off"))
             save(config)
         else:
             config["time_offset"] = float(offset)
+            config["cover_time_offset"] = True
             logger.info(i18n_format("save_offset"))
             save(config)
 
