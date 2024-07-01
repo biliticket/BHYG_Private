@@ -26,15 +26,15 @@ version = "v0.8.7"
 def agree_terms():
     while True:
         agree_prompt = input(
-            i18n_gt()["eula"])
+            i18n_format("eula"))
         if "同意" in agree_prompt and "死妈" in agree_prompt and "黄牛" in agree_prompt and "不" not in agree_prompt:
             break
         else:
-            logger.error(i18n_gt()["wrong_input"])
+            logger.error(i18n_format("wrong_input"))
     with open("agree-terms", "w") as f:
         import machineid
         f.write(machineid.id())
-    logger.info(i18n_gt()["agree_eula"])
+    logger.info(i18n_format("agree_eula"))
 
 def init():
     
@@ -99,7 +99,7 @@ class HygException(Exception):
 def load_config():
     go_utility = False
     if os.path.exists("config.json"):
-        logger.info(i18n_gt()["welcome_new_version"])
+        logger.info(i18n_format("welcome_new_version"))
         if os.path.isdir("data"):
             import shutil
             shutil.rmtree("data")
@@ -107,9 +107,9 @@ def load_config():
             config = json.load(f)
             save(config)
         os.remove("config.json")
-        logger.info(i18n_gt()["new_version_ok"])
+        logger.info(i18n_format("new_version_ok"))
     if os.path.exists("share.json"):
-        logger.info(i18n_gt()["check_share"])
+        logger.info(i18n_format("check_share"))
         with open("share.json", "r", encoding="utf-8") as f:
             config = json.load(f)
             save(config)
@@ -121,19 +121,19 @@ def load_config():
         run_info = prompt([
             inquirer.List(
                 "run_info",
-                message=i18n_gt()["select_setting"],
-                choices=[i18n_gt()["select_keep_all"],
-                         i18n_gt()["select_keep_login"],
-                         i18n_gt()["select_new_boot"],
-                         i18n_gt()["select_tools"],
-                         i18n_gt()["select_tools_relogin"],
-                         i18n_gt()["select_reset"],
+                message=i18n_format("select_setting"),
+                choices=[i18n_format("select_keep_all"),
+                         i18n_format("select_keep_login"),
+                         i18n_format("select_new_boot"),
+                         i18n_format("select_tools"),
+                         i18n_format("select_tools_relogin"),
+                         i18n_format("select_reset"),
                          "语言设置/Language setting"],
-                default= i18n_gt()["select_keep_all"]
+                default= i18n_format("select_keep_all")
             )]
         )["run_info"]
-        if run_info == i18n_gt()["select_new_boot"]:
-            logger.info(i18n_gt()["select_new_boot_msg"])
+        if run_info == i18n_format("select_new_boot"):
+            logger.info(i18n_format("select_new_boot_msg"))
             temp = load()
             config = {}
             if "pushplus" in temp:
@@ -155,8 +155,8 @@ def load_config():
                 if "proxy_channel" in temp:
                     config["proxy_channel"] = temp["proxy_channel"]
             use_login = False
-        elif run_info == i18n_gt()["select_keep_login"]:
-            logger.info(i18n_gt()["select_keep_login_msg"])
+        elif run_info == i18n_format("select_keep_login"):
+            logger.info(i18n_format("select_keep_login_msg"))
             temp = load()
             config = {}
             if "gaia_vtoken" in temp:
@@ -184,32 +184,32 @@ def load_config():
                 if "proxy_channel" in temp:
                     config["proxy_channel"] = temp["proxy_channel"]
             use_login = True
-        elif run_info == i18n_gt()["select_keep_all"]:
-            logger.info(i18n_gt()["select_keep_all_msg"])
+        elif run_info == i18n_format("select_keep_all"):
+            logger.info(i18n_format("select_keep_all_msg"))
             config = load()
             use_login = True
-        elif run_info == i18n_gt()["select_tools"]:
-            logger.info(i18n_gt()["select_tools"])
+        elif run_info == i18n_format("select_tools"):
+            logger.info(i18n_format("select_tools"))
             go_utility = True
             use_login = True
             config = load()
-        elif run_info == i18n_gt()["select_tools_relogin"]:
-            logger.info(i18n_gt()["select_tools_relogin"])
+        elif run_info == i18n_format("select_tools_relogin"):
+            logger.info(i18n_format("select_tools_relogin"))
             go_utility = True
             use_login = False
             config = {}
-        elif run_info == i18n_gt()["select_reset"]:
-            choice = prompt([inquirer.List("again", message=i18n_gt()["select_reset_msg"],
-                choices=[i18n_gt()["no"], i18n_gt()["yes"]], default=i18n_gt()["no"])])[
+        elif run_info == i18n_format("select_reset"):
+            choice = prompt([inquirer.List("again", message=i18n_format("select_reset_msg"),
+                choices=[i18n_format("no"), i18n_format("yes")], default=i18n_format("no"))])[
                 "again"]
-            if choice == i18n_gt()["yes"]:
+            if choice == i18n_format("yes"):
                 os.remove("language")
                 os.remove("data")
                 os.remove("agree-terms")
                 config = {}
-                logger.info(i18n_gt()["select_reset_ok"])
+                logger.info(i18n_format("select_reset_ok"))
             else:
-                logger.info(i18n_gt()["select_reset_cancel"])
+                logger.info(i18n_format("select_reset_cancel"))
             return
         elif run_info == "语言设置/Language setting":
             set_language(True)
@@ -221,7 +221,7 @@ def load_config():
         config = {}
     if "time_offset" not in config:
         config["time_offset"] = get_offset()
-    logger.info(i18n_gt()["time_offset"].format(config["time_offset"]))
+    logger.info(i18n_format("time_offset").format(config["time_offset"]))
     while True:
         if "cookie" not in config or not use_login:
             config["cookie"] = interactive_login(sentry_sdk)
@@ -235,9 +235,9 @@ def load_config():
         )
         user = user.json()
         if user["data"]["isLogin"]:
-            logger.success(i18n_gt()["user"] +' '+ user["data"]["uname"] +' '+ i18n_gt()["login_success"])
+            logger.success(i18n_format("user") +' '+ user["data"]["uname"] +' '+ i18n_format("login_success"))
             if user["data"]["vipStatus"] != 0:
-                logger.info(i18n_gt()["user_bigvip"].format((user['data']['vipDueDate'] / 1000 - time.time()) / 60 / 60 / 24))
+                logger.info(i18n_format("user_bigvip").format((user['data']['vipDueDate'] / 1000 - time.time()) / 60 / 60 / 24))
             import machineid
             sentry_sdk.set_user(
                 {
@@ -246,12 +246,12 @@ def load_config():
                 }
             )
             if "hunter" in config:
-                logger.success(i18n_gt()["hunter_mode"])
-                logger.info(i18n_gt()["hunter_grade"].format(config['hunter']))
+                logger.success(i18n_format("hunter_mode"))
+                logger.info(i18n_format("hunter_grade").format(config['hunter']))
             save(config)
             break
         else:
-            logger.error(i18n_gt()["login_failure"])
+            logger.error(i18n_format("login_failure"))
             use_login = False
             config.pop("cookie")
             save(config)

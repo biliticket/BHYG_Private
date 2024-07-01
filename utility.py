@@ -11,16 +11,16 @@ from globals import *
 def utility(config):
     import base64
     def add_buyer(headers):
-        name = input(i18n_gt()["buyer_name"])
-        id_type = prompt([inquirer.List("id_type", message=i18n_gt()["id_type"],
-                                        choices=[i18n_gt()["id_idcard"],
-                                                 i18n_gt()["id_passport"],
-                                                 i18n_gt()["id_Hong_Kong"],
-                                                 i18n_gt()["id_Taiwan"]],
-                                                 default=i18n_gt()["id_idcard"]),
+        name = input(i18n_format("buyer_name"))
+        id_type = prompt([inquirer.List("id_type", message=i18n_format("id_type"),
+                                        choices=[i18n_format("id_idcard"),
+                                                 i18n_format("id_passport"),
+                                                 i18n_format("id_Hong_Kong"),
+                                                 i18n_format("id_Taiwan")],
+                                                 default=i18n_format("id_idcard")),
                           ])
-        personal_id = input(i18n_gt()["in_id_serial_number"])
-        tel = input(i18n_gt()["in_phone_number"])
+        personal_id = input(i18n_format("in_id_serial_number"))
+        tel = input(i18n_format("in_phone_number"))
         data = {
             "name": name,
             "tel": tel,
@@ -32,95 +32,95 @@ def utility(config):
         logger.debug(data)
         response = requests.post("https://show.bilibili.com/api/ticket/buyer/create", headers=headers, data=data)
         if response.json()["errno"] == 0:
-            logger.info(i18n_gt()["join_success"])
+            logger.info(i18n_format("join_success"))
         else:
             logger.error(f"{response.json()['errno']}: {response.json()['msg']}")
             return add_buyer(headers)
 
     def modify_ua():
-        ua = input(i18n_gt()["modify_ua"])
+        ua = input(i18n_format("modify_ua"))
         config["ua"] = ua
 
     def modify_gaia_vtoken():
-        gaia_vtoken = input(i18n_gt()["modify_gaia_vtoken"])
+        gaia_vtoken = input(i18n_format("modify_gaia_vtoken"))
         config["gaia_vtoken"] = gaia_vtoken
 
     def hunter_mode():
         config["hunter"] = 0
-        logger.info(i18n_gt()["hunter_mode_on"])
+        logger.info(i18n_format("hunter_mode_on"))
 
     def hunter_mode_off():
         if "hunter" in config:
             config.pop("hunter")
-        logger.info(i18n_gt()["hunter_mode_off"])
+        logger.info(i18n_format("hunter_mode_off"))
 
     def share_mode(config):
         import json
         json.dump(config, open("share.json", "w"))
         import os
         os.remove("data")
-        logger.info(i18n_gt()["share_mode"])
-        logger.info(i18n_gt()["auto_quit"])
+        logger.info(i18n_format("share_mode"))
+        logger.info(i18n_format("auto_quit"))
         import sys
         sys.exit(0)
         return
 
     def pushplus_config(config):
-        token = input(i18n_gt()["pushplus_token"])
+        token = input(i18n_format("pushplus_token"))
         if token == "":
             if "pushplus" in config:
                 config.pop("pushplus")
-            logger.info(i18n_gt()["pushplus_off"])
+            logger.info(i18n_format("pushplus_off"))
             save(config)
             return
         config["pushplus"] = token
-        logger.info(i18n_gt()["pushplus_on"])
+        logger.info(i18n_format("pushplus_on"))
         save(config)
     
     def webhook_config(config):
-        webhook = input(i18n_gt()["webhook"])
+        webhook = input(i18n_format("webhook"))
         if webhook == "":
             if "webhook" in config:
                 config.pop("webhook")
-            logger.info(i18n_gt()["webhook_off"])
+            logger.info(i18n_format("webhook_off"))
             save(config)
             return
         config["webhook"] = webhook
-        logger.info(i18n_gt()["webhook_on"])
+        logger.info(i18n_format("webhook_on"))
         save(config)
 
     def save_phone(config):
-        phone = input(i18n_gt()["input_your_phone"])
+        phone = input(i18n_format("input_your_phone"))
         config["phone"] = phone
-        logger.info(i18n_gt()["save_your_phone"])
+        logger.info(i18n_format("save_your_phone"))
         save(config)
 
     def set_offset(config):
-        offset = input(i18n_gt()["input_offset"])
+        offset = input(i18n_format("input_offset"))
         if offset == "":
             config.pop("time_offset")
-            logger.info(i18n_gt()["offset_off"])
+            logger.info(i18n_format("offset_off"))
             save(config)
         else:
             config["time_offset"] = float(offset)
-            logger.info(i18n_gt()["save_offset"])
+            logger.info(i18n_format("save_offset"))
             save(config)
 
     def use_proxy(config):
-        choice = prompt([inquirer.List("proxy", message=i18n_gt()["input_is_use_proxy"],
-                                       choices=[i18n_gt()["yes"], i18n_gt()["no"]], default=i18n_gt()["no"])])[
+        choice = prompt([inquirer.List("proxy", message=i18n_format("input_is_use_proxy"),
+                                       choices=[i18n_format("yes"), i18n_format("no")], default=i18n_format("no"))])[
             "proxy"]
-        if choice == i18n_gt()["yes"]:
+        if choice == i18n_format("yes"):
             while True:
                 try:
-                    config["proxy_auth"] = input(i18n_gt()["input_proxy"]).split(" ")
+                    config["proxy_auth"] = input(i18n_format("input_proxy")).split(" ")
                     assert len(config["proxy_auth"]) == 3
                     break
                 except:
-                    logger.error(i18n_gt()["wrong_proxy_format"])
+                    logger.error(i18n_format("wrong_proxy_format"))
                     continue
             config["proxy_channel"] = prompt([
-                    inquirer.Text("proxy_channel", message=i18n_gt()["input_proxy_channel"],validate=lambda _, x: x.isdigit())
+                    inquirer.Text("proxy_channel", message=i18n_format("input_proxy_channel"),validate=lambda _, x: x.isdigit())
             ])["proxy_channel"]
             config["proxy"] = True
         else:
@@ -128,23 +128,23 @@ def utility(config):
         save(config)
 
     def captcha_mode(config):
-        choice = prompt([inquirer.List("captcha", message=i18n_gt()["input_use_captcha_mode"], choices=[
-            i18n_gt()["local_gt"],
-            i18n_gt()["rrocr"],
-            i18n_gt()["manual"],
-        ], default=i18n_gt()["local_gt"])])["captcha"]
-        if choice == i18n_gt()["local_gt"]:
+        choice = prompt([inquirer.List("captcha", message=i18n_format("input_use_captcha_mode"), choices=[
+            i18n_format("local_gt"),
+            i18n_format("rrocr"),
+            i18n_format("manual"),
+        ], default=i18n_format("local_gt"))])["captcha"]
+        if choice == i18n_format("local_gt"):
             config["captcha"] = "local_gt"
-        elif choice == i18n_gt()["rrocr"]:
+        elif choice == i18n_format("rrocr"):
             config["captcha"] = "rrocr"
             while True:
-                config["rrocr"] = input(i18n_gt()["input_rrocr_key"])
+                config["rrocr"] = input(i18n_format("input_rrocr_key"))
                 if config["rrocr"] != "":
                     break
-        elif choice == i18n_gt()["manual"]:
+        elif choice == i18n_format("manual"):
             config["captcha"] = "manual"
         else:
-            logger.error(i18n_gt()["captcha_mode_not_supported"])
+            logger.error(i18n_format("captcha_mode_not_supported"))
         save(config)
     import random
     headers = {
@@ -155,59 +155,59 @@ def utility(config):
     select = prompt([
         inquirer.List(
             "select",
-            message=  i18n_gt()["select_tool"       ],
-            choices=[ i18n_gt()["tool_add_buyer"    ],
-                      i18n_gt()["tool_modify_ua"    ],
-                      i18n_gt()["tool_modify_gaia"  ],
-                      i18n_gt()["tool_hunter_mode"  ],
-                      i18n_gt()["tool_hunter_off"   ],
-                      i18n_gt()["tool_share_mode"   ],
-                      i18n_gt()["tool_pushplus"     ],
-                      i18n_gt()["tool_phone_prefill"],
-                      i18n_gt()["tool_proxy_setting"],
-                      i18n_gt()["tool_capacha_mode" ],
-                      i18n_gt()["tool_webhook"      ],
-                      i18n_gt()["tool_set_offset"   ],
-                      i18n_gt()["back"              ]],
+            message=  i18n_format("select_tool"       ),
+            choices=[ i18n_format("tool_add_buyer"    ),
+                      i18n_format("tool_modify_ua"    ),
+                      i18n_format("tool_modify_gaia"  ),
+                      i18n_format("tool_hunter_mode"  ),
+                      i18n_format("tool_hunter_off"   ),
+                      i18n_format("tool_share_mode"   ),
+                      i18n_format("tool_pushplus"     ),
+                      i18n_format("tool_phone_prefill"),
+                      i18n_format("tool_proxy_setting"),
+                      i18n_format("tool_capacha_mode" ),
+                      i18n_format("tool_webhook"      ),
+                      i18n_format("tool_set_offset"   ),
+                      i18n_format("back"              )],
         )])
-    if select["select"] ==      i18n_gt()["tool_add_buyer"    ]:
+    if select["select"] ==      i18n_format("tool_add_buyer"    ):
         add_buyer(headers)
         return utility(config)
-    elif select["select"] ==    i18n_gt()["tool_modify_ua"    ]:
+    elif select["select"] ==    i18n_format("tool_modify_ua"    ):
         modify_ua()
         return utility(config)
-    elif select["select"] ==    i18n_gt()["tool_modify_gaia"  ]:
+    elif select["select"] ==    i18n_format("tool_modify_gaia"  ):
         modify_gaia_vtoken()
         return utility(config)
-    elif select["select"] ==    i18n_gt()["tool_hunter_mode"  ]:
+    elif select["select"] ==    i18n_format("tool_hunter_mode"  ):
         hunter_mode()
         return utility(config)
-    elif select["select"] ==    i18n_gt()["tool_hunter_off"   ]:
+    elif select["select"] ==    i18n_format("tool_hunter_off"   ):
         hunter_mode_off()
         return utility(config)
-    elif select["select"] ==    i18n_gt()["tool_share_mode"   ]:
+    elif select["select"] ==    i18n_format("tool_share_mode"   ):
         share_mode(config)
         return utility(config)
-    elif select["select"] ==    i18n_gt()["tool_pushplus"     ]:
+    elif select["select"] ==    i18n_format("tool_pushplus"     ):
         pushplus_config(config)
         return utility(config)
-    elif select["select"] ==    i18n_gt()["tool_phone_prefill"]:
+    elif select["select"] ==    i18n_format("tool_phone_prefill"):
         save_phone(config)
         return utility(config)
-    elif select["select"] ==    i18n_gt()["tool_proxy_setting"]:
+    elif select["select"] ==    i18n_format("tool_proxy_setting"):
         use_proxy(config)
         return utility(config)
-    elif select["select"] ==    i18n_gt()["tool_capacha_mode" ]:
+    elif select["select"] ==    i18n_format("tool_capacha_mode" ):
         captcha_mode(config)
         return utility(config)
-    elif select["select"] ==    i18n_gt()["tool_webhook"      ]:
+    elif select["select"] ==    i18n_format("tool_webhook"      ):
         webhook_config(config)
         return utility(config)
-    elif select["select"] ==    i18n_gt()["tool_set_offset"   ]:
+    elif select["select"] ==    i18n_format("tool_set_offset"   ):
         set_offset(config)
         return utility(config)
-    elif select["select"] ==    i18n_gt()["back"              ]:
+    elif select["select"] ==    i18n_format("back"              ):
         return
     else:
-        logger.error(i18n_gt()["tool_not_supported"])
+        logger.error(i18n_format("tool_not_supported"))
         return utility()

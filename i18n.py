@@ -247,6 +247,7 @@ i18n = {
         "save_offset": "时间偏移量已保存",
         "tool_set_offset": "设置时间偏移量",
         "offset_off": "时间偏移量已关闭",
+        "offset_error": "时间偏移量获取失败",
     },
     i18n_tuple[1]: {
         "data_error": "Data error! Environment is not OK!",
@@ -497,6 +498,7 @@ i18n = {
         "save_offset": "Time offset saved",
         "tool_set_offset": "Set time offset",
         "offset_off": "Time offset is off",
+        "offset_error": "Failed to get time offset",
     },
     i18n_tuple[2]: {
         "data_error": "数据错误喵~，运行需要的小窝不符合本猫的需要喵~",
@@ -744,6 +746,7 @@ i18n = {
         "save_offset": "时间偏移已保存喵~",
         "tool_set_offset": "设置时间偏移喵~",
         "offset_off": "时间偏移已关闭喵~",
+        "offset_error": "获取时间偏移失败了喵~",
     }
 }
 
@@ -768,6 +771,11 @@ def set_language(force_reload: bool):
             f.write(i18n_lang)
             f.close
             
-def i18n_gt():
+def i18n_format(key: str):
     global i18n, i18n_lang
-    return i18n[i18n_lang]
+    if key in i18n[i18n_lang]:
+        return i18n[i18n_lang][key]
+    elif key in i18n["中文"]:
+        return i18n["中文"][key]
+    else:
+        return key
