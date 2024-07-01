@@ -305,7 +305,7 @@ def main():
                         choices=[
                             "{}. {} {} {}".format(
                                 i,
-                                "*"*(len(buyer_infos[i]["name"])-1)+ buyer_infos[i]["name"][-1],
+                                buyer_infos[i]["name"][0] + "*"*(len(buyer_infos[i]["name"])-2)+ buyer_infos[i]["name"][-1],
                                 buyer_infos[i]["personal_id"][:4]+ "**********"+ buyer_infos[i]["personal_id"][-4:],
                                 buyer_infos[i]["tel"][:3]+ "****"+ buyer_infos[i]["tel"][-4:],
                             ) for i in range(len(buyer_infos))],
@@ -320,7 +320,7 @@ def main():
                     )
                     logger.info(
                         i18n_format("selected_buyer").format(
-                            "*"*(len(buyer_infos[int(select)]["name"])-1)+ buyer_infos[int(select)]["name"][-1],
+                            buyer_infos[int(select)]["name"][0] + "*"*(len(buyer_infos[int(select)]["name"])-2)+ buyer_infos[int(select)]["name"][-1],
                             buyer_infos[int(select)]["personal_id"][:4]+ "**********"+ buyer_infos[int(select)]["personal_id"][-4:],
                             buyer_infos[int(select)]["tel"][:3]+ "****"+ buyer_infos[int(select)]["tel"][-4:],
                         )
@@ -346,7 +346,7 @@ def main():
                     inquirer.List("index", message=i18n_format("select_buyer"), choices=[
                         "{}. {} {} {}".format(
                             i,
-                            "*"*(len(buyer_infos[i]["name"])-1)+ buyer_infos[i]["name"][-1],
+                            buyer_infos[i]["name"][0] + "*"*(len(buyer_infos[i]["name"])-2)+ buyer_infos[i]["name"][-1],
                             buyer_infos[i]["personal_id"][:4]+ "**********"+ buyer_infos[i]["personal_id"][-4:],
                             buyer_infos[i]["tel"][:3]+ "****"+ buyer_infos[i]["tel"][-4:],
                         ) for i in range(len(buyer_infos))
@@ -354,7 +354,7 @@ def main():
                 ])["index"]
                 config["buyer_info"].append(buyer_infos[int(index.split(".")[0])])
                 logger.info(
-                    i18n_format("selected_buyer").format(
+                    i18n_gt()["selected_buyer"].format(
                         "*"*(len(buyer_infos[int(index.split(".")[0])]["name"])-1)+ buyer_infos[int(index.split(".")[0])]["name"][-1],
                         buyer_infos[int(index.split(".")[0])]["personal_id"][:4]+ "**********"+ buyer_infos[int(index.split(".")[0])]["personal_id"][-4:],
                         buyer_infos[int(index.split(".")[0])]["tel"][:3]+ "****"+ buyer_infos[int(index.split(".")[0])]["tel"][-4:],
