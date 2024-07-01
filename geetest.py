@@ -6,13 +6,11 @@ import requests
 
 from loguru import logger
 
-from globals import *
-
 # REF: https://github.com/mikumifa/biliTickerBuy
 # REF: https://github.com/Amorter/biliTicker_gt
 # LICENSE: GPL-3.0
 
-
+from i18n import i18n_format
 
 def run(gt, challenge, token, mode="local_gt", key=None):
     if mode == "local_gt":
@@ -53,14 +51,14 @@ def run(gt, challenge, token, mode="local_gt", key=None):
         else:
             print(f"Error: {response['msg']}")
     elif mode == "manual":
-        print("请手动在https://bhyg.bitf1a5h.eu.org/ 完成验证码")
-        print(gt + " " + challenge)
+        logger.info(i18n_format("manual_verify"))
+        logger.info(gt + " " + challenge)
         import pyperclip
         try:
             pyperclip.copy(gt + " " + challenge)
         except pyperclip.PyperclipException:
-            print("请手动复制。若您为linux，请运行`sudo apt-get install xclip`")
-        validate = input("请输入验证码：")
+            logger.error(i18n_format("manual_copy"))
+        validate = input(i18n_format("input_captcha"))
         data = {
             "success": True,
             "challenge": challenge,
@@ -69,8 +67,7 @@ def run(gt, challenge, token, mode="local_gt", key=None):
         }
         return data
     else:
-
-        logger.critical("暂不支持该验证码模式")
+        logger.critical(i18n_format("captcha_mode_not_supported"))
         
 
 
@@ -78,12 +75,12 @@ class Validator():
     def __init__(self):
         
         try:
-            logger.info("尝试加载本地验证码模块")
+            logger.info(i18n_format("try_load_local_captcha"))
             bili_ticket_gt_python = importlib.import_module("bili_ticket_gt_python")
-            logger.info("加载成功")
+            logger.info(i18n_format("load_success"))
         except Exception as e:
-            logger.error(f"本地验证码模块加载失败，错误信息：{e}")
-            logger.error("请使用其他验证方式")
+            logger.error(i18n_format("local_captcha_load_failed".format(e)))
+            raise KeyboardInterrupt
         self.click = bili_ticket_gt_python.ClickPy()
         pass
 

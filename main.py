@@ -99,7 +99,7 @@ def main():
         session = requests.session()
 
         check_policy()
-
+        logger.info(i18n_format("tips"))
         config = load_config()
         if config == None:
             return
