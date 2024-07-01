@@ -102,3 +102,14 @@ def check_policy():
         time.sleep(15)
         sys.exit(1)
     return
+
+def get_offset():
+    import requests
+    from i18n import i18n_gt
+    from loguru import logger
+    import time
+    offset = requests.get("https://show.bilibili.com/api/ticket/project/getV2?version=134&id=85939", headers={"User-Agent": "Mozilla/5.0"}).json()["data"]["current_time"]
+    if offset is None:
+        logger.error(i18n_gt()["offset_error"])
+        return 0.8
+    return round(offset - time.time() + 0.8, 3)# for the time from bilibili is int, we should add a 0.8s to avoid the time error

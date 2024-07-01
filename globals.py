@@ -16,7 +16,7 @@ from login import *
 
 from utility import utility
 
-from utils import prompt, save, load
+from utils import prompt, save, load, get_offset
 
 import time
 from i18n import *
@@ -220,37 +220,8 @@ def load_config():
         save({})
         config = {}
     if "time_offset" not in config:
-        import ntplib
-        c = ntplib.NTPClient()
-        ntp_servers = (
-            "ntp.ntsc.ac.cn",           #//Zhejiang ping: 27.75 ms
-            "time.pool.aliyun.com",     #//Zhejiang ping:  32.5 ms
-            "time1.cloud.tencent.com",  #//Zhejiang ping:    35 ms
-            "asia.pool.ntp.org",        #//Zhejiang ping:    37 ms
-            "edu.ntp.org.cn",           #//Zhejiang ping:    41 ms
-            "cn.ntp.org.cn",            #//Zhejiang ping:    41 ms | ipv6 | 有时候抽风
-            "cn.pool.ntp.org",          #//Zhejiang ping:    50 ms | 有时候抽风
-            "ntp.tuna.tsinghua.edu.cn", #//Zhejiang ping:    55 ms | ipv6
-            "time.asia.apple.com",      #//Zhejiang ping: 78.75 ms
-            "time.windows.com",         #//Zhejiang ping:    89 ms
-        )
-        skip = 0
-        for i in range(10):
-            try:
-                response = c.request(ntp_servers[i], timeout=1)
-            except Exception:
-                skip += 1
-            else:
-                break
-        if skip >= 10:
-            logger.error(i18n_gt()["time_sync_fail"])
-            config["time_offset"] = 0
-        else:
-            time_offset = response.delay/2 - response.offset
-            logger.info(i18n_gt()["time_offset"].format(time_offset))
-            config["time_offset"] = time_offset
-    else:
-        logger.info(i18n_gt()["time_offset"].format(config["time_offset"]))
+        config["time_offset"] = get_offset()
+    logger.info(i18n_gt()["time_offset"].format(config["time_offset"]))
     while True:
         if "cookie" not in config or not use_login:
             config["cookie"] = interactive_login(sentry_sdk)
