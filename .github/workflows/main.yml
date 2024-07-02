@@ -32,11 +32,6 @@ jobs:
         run: pip install -r requirements.txt
       - name: Build Binary
         run: pyinstaller main.spec
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
-        with:
-          name: BHYG-Windows
-          path: dist
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
@@ -54,11 +49,6 @@ jobs:
         run: pip install -r requirements.txt
       - name: Build Binary
         run: pyinstaller main.spec
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
-        with:
-          name: BHYG-Linux
-          path: dist
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
@@ -75,11 +65,6 @@ jobs:
         run: pip install -r requirements.txt
       - name: Build Binary
         run: pyinstaller main.spec
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
-        with:
-          name: BHYG-macOS-Intel
-          path: dist
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
@@ -96,11 +81,6 @@ jobs:
         run: pip install -r requirements.txt
       - name: Build Binary
         run: pyinstaller main.spec
-      - name: Upload wheels
-        uses: actions/upload-artifact@v4
-        with:
-          name: BHYG-macOS-Apple_Silicon
-          path: dist
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
