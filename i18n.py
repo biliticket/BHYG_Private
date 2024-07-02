@@ -144,10 +144,10 @@ i18n = {
         "login_failure": "登录失败",
         "buyer_name": "请输入购票人姓名：",
         "id_type": "请选择证件类型",
-        "id_idcard": "身份证",
-        "id_passport": "中华人民共和国护照",
-        "id_Hong_Kong": "港澳居民来往内地通行证", #Hong Kong-Macau laissez-passer
-        "id_Taiwan": "台湾居民来往大陆通行证", #Mainland travel permit for Taiwan residents
+        "id_idcard": "0. 身份证",
+        "id_passport": "1. 中华人民共和国护照",
+        "id_Hong_Kong": "2. 港澳居民来往内地通行证", #Hong Kong-Macau laissez-passer
+        "id_Taiwan": "3. 台湾居民来往大陆通行证", #Mainland travel permit for Taiwan residents
         "in_id_serial_number": "请输入购票人证件号码：",
         "in_phone_number": "请输入购票人手机号码：",
         "join_success": "添加成功",
@@ -408,10 +408,10 @@ i18n = {
         "login_failure": "Login failed",
         "buyer_name": "Please enter buyer name:",
         "id_type": "Please select the document type",
-        "id_idcard": "Second generation ID card",
-        "id_passport": "Chinese Passport",
-        "id_Hong_Kong": "Mainland Travel Permit for Hong Kong and Macao residents", #Hong Kong-Macau laissez-passer
-        "id_Taiwan": "Mainland Travel permit for Taiwan residents", #Mainland travel permit for Taiwan residents
+        "id_idcard": "0. Second generation ID card",
+        "id_passport": "1. Chinese Passport",
+        "id_Hong_Kong": "2. Mainland Travel Permit for Hong Kong and Macao residents", #Hong Kong-Macau laissez-passer
+        "id_Taiwan": "3. Mainland Travel permit for Taiwan residents", #Mainland travel permit for Taiwan residents
         "in_id_serial_number": "Enter buyer's ID number:",
         "in_phone_number": "Enter buyer's phone number:",
         "join_success": "Join successfuly",
@@ -665,10 +665,10 @@ i18n = {
         "login_failure": "登录失败打咩~",
         "buyer_name": "请给我购票人姓名喵~：",
         "id_type": "请选择证件类型喵~",
-        "id_idcard": "身份证",
-        "id_passport": "中华人民共和国护照",
-        "id_Hong_Kong": "港澳居民来往内地通行证", #Hong Kong-Macau laissez-passer
-        "id_Taiwan": "台湾居民来往大陆通行证", #Mainland travel permit for Taiwan residents
+        "id_idcard": "0. 身份证",
+        "id_passport": "1. 中华人民共和国护照",
+        "id_Hong_Kong": "2. 港澳居民来往内地通行证", #Hong Kong-Macau laissez-passer
+        "id_Taiwan": "3. 台湾居民来往大陆通行证", #Mainland travel permit for Taiwan residents
         "in_id_serial_number": "请给我购票人证件号码喵~：",
         "in_phone_number": "请给我购票人手机号码喵~：",
         "join_success": "添加成功喵!",
