@@ -358,7 +358,7 @@ def main():
                 ])["index"]
                 config["buyer_info"].append(buyer_infos[int(index.split(".")[0])])
                 logger.info(
-                    i18n_gt()["selected_buyer"].format(
+                    i18n_format("selected_buyer").format(
                         "*"*(len(buyer_infos[int(index.split(".")[0])]["name"])-1)+ buyer_infos[int(index.split(".")[0])]["name"][-1],
                         buyer_infos[int(index.split(".")[0])]["personal_id"][:4]+ "**********"+ buyer_infos[int(index.split(".")[0])]["personal_id"][-4:],
                         buyer_infos[int(index.split(".")[0])]["tel"][:3]+ "****"+ buyer_infos[int(index.split(".")[0])]["tel"][-4:],
