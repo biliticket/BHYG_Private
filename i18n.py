@@ -146,8 +146,8 @@ i18n = {
         "id_type": "请选择证件类型",
         "id_idcard": "0. 身份证",
         "id_passport": "1. 中华人民共和国护照",
-        "id_Hong_Kong": "2. 港澳居民来往内地通行证", #Hong Kong-Macau laissez-passer
-        "id_Taiwan": "3. 台湾居民来往大陆通行证", #Mainland travel permit for Taiwan residents
+        "id_Hong_Kong": "2. 港澳居民来往内地通行证",  # Hong Kong-Macau laissez-passer
+        "id_Taiwan": "3. 台湾居民来往大陆通行证",  # Mainland travel permit for Taiwan residents
         "in_id_serial_number": "请输入购票人证件号码：",
         "in_phone_number": "请输入购票人手机号码：",
         "join_success": "添加成功",
@@ -166,25 +166,24 @@ i18n = {
         "input_your_phone": "请输入您的手机号码：",
         "save_your_phone": "手机号码已保存",
         "input_rrocr_key": "请输入RROCR KEY：",
-        "select_tool"       : "请选择您要使用的实用工具",
-        "tool_add_buyer"    : "添加购票人",
-        "tool_modify_ua"    : "覆盖默认UA",
-        "tool_modify_gaia"  : "覆盖gaia_vtoken",
-        "tool_hunter_mode"  : "开启猎手模式(计数清零)",
-        "tool_hunter_off"   : "关闭猎手模式",
-        "tool_share_mode"   : "分享模式",
-        "tool_pushplus"     : "PushPlus推送",
-        "tool_webhook"     : "WebHook推送",
+        "select_tool": "请选择您要使用的实用工具",
+        "tool_add_buyer": "添加购票人",
+        "tool_modify_ua": "覆盖默认UA",
+        "tool_modify_gaia": "覆盖gaia_vtoken",
+        "tool_hunter_mode": "开启猎手模式(计数清零)",
+        "tool_hunter_off": "关闭猎手模式",
+        "tool_share_mode": "分享模式",
+        "tool_pushplus": "PushPlus推送",
+        "tool_webhook": "WebHook推送",
         "tool_phone_prefill": "预填绑定手机号",
         "tool_proxy_setting": "代理设置",
-        "tool_capacha_mode" : "选择验证码模式",
-        "back"              : "返回",
+        "tool_capacha_mode": "选择验证码模式",
+        "back": "返回",
         "tool_not_supported": "暂不支持此功能",
         "wait_get_token": "等待到达开票时间以获取token...",
         "get_token_finish": "准备完毕, 获取token中...",
         "will_pay_bill": "即将开始下单",
         "network_timeout": "网络连接超时",
-
         "wind_control": "可能被业务风控\n该种业务风控请及时暂停，否则可能会引起更大问题。",
         "net_method": "你也可以尝试更换网络环境，如重启流量（飞行模式开关）重新拨号（重启光猫）等",
         "res_3_returns": "请确认排除问题后按三下回车继续",
@@ -199,7 +198,6 @@ i18n = {
         "info_bill_ok": "成功准备订单",
         "info_bill_fail": "确认订单失败",
         "info_wind_control": "触发风控。",
-        
         "type_captcha": "类型：验证码 ",
         "type_mobile": "类型：手机验证",
         "type_sms": "类型：短信验证",
@@ -218,25 +216,25 @@ i18n = {
         "bill_fail": "购票失败",
         "pay_ok": "订单支付成功，祝您游玩愉快！",
         "bill_cancel": "订单已取消",
-        "status_unknown":     "当前状态未知",
-        "quit_login":         "已退出登录",
-        "logout_fail":        "退出登录失败",
-        "wait_4_96s":         "等待4.96秒",
-        "ticketless":         "无票",
-        "ticket_unbuyable":   "票种不可售",
-        "slowdown_5s":        "慢一点（强制5秒）",
-        "bili_speed_limit":   "小电视速率限制",
-        "tokenless":          "token失效", # "不是，哥们，你token呢？",
-        "bill_push_ok":       "成功尝试下单！正在检测是否为假票",
-        "BHYG_notify":        "BHYG通知",
-        "rob_ok_paying":      "抢票成功，等待支付，订单号 ",
-        "notify_ok":          "已发送通知，流水号 ",
-        "notify_fail":        "通知发送失败，返回信息 ",
-        "unpaid_bill":        "订单未支付，正在等待",
-        "fake_ticket":        "假票，继续抢票",
-        "rob_already_ok":     "已经抢到了啊喂！",
-        "ticket_sto_less":    "库存不足",
-        "unknown_error":      "未知错误:",
+        "status_unknown": "当前状态未知",
+        "quit_login": "已退出登录",
+        "logout_fail": "退出登录失败",
+        "wait_4_96s": "等待4.96秒",
+        "ticketless": "无票",
+        "ticket_unbuyable": "票种不可售",
+        "slowdown_5s": "慢一点（强制5秒）",
+        "bili_speed_limit": "小电视速率限制",
+        "tokenless": "token失效",  # "不是，哥们，你token呢？",
+        "bill_push_ok": "成功尝试下单！正在检测是否为假票",
+        "BHYG_notify": "BHYG通知",
+        "rob_ok_paying": "抢票成功，等待支付，订单号 ",
+        "notify_ok": "已发送通知，流水号 ",
+        "notify_fail": "通知发送失败，返回信息 ",
+        "unpaid_bill": "订单未支付，正在等待",
+        "fake_ticket": "假票，继续抢票",
+        "rob_already_ok": "已经抢到了啊喂！",
+        "ticket_sto_less": "库存不足",
+        "unknown_error": "未知错误:",
         "whitelist": "当前处于白名单模式，你的机器不在白名单",
         "blacklist": "当前处于黑名单模式，你的机器在黑名单",
         "version_not_allowed": "当前版本不允许使用，请更新到最新版本",
@@ -411,8 +409,8 @@ i18n = {
         "id_type": "Please select the document type",
         "id_idcard": "0. Second generation ID card",
         "id_passport": "1. Chinese Passport",
-        "id_Hong_Kong": "2. Mainland Travel Permit for Hong Kong and Macao residents", #Hong Kong-Macau laissez-passer
-        "id_Taiwan": "3. Mainland Travel permit for Taiwan residents", #Mainland travel permit for Taiwan residents
+        "id_Hong_Kong": "2. Mainland Travel Permit for Hong Kong and Macao residents",  # Hong Kong-Macau laissez-passer
+        "id_Taiwan": "3. Mainland Travel permit for Taiwan residents",  # Mainland travel permit for Taiwan residents
         "in_id_serial_number": "Enter buyer's ID number:",
         "in_phone_number": "Enter buyer's phone number:",
         "join_success": "Join successfuly",
@@ -431,25 +429,24 @@ i18n = {
         "input_your_phone": "Enter your phone number:",
         "save_your_phone": "Phone number saved.",
         "input_rrocr_key": "Enter RROCR KEY:",
-        "select_tool"       : "Select the utility you want to use",
-        "tool_add_buyer"    : "Add buyer",
-        "tool_modify_ua"    : "Overwrite default UA",
-        "tool_modify_gaia"  : "Overwrite gaia_vtoken",
-        "tool_hunter_mode"  : "Turn on hunter mode (reset to 0)",
-        "tool_hunter_off"   : "Turn off hunter mode",
-        "tool_share_mode"   : "Turn on share mode",
-        "tool_pushplus"     : "PushPlus settings",
-        "tool_webhook"     : "WebHook settings",
+        "select_tool": "Select the utility you want to use",
+        "tool_add_buyer": "Add buyer",
+        "tool_modify_ua": "Overwrite default UA",
+        "tool_modify_gaia": "Overwrite gaia_vtoken",
+        "tool_hunter_mode": "Turn on hunter mode (reset to 0)",
+        "tool_hunter_off": "Turn off hunter mode",
+        "tool_share_mode": "Turn on share mode",
+        "tool_pushplus": "PushPlus settings",
+        "tool_webhook": "WebHook settings",
         "tool_phone_prefill": "Pre-fill binding phone number",
         "tool_proxy_setting": "Proxy settings",
-        "tool_capacha_mode" : "Select Captcha mode",
-        "back"              : "back",
+        "tool_capacha_mode": "Select Captcha mode",
+        "back": "back",
         "tool_not_supported": "Not supported yet",
         "wait_get_token": "Wait for the billing time to get the token...",
         "get_token_finish": "Ready, getting token...",
         "will_pay_bill": "Start order soon",
         "network_timeout": "Network timeout",
-        
         "wind_control": "May be risk control.\nThis kind of risk control must suspend in time, otherwise it may cause more problems.",
         "net_method": "You can also try to change the network environment (IP), such as restarting modem.",
         "res_3_returns": "Please confirm the problem and hint return 3 times to continue",
@@ -464,7 +461,6 @@ i18n = {
         "info_bill_ok": "Order prepared successfully",
         "info_bill_fail": "Order prepared failed",
         "info_wind_control": "Trigger risk control.",
-        
         "type_captcha": "Type: captcha ",
         "type_mobile": "Type: mobile verification",
         "type_sms": "Type: SMS verification",
@@ -483,25 +479,25 @@ i18n = {
         "bill_fail": "buy ticket failed.",
         "pay_ok": "Paid successfully, wish you a pleasant visit!",
         "bill_cancel": "Order cancelled",
-        "status_unknown":     "Unknown status",
-        "quit_login":         "Already logout",
-        "logout_fail":        "Logout failed",
-        "wait_4_96s":         "Wait for 4.96s",
-        "ticketless":         "Ticketless",      #无票
-        "ticket_unbuyable":   "Ticket unbuyable", #票种不可售
-        "slowdown_5s":        "Sleep for 5s",
-        "bili_speed_limit":   "Bilibilimit", # 小电视速率限制
-        "tokenless":          "Tokenless", # "不是，哥们，你token呢？",
-        "bill_push_ok":       "Order placed! Checking for fake ticket",
-        "BHYG_notify":        "BHYG Notify",
-        "rob_ok_paying":      "Ticket grabbed! Waiting for payment. Order No. ",
-        "notify_ok":          "Notification sent, Serial No. ",
-        "notify_fail":        "Notification send failed. Return: ",
-        "unpaid_bill":        "Order not paid and waiting to pay",
-        "fake_ticket":        "Fake ticket. Continue to grab",
-        "rob_already_ok":     "Already grabbed a ticket!",
-        "ticket_sto_less":    "Out of stock",
-        "unknown_error":      "Unknown error:",
+        "status_unknown": "Unknown status",
+        "quit_login": "Already logout",
+        "logout_fail": "Logout failed",
+        "wait_4_96s": "Wait for 4.96s",
+        "ticketless": "Ticketless",  # 无票
+        "ticket_unbuyable": "Ticket unbuyable",  # 票种不可售
+        "slowdown_5s": "Sleep for 5s",
+        "bili_speed_limit": "Bilibilimit",  # 小电视速率限制
+        "tokenless": "Tokenless",  # "不是，哥们，你token呢？",
+        "bill_push_ok": "Order placed! Checking for fake ticket",
+        "BHYG_notify": "BHYG Notify",
+        "rob_ok_paying": "Ticket grabbed! Waiting for payment. Order No. ",
+        "notify_ok": "Notification sent, Serial No. ",
+        "notify_fail": "Notification send failed. Return: ",
+        "unpaid_bill": "Order not paid and waiting to pay",
+        "fake_ticket": "Fake ticket. Continue to grab",
+        "rob_already_ok": "Already grabbed a ticket!",
+        "ticket_sto_less": "Out of stock",
+        "unknown_error": "Unknown error:",
         "whitelist": "Currently in whitelist mode, your machine is not in whitelist.",
         "blacklist": "Currently in blacklist mode, your machine is in blacklist.",
         "version_not_allowed": "The current version is not allowed, please update to the latest version.",
@@ -525,7 +521,6 @@ i18n = {
         "try_load_local_captcha": "Trying to load local CAPTCHA module",
         "load_success": "Load successfully",
         "local_captcha_load_failed": "Failed to load local CAPTCHA module, error: {}, please use other verification methods",
-
     },
     i18n_tuple[2]: {
         "data_error": "数据错误喵~，运行需要的小窝不符合本猫的需要喵~",
@@ -672,8 +667,8 @@ i18n = {
         "id_type": "请选择证件类型喵~",
         "id_idcard": "0. 身份证",
         "id_passport": "1. 中华人民共和国护照",
-        "id_Hong_Kong": "2. 港澳居民来往内地通行证", #Hong Kong-Macau laissez-passer
-        "id_Taiwan": "3. 台湾居民来往大陆通行证", #Mainland travel permit for Taiwan residents
+        "id_Hong_Kong": "2. 港澳居民来往内地通行证",  # Hong Kong-Macau laissez-passer
+        "id_Taiwan": "3. 台湾居民来往大陆通行证",  # Mainland travel permit for Taiwan residents
         "in_id_serial_number": "请给我购票人证件号码喵~：",
         "in_phone_number": "请给我购票人手机号码喵~：",
         "join_success": "添加成功喵!",
@@ -692,25 +687,24 @@ i18n = {
         "input_your_phone": "请给我您的手机号码喵~：",
         "save_your_phone": "手机号码已保存喵~",
         "input_rrocr_key": "请给我RROCR KEY喵~：",
-        "select_tool"       : "请选择您要使用的实用工具喵*",
-        "tool_add_buyer"    : "喂我购票人>喵<",
-        "tool_modify_ua"    : "覆盖默认UA咪~",
-        "tool_modify_gaia"  : "覆盖gaia_vtoken=喵=",
-        "tool_hunter_mode"  : "开启猎手模式(计数清零)喵#",
-        "tool_hunter_off"   : "关闭猎手模式喵^",
-        "tool_share_mode"   : "分享模式喵~",
-        "tool_pushplus"     : "PushPlus推送咪~",
-        "tool_webhook"     : "WebHook推送咪~",
+        "select_tool": "请选择您要使用的实用工具喵*",
+        "tool_add_buyer": "喂我购票人>喵<",
+        "tool_modify_ua": "覆盖默认UA咪~",
+        "tool_modify_gaia": "覆盖gaia_vtoken=喵=",
+        "tool_hunter_mode": "开启猎手模式(计数清零)喵#",
+        "tool_hunter_off": "关闭猎手模式喵^",
+        "tool_share_mode": "分享模式喵~",
+        "tool_pushplus": "PushPlus推送咪~",
+        "tool_webhook": "WebHook推送咪~",
         "tool_phone_prefill": "预填绑定手机号咪&",
         "tool_proxy_setting": "代理设置喵`",
-        "tool_capacha_mode" : "选择验证码模式喵!",
-        "back"              : "返回",
+        "tool_capacha_mode": "选择验证码模式喵!",
+        "back": "返回",
         "tool_not_supported": "暂不支持此功能咩~",
         "wait_get_token": "等待到达开票时间以获取token喵~...",
         "get_token_finish": "准备完毕, 获取token中喵~...",
         "will_pay_bill": "即将开始下单喵~",
         "network_timeout": "网络连接超时呜!",
-        
         "wind_control": "可能被业务风控\n该种业务风控请及时暂停，否则可能会引起更大问题喵~。",
         "net_method": "你也可以尝试更换网络环境，如重启流量（飞行模式开关）重新拨号（重启光猫）等",
         "res_3_returns": "请确认排除问题后按三下回车继续喵~",
@@ -725,7 +719,6 @@ i18n = {
         "info_bill_ok": "成功准备订单喵!",
         "info_bill_fail": "确认订单失败呜~",
         "info_wind_control": "触发风控。",
-        
         "type_captcha": "要过验证码了喵... ",
         "type_mobile": "要过手机验证码了喵...",
         "type_sms": "要过短信验证码了喵...",
@@ -744,25 +737,25 @@ i18n = {
         "bill_fail": "购票失败咩!",
         "pay_ok": "订单支付成功，祝您游玩愉快喵！！！！！！！！！！！",
         "bill_cancel": "订单已取消呜~",
-        "status_unknown":     "当前状态像一片大雾一样未知喵~",
-        "quit_login":         "已退出登录了喵!",
-        "logout_fail":        "退出登录失败了咪~",
-        "wait_4_96s":         "等待4.96秒",
-        "ticketless":         "无票喵",
-        "ticket_unbuyable":   "票种不可售咩",
-        "slowdown_5s":        "慢一点（强制5秒）呜",
-        "bili_speed_limit":   "前方拥挤, 抖起小电视了喵",
-        "tokenless":          "不是，哥们，你token呢？", # "不是，哥们，你token呢？",
-        "bill_push_ok":       "成功尝试下单！正在检测是否为假票咪",
-        "BHYG_notify":        "猫娘通知 - 来自BHYG",
-        "rob_ok_paying":      "抢~!!!票~!!!成~!!!功~!!!喵~!~!~!喵喵喵喵喵喵~喵~~喵~~!~~~!~~~~!，等待支付喵!!，订单号 ",
-        "notify_ok":          "已发送通知，流水号 ",
-        "notify_fail":        "通知发送失败，返回信息 ",
-        "unpaid_bill":        "订单未支付，正在等待喵~",
-        "fake_ticket":        "nmd假票，继续抢票去了喵@",
-        "rob_already_ok":     "已经抢到了啊喂！",
-        "ticket_sto_less":    "库存不足咪",
-        "unknown_error":      "未知错误咩:",
+        "status_unknown": "当前状态像一片大雾一样未知喵~",
+        "quit_login": "已退出登录了喵!",
+        "logout_fail": "退出登录失败了咪~",
+        "wait_4_96s": "等待4.96秒",
+        "ticketless": "无票喵",
+        "ticket_unbuyable": "票种不可售咩",
+        "slowdown_5s": "慢一点（强制5秒）呜",
+        "bili_speed_limit": "前方拥挤, 抖起小电视了喵",
+        "tokenless": "不是，哥们，你token呢？",  # "不是，哥们，你token呢？",
+        "bill_push_ok": "成功尝试下单！正在检测是否为假票咪",
+        "BHYG_notify": "猫娘通知 - 来自BHYG",
+        "rob_ok_paying": "抢~!!!票~!!!成~!!!功~!!!喵~!~!~!喵喵喵喵喵喵~喵~~喵~~!~~~!~~~~!，等待支付喵!!，订单号 ",
+        "notify_ok": "已发送通知，流水号 ",
+        "notify_fail": "通知发送失败，返回信息 ",
+        "unpaid_bill": "订单未支付，正在等待喵~",
+        "fake_ticket": "nmd假票，继续抢票去了喵@",
+        "rob_already_ok": "已经抢到了啊喂！",
+        "ticket_sto_less": "库存不足咪",
+        "unknown_error": "未知错误咩:",
         "whitelist": "当前处于白名单模式喵~，你的机器不在白名单呜呜呜~",
         "blacklist": "当前处于黑名单模式喵~，你的机器在黑名单呜呜呜~",
         "version_not_allowed": "当前版本不允许使用，请更新到最新版本喵~",
@@ -783,30 +776,33 @@ i18n = {
         "try_load_local_captcha": "尝试预热本地验证码模块喵~",
         "load_success": "预热成功喵!",
         "local_captcha_load_failed": "本地验证码模块预热失败喵，错误信息：{}，请使用其他验证方式喵呜~",
-    }
+    },
 }
+
 
 def set_language(force_reload: bool):
     global i18n, i18n_lang
     import os
     import inquirer
-    if not force_reload and os.path.exists("language"): #加载语言文件
+
+    if not force_reload and os.path.exists("language"):  # 加载语言文件
         with open("language", "r", encoding="utf-8") as f:
             i18n_lang = f.read()
             print("Software language:", i18n_lang)
-            f.close
-    else: #加载语言文件不存在时, 创建一个语言文件
-        i18n_lang = inquirer.prompt([
-            inquirer.List(
-                name="lang_select",
-                message="Please select language",
-                choices=i18n_tuple,
-            )]
+    else:  # 加载语言文件不存在时, 创建一个语言文件
+        i18n_lang = inquirer.prompt(
+            [
+                inquirer.List(
+                    name="lang_select",
+                    message="Please select language",
+                    choices=i18n_tuple,
+                )
+            ]
         )["lang_select"]
         with open("language", "w", encoding="utf-8") as f:
             f.write(i18n_lang)
-            f.close
-            
+
+
 def i18n_format(key: str):
     global i18n, i18n_lang
     if key in i18n[i18n_lang]:

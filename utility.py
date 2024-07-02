@@ -10,17 +10,28 @@ from utils import prompt, save, load
 from i18n import *
 
 from globals import *
+
+
 def utility(config):
     import base64
+
     def add_buyer(headers):
         name = input(i18n_format("buyer_name"))
-        id_type = prompt([inquirer.List("id_type", message=i18n_format("id_type"),
-                                        choices=[i18n_format("id_idcard"),
-                                                 i18n_format("id_passport"),
-                                                 i18n_format("id_Hong_Kong"),
-                                                 i18n_format("id_Taiwan")],
-                                                 default=i18n_format("id_idcard")),
-                          ])
+        id_type = prompt(
+            [
+                inquirer.List(
+                    "id_type",
+                    message=i18n_format("id_type"),
+                    choices=[
+                        i18n_format("id_idcard"),
+                        i18n_format("id_passport"),
+                        i18n_format("id_Hong_Kong"),
+                        i18n_format("id_Taiwan"),
+                    ],
+                    default=i18n_format("id_idcard"),
+                ),
+            ]
+        )
         personal_id = input(i18n_format("in_id_serial_number"))
         tel = input(i18n_format("in_phone_number"))
         data = {
@@ -29,10 +40,14 @@ def utility(config):
             "id_type": id_type["id_type"].split(".")[0],
             "personal_id": personal_id,
             "is_default": "0",
-            "src": "ticket"
+            "src": "ticket",
         }
         logger.debug(data)
-        response = requests.post("https://show.bilibili.com/api/ticket/buyer/create", headers=headers, data=data)
+        response = requests.post(
+            "https://show.bilibili.com/api/ticket/buyer/create",
+            headers=headers,
+            data=data,
+        )
         if response.json()["errno"] == 0:
             logger.info(i18n_format("join_success"))
         else:
@@ -58,12 +73,15 @@ def utility(config):
 
     def share_mode(config):
         import json
+
         json.dump(config, open("share.json", "w"))
         import os
+
         os.remove("data")
         logger.info(i18n_format("share_mode"))
         logger.info(i18n_format("auto_quit"))
         import sys
+
         sys.exit(0)
         return
 
@@ -78,7 +96,7 @@ def utility(config):
         config["pushplus"] = token
         logger.info(i18n_format("pushplus_on"))
         save(config)
-    
+
     def webhook_config(config):
         webhook = input(i18n_format("webhook"))
         if webhook == "":
@@ -113,9 +131,16 @@ def utility(config):
             save(config)
 
     def use_proxy(config):
-        choice = prompt([inquirer.List("proxy", message=i18n_format("input_is_use_proxy"),
-                                       choices=[i18n_format("yes"), i18n_format("no")], default=i18n_format("no"))])[
-            "proxy"]
+        choice = prompt(
+            [
+                inquirer.List(
+                    "proxy",
+                    message=i18n_format("input_is_use_proxy"),
+                    choices=[i18n_format("yes"), i18n_format("no")],
+                    default=i18n_format("no"),
+                )
+            ]
+        )["proxy"]
         if choice == i18n_format("yes"):
             while True:
                 try:
@@ -125,20 +150,35 @@ def utility(config):
                 except:
                     logger.error(i18n_format("wrong_proxy_format"))
                     continue
-            config["proxy_channel"] = prompt([
-                    inquirer.Text("proxy_channel", message=i18n_format("input_proxy_channel"),validate=lambda _, x: x.isdigit())
-            ])["proxy_channel"]
+            config["proxy_channel"] = prompt(
+                [
+                    inquirer.Text(
+                        "proxy_channel",
+                        message=i18n_format("input_proxy_channel"),
+                        validate=lambda _, x: x.isdigit(),
+                    )
+                ]
+            )["proxy_channel"]
             config["proxy"] = True
         else:
             config["proxy"] = False
         save(config)
 
     def captcha_mode(config):
-        choice = prompt([inquirer.List("captcha", message=i18n_format("input_use_captcha_mode"), choices=[
-            i18n_format("local_gt"),
-            i18n_format("rrocr"),
-            i18n_format("manual"),
-        ], default=i18n_format("local_gt"))])["captcha"]
+        choice = prompt(
+            [
+                inquirer.List(
+                    "captcha",
+                    message=i18n_format("input_use_captcha_mode"),
+                    choices=[
+                        i18n_format("local_gt"),
+                        i18n_format("rrocr"),
+                        i18n_format("manual"),
+                    ],
+                    default=i18n_format("local_gt"),
+                )
+            ]
+        )["captcha"]
         if choice == i18n_format("local_gt"):
             config["captcha"] = "local_gt"
             sentry_sdk.set_tag("captcha", "local_gt")
@@ -155,67 +195,75 @@ def utility(config):
         else:
             logger.error(i18n_format("captcha_mode_not_supported"))
         save(config)
+
     import random
+
     headers = {
         "Cookie": config["cookie"],
-        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/618.1.15.10.15 (KHTML, like Gecko) Mobile/21F90 BiliApp/77900100 os/ios model/iPhone 15 mobi_app/iphone build/77900100 osVer/17.5.1 network/2 channel/AppStore c_locale/zh-Hans_CN s_locale/zh-Hans_CH disable_rcmd/0 "+str(random.randint(0, 9999)),
-        "Referer": "https://show.bilibili.com"
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/618.1.15.10.15 (KHTML, like Gecko) Mobile/21F90 BiliApp/77900100 os/ios model/iPhone 15 mobi_app/iphone build/77900100 osVer/17.5.1 network/2 channel/AppStore c_locale/zh-Hans_CN s_locale/zh-Hans_CH disable_rcmd/0 "
+        + str(random.randint(0, 9999)),
+        "Referer": "https://show.bilibili.com",
     }
-    select = prompt([
-        inquirer.List(
-            "select",
-            message=  i18n_format("select_tool"       ),
-            choices=[ i18n_format("tool_add_buyer"    ),
-                      i18n_format("tool_modify_ua"    ),
-                      i18n_format("tool_modify_gaia"  ),
-                      i18n_format("tool_hunter_mode"  ),
-                      i18n_format("tool_hunter_off"   ),
-                      i18n_format("tool_share_mode"   ),
-                      i18n_format("tool_pushplus"     ),
-                      i18n_format("tool_phone_prefill"),
-                      i18n_format("tool_proxy_setting"),
-                      i18n_format("tool_capacha_mode" ),
-                      i18n_format("tool_webhook"      ),
-                      i18n_format("tool_set_offset"   ),
-                      i18n_format("back"              )],
-        )])
-    if select["select"] ==      i18n_format("tool_add_buyer"    ):
+    select = prompt(
+        [
+            inquirer.List(
+                "select",
+                message=i18n_format("select_tool"),
+                choices=[
+                    i18n_format("tool_add_buyer"),
+                    i18n_format("tool_modify_ua"),
+                    i18n_format("tool_modify_gaia"),
+                    i18n_format("tool_hunter_mode"),
+                    i18n_format("tool_hunter_off"),
+                    i18n_format("tool_share_mode"),
+                    i18n_format("tool_pushplus"),
+                    i18n_format("tool_phone_prefill"),
+                    i18n_format("tool_proxy_setting"),
+                    i18n_format("tool_capacha_mode"),
+                    i18n_format("tool_webhook"),
+                    i18n_format("tool_set_offset"),
+                    i18n_format("back"),
+                ],
+            )
+        ]
+    )
+    if select["select"] == i18n_format("tool_add_buyer"):
         add_buyer(headers)
         return utility(config)
-    elif select["select"] ==    i18n_format("tool_modify_ua"    ):
+    elif select["select"] == i18n_format("tool_modify_ua"):
         modify_ua()
         return utility(config)
-    elif select["select"] ==    i18n_format("tool_modify_gaia"  ):
+    elif select["select"] == i18n_format("tool_modify_gaia"):
         modify_gaia_vtoken()
         return utility(config)
-    elif select["select"] ==    i18n_format("tool_hunter_mode"  ):
+    elif select["select"] == i18n_format("tool_hunter_mode"):
         hunter_mode()
         return utility(config)
-    elif select["select"] ==    i18n_format("tool_hunter_off"   ):
+    elif select["select"] == i18n_format("tool_hunter_off"):
         hunter_mode_off()
         return utility(config)
-    elif select["select"] ==    i18n_format("tool_share_mode"   ):
+    elif select["select"] == i18n_format("tool_share_mode"):
         share_mode(config)
         return utility(config)
-    elif select["select"] ==    i18n_format("tool_pushplus"     ):
+    elif select["select"] == i18n_format("tool_pushplus"):
         pushplus_config(config)
         return utility(config)
-    elif select["select"] ==    i18n_format("tool_phone_prefill"):
+    elif select["select"] == i18n_format("tool_phone_prefill"):
         save_phone(config)
         return utility(config)
-    elif select["select"] ==    i18n_format("tool_proxy_setting"):
+    elif select["select"] == i18n_format("tool_proxy_setting"):
         use_proxy(config)
         return utility(config)
-    elif select["select"] ==    i18n_format("tool_capacha_mode" ):
+    elif select["select"] == i18n_format("tool_capacha_mode"):
         captcha_mode(config)
         return utility(config)
-    elif select["select"] ==    i18n_format("tool_webhook"      ):
+    elif select["select"] == i18n_format("tool_webhook"):
         webhook_config(config)
         return utility(config)
-    elif select["select"] ==    i18n_format("tool_set_offset"   ):
+    elif select["select"] == i18n_format("tool_set_offset"):
         set_offset(config)
         return utility(config)
-    elif select["select"] ==    i18n_format("back"              ):
+    elif select["select"] == i18n_format("back"):
         return
     else:
         logger.error(i18n_format("tool_not_supported"))

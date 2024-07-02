@@ -21,24 +21,32 @@ from utils import prompt, save, load
 import time
 from i18n import *
 
-ver_int = 808 # "0.8.8  00 08 08
-version = "v{}.{}.{}".format((ver_int//10000)%100, (ver_int//100)%100, ver_int%100)
+ver_int = 808  # "0.8.8  00 08 08
+version = "v{}.{}.{}".format(
+    (ver_int // 10000) % 100, (ver_int // 100) % 100, ver_int % 100
+)
+
 
 def agree_terms():
     while True:
-        agree_prompt = input(
-            i18n_format("eula"))
-        if "同意" in agree_prompt and "死妈" in agree_prompt and "黄牛" in agree_prompt and "不" not in agree_prompt:
+        agree_prompt = input(i18n_format("eula"))
+        if (
+            "同意" in agree_prompt
+            and "死妈" in agree_prompt
+            and "黄牛" in agree_prompt
+            and "不" not in agree_prompt
+        ):
             break
         else:
             logger.error(i18n_format("wrong_input"))
     with open("agree-terms", "w") as f:
         import machineid
+
         f.write(machineid.id())
     logger.info(i18n_format("agree_eula"))
 
+
 def init(version):
-    
     logger.remove(handler_id=0)
     if not os.path.exists("logs"):
         os.mkdir("logs")
@@ -68,6 +76,7 @@ def init(version):
         with open("agree-terms", "r") as f:
             hwid = f.read()
             import machineid
+
             if hwid != machineid.id():
                 agree_terms()
                 with open("agree-terms", "w") as f:
@@ -80,28 +89,26 @@ def init(version):
         enable_tracing=True,
         integrations=[
             LoguruIntegration(
-                level=LoggingLevels.DEBUG.value, event_level=LoggingLevels.CRITICAL.value
+                level=LoggingLevels.DEBUG.value,
+                event_level=LoggingLevels.CRITICAL.value,
             ),
         ],
         sample_rate=1.0,
-        environment=environment
+        environment=environment,
     )
     with sentry_sdk.configure_scope() as scope:
         scope.add_attachment(path="data")
 
     import machineid
-    sentry_sdk.set_user(
-        {
-            "hwid": machineid.id()[:16],
-            "ip_address": "{{auto}}"
-        }
-    )
+
+    sentry_sdk.set_user({"hwid": machineid.id()[:16], "ip_address": "{{auto}}"})
     try:
         os_username = os.getlogin()
         sentry_sdk.set_tag("os_username", os_username)
     except Exception:
         pass
     return sentry_sdk
+
 
 class HygException(Exception):
     pass
@@ -113,6 +120,7 @@ def load_config():
         logger.info(i18n_format("welcome_new_version"))
         if os.path.isdir("data"):
             import shutil
+
             shutil.rmtree("data")
         with open("config.json", "r", encoding="utf-8") as f:
             config = json.load(f)
@@ -127,21 +135,26 @@ def load_config():
         os.remove("share.json")
     if os.path.isdir("data"):
         import shutil
+
         shutil.rmtree("data")
     if os.path.exists("data"):
-        run_info = prompt([
-            inquirer.List(
-                "run_info",
-                message=i18n_format("select_setting"),
-                choices=[i18n_format("select_keep_all"),
-                         i18n_format("select_keep_login"),
-                         i18n_format("select_new_boot"),
-                         i18n_format("select_tools"),
-                         i18n_format("select_tools_relogin"),
-                         i18n_format("select_reset"),
-                         "语言设置/Language setting"],
-                default= i18n_format("select_keep_all")
-            )]
+        run_info = prompt(
+            [
+                inquirer.List(
+                    "run_info",
+                    message=i18n_format("select_setting"),
+                    choices=[
+                        i18n_format("select_keep_all"),
+                        i18n_format("select_keep_login"),
+                        i18n_format("select_new_boot"),
+                        i18n_format("select_tools"),
+                        i18n_format("select_tools_relogin"),
+                        i18n_format("select_reset"),
+                        "语言设置/Language setting",
+                    ],
+                    default=i18n_format("select_keep_all"),
+                )
+            ]
         )["run_info"]
         if run_info == i18n_format("select_new_boot"):
             logger.info(i18n_format("select_new_boot_msg"))
@@ -210,9 +223,16 @@ def load_config():
             use_login = False
             config = {}
         elif run_info == i18n_format("select_reset"):
-            choice = prompt([inquirer.List("again", message=i18n_format("select_reset_msg"),
-                choices=[i18n_format("no"), i18n_format("yes")], default=i18n_format("no"))])[
-                "again"]
+            choice = prompt(
+                [
+                    inquirer.List(
+                        "again",
+                        message=i18n_format("select_reset_msg"),
+                        choices=[i18n_format("no"), i18n_format("yes")],
+                        default=i18n_format("no"),
+                    )
+                ]
+            )["again"]
             if choice == i18n_format("yes"):
                 os.remove("language")
                 os.remove("data")
@@ -236,18 +256,19 @@ def load_config():
     else:
         logger.info(i18n_format("auto_time_offset"))
         import ntplib
+
         c = ntplib.NTPClient()
         ntp_servers = (
-            "ntp.ntsc.ac.cn",           #//Zhejiang ping: 27.75 ms
-            "time.pool.aliyun.com",     #//Zhejiang ping:  32.5 ms
-            "time1.cloud.tencent.com",  #//Zhejiang ping:    35 ms
-            "asia.pool.ntp.org",        #//Zhejiang ping:    37 ms
-            "edu.ntp.org.cn",           #//Zhejiang ping:    41 ms
-            "cn.ntp.org.cn",            #//Zhejiang ping:    41 ms | ipv6 | 有时候抽风
-            "cn.pool.ntp.org",          #//Zhejiang ping:    50 ms | 有时候抽风
-            "ntp.tuna.tsinghua.edu.cn", #//Zhejiang ping:    55 ms | ipv6
-            "time.asia.apple.com",      #//Zhejiang ping: 78.75 ms
-            "time.windows.com",         #//Zhejiang ping:    89 ms
+            "ntp.ntsc.ac.cn",  # //Zhejiang ping: 27.75 ms
+            "time.pool.aliyun.com",  # //Zhejiang ping:  32.5 ms
+            "time1.cloud.tencent.com",  # //Zhejiang ping:    35 ms
+            "asia.pool.ntp.org",  # //Zhejiang ping:    37 ms
+            "edu.ntp.org.cn",  # //Zhejiang ping:    41 ms
+            "cn.ntp.org.cn",  # //Zhejiang ping:    41 ms | ipv6 | 有时候抽风
+            "cn.pool.ntp.org",  # //Zhejiang ping:    50 ms | 有时候抽风
+            "ntp.tuna.tsinghua.edu.cn",  # //Zhejiang ping:    55 ms | ipv6
+            "time.asia.apple.com",  # //Zhejiang ping: 78.75 ms
+            "time.windows.com",  # //Zhejiang ping:    89 ms
         )
         skip = 0
         for i in range(10):
@@ -261,15 +282,17 @@ def load_config():
             logger.error(i18n_format("time_sync_fail"))
             config["time_offset"] = 0.5
         else:
-            time_offset = response.delay/2 - response.offset + 0.5
+            time_offset = response.delay / 2 - response.offset + 0.5
             logger.info(i18n_format("time_offset").format(time_offset))
             config["time_offset"] = time_offset
     while True:
         if "cookie" not in config or not use_login:
             config["cookie"] = interactive_login(sentry_sdk)
         import random
+
         headers = {
-            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/618.1.15.10.15 (KHTML, like Gecko) Mobile/21F90 BiliApp/77900100 os/ios model/iPhone 15 mobi_app/iphone build/77900100 osVer/17.5.1 network/2 channel/AppStore c_locale/zh-Hans_CN s_locale/zh-Hans_CH disable_rcmd/0 "+str(random.randint(0, 9999)),
+            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/618.1.15.10.15 (KHTML, like Gecko) Mobile/21F90 BiliApp/77900100 os/ios model/iPhone 15 mobi_app/iphone build/77900100 osVer/17.5.1 network/2 channel/AppStore c_locale/zh-Hans_CN s_locale/zh-Hans_CH disable_rcmd/0 "
+            + str(random.randint(0, 9999)),
             "Cookie": config["cookie"],
         }
         user = requests.get(
@@ -277,10 +300,21 @@ def load_config():
         )
         user = user.json()
         if user["data"]["isLogin"]:
-            logger.success(i18n_format("user") +' '+ user["data"]["uname"] +' '+ i18n_format("login_success"))
+            logger.success(
+                i18n_format("user")
+                + " "
+                + user["data"]["uname"]
+                + " "
+                + i18n_format("login_success")
+            )
             if user["data"]["vipStatus"] != 0:
-                logger.info(i18n_format("user_bigvip").format((user['data']['vipDueDate'] / 1000 - time.time()) / 60 / 60 / 24))
+                logger.info(
+                    i18n_format("user_bigvip").format(
+                        (user["data"]["vipDueDate"] / 1000 - time.time()) / 60 / 60 / 24
+                    )
+                )
             import machineid
+
             sentry_sdk.set_user(
                 {
                     "username": user["data"]["mid"],
@@ -291,7 +325,7 @@ def load_config():
             config["uid"] = user["data"]["mid"]
             if "hunter" in config:
                 logger.success(i18n_format("hunter_mode"))
-                logger.info(i18n_format("hunter_grade").format(config['hunter']))
+                logger.info(i18n_format("hunter_grade").format(config["hunter"]))
             save(config)
             break
         else:
