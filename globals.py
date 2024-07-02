@@ -21,6 +21,9 @@ from utils import prompt, save, load
 import time
 from i18n import *
 
+ver_int = 808 # "0.8.8  00 08 08
+version = "v{}.{}.{}".format((ver_int//10000)%100, (ver_int//100)%100, ver_int%100)
+
 def agree_terms():
     while True:
         agree_prompt = input(

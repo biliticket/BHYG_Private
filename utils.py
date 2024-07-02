@@ -59,7 +59,7 @@ def load() -> dict:
 def check_policy(uid = None):
     import requests
     from i18n import i18n_format
-    from main import version
+    from globals import version, ver_int
     import os
     import sys
     from loguru import logger
@@ -85,7 +85,7 @@ def check_policy(uid = None):
     if "policy" not in locals():
         logger.error(i18n_format("policy_get_failed"))
         sys.exit(1)
-    if version not in policy["allowed versions"]:
+    if ver_int < policy["min_version"]: #if version not in policy["allowed versions"]:
         logger.error(i18n_format("version_not_allowed"))
         allow = False
     if policy["type"] == "blacklist":
