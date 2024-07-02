@@ -31,9 +31,7 @@ def agree_terms():
     while True:
         agree_prompt = input(i18n_format("eula"))
         if (
-            "同意" in agree_prompt
-            and "死妈" in agree_prompt
-            and "黄牛" in agree_prompt
+            all(keyword in agree_prompt for keyword in ["同意", "死妈", "黄牛"])
             and "不" not in agree_prompt
         ):
             break
