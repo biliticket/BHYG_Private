@@ -6,7 +6,7 @@ requests
 sentry-sdk
 kdl
 pycryptodome
-bili_ticket_gt_python==0.2.5
+bili_ticket_gt_python==0.2.6
 inquirer
 ntplib
 py-machineid
