@@ -106,7 +106,12 @@ def verify_code_login(session, headers):
     gt = captcha["data"]["geetest"]["gt"]
     challenge = captcha["data"]["geetest"]["challenge"]
     token = captcha["data"]["token"]
-    tel = prompt([inquirer.Text("tel", message=i18n_format("input_phone_num"), validate=lambda _, x: len(x) == 11)])["tel"]
+    while True:
+        tel = input(i18n_format("input_phone_num"))
+        if not tel.isdigit() and len(tel) != 11:
+            logger.error(i18n_format("wrong_input"))
+        else:
+            break
     logger.info(i18n_format("input_auto_verify"))
     cap_data = _verify(gt, challenge, token)
     while cap_data == False:

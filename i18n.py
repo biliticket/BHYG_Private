@@ -261,6 +261,7 @@ i18n = {
         "key_expired": "密钥已过期，请重新获取",
         "key_invalid": "密钥无效，请重新获取",
         "input_key": "云控系统要求您进行密钥激活，请输入密钥",
+        "wrong_input_project_id": "输入的项目ID格式不正确，请重新输入，项目id一般为5位数字",
     },
     i18n_tuple[1]: {
         "data_error": "Data error! Environment is not OK!",

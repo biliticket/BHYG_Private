@@ -129,13 +129,17 @@ def main():
                 config["mode"] = 'time'
                 logger.info(i18n_format("mode_time_on"))
         if "status_delay" not in config and config["mode"] == 'detect':
-            config["status_delay"] = float(prompt([
-                inquirer.Text(
-                    "status_delay",
-                    message=i18n_format("input_status_delay"),
-                    default="0.2",
-                    validate=lambda _, x: float(x) >= 0
-                )])["status_delay"])
+            while True:
+                config["status_delay"] = input(i18n_format("input_status_delay"))
+                if config["status_delay"] == "":
+                    config["status_delay"] = 0.2
+                try:
+                    config["status_delay"] = float(config["status_delay"])
+                    if config["status_delay"] < 0:
+                        raise ValueError
+                    break
+                except ValueError:
+                    logger.error(i18n_format("wrong_input"))
         if "proxy" not in config:
             logger.info(i18n_format("no_proxy_by_default"))
             config["proxy"] = False
@@ -174,10 +178,17 @@ def main():
                     )
                 if len(common_project_id) == 0:
                     logger.info(i18n_format("empty"))
-                config["project_id"] = prompt([
-                    inquirer.Text("project_id", message=i18n_format("input_project_id"),
-                                  validate=lambda _, x: x.isdigit())
-                ])["project_id"]
+                # config["project_id"] = prompt([
+                #     inquirer.Text("project_id", message=i18n_format("input_project_id"),
+                #                   validate=lambda _, x: x.isdigit())
+                while True:
+                    config["project_id"] = input(i18n_format("input_project_id"))
+                    try:
+                        config["project_id"] = int(config["project_id"])
+                    except ValueError:
+                        logger.error(i18n_format("wrong_input_project_id"))
+                        continue
+                    break
                 url = (
                         "https://show.bilibili.com/api/ticket/project/getV2?version=134&id="
                         + config["project_id"]
