@@ -29,7 +29,7 @@ a = Analysis(
         'pyinstaller',
         'qrcode',
         'requests',
-        'sentry-sdk',
+        'sentry_sdk',
         'kdl',
         'pycryptodome',
         'inquirer',
