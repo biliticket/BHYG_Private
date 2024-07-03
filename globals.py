@@ -278,9 +278,9 @@ def load_config():
                 break
         if skip >= 10:
             logger.error(i18n_format("time_sync_fail"))
-            config["time_offset"] = 0.5
+            config["time_offset"] = -0.5
         else:
-            time_offset = response.delay / 2 - response.offset + 0.5
+            time_offset = response.offset - 0.5
             logger.info(i18n_format("time_offset").format(time_offset))
             config["time_offset"] = time_offset
     while True:
