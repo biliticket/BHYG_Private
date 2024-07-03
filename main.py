@@ -21,15 +21,12 @@ from i18n import *
 
 common_project_id = [
     {"name": "上海·BilibiliWorld 2024", "id": 85939},
-    {"name": "上海·BILIBILI MACRO LINK 2024", "id": 85938}
+    {"name": "上海·BILIBILI MACRO LINK 2024", "id": 85938},
 ]
-
-version = "v0.8.8"
 
 
 def run(hyg):
-    
-    if hyg.config["mode"] == 'direct' or hyg.config["mode"] == 'time':
+    if hyg.config["mode"] == "direct" or hyg.config["mode"] == "time":
         while True:
             if hyg.try_create_order():
                 if "hunter" not in hyg.config:
@@ -37,10 +34,12 @@ def run(hyg):
                     logger.success(i18n_format("pay_success"))
                     return
                 else:
-                    hyg.config['hunter'] += 1
+                    hyg.config["hunter"] += 1
                     save(hyg.config)
-                    logger.success(i18n_format("hunter_prompt").format(hyg.config['hunter']))
-    elif hyg.config["mode"] == 'detect':
+                    logger.success(
+                        i18n_format("hunter_prompt").format(hyg.config["hunter"])
+                    )
+    elif hyg.config["mode"] == "detect":
         while 1:
             hyg.risk = False
             if hyg.risk:
@@ -62,9 +61,13 @@ def run(hyg):
                             logger.success(i18n_format("pay_success"))
                             return
                         else:
-                            hyg.config['hunter'] += 1
+                            hyg.config["hunter"] += 1
                             save(hyg.config)
-                            logger.success(i18n_format("hunter_prompt").format(hyg.config['hunter']))
+                            logger.success(
+                                i18n_format("hunter_prompt").format(
+                                    hyg.config["hunter"]
+                                )
+                            )
                 break
             elif status == 1:
                 logger.warning(i18n_format("not_begin"))
@@ -89,9 +92,11 @@ def run(hyg):
 
 
 def main():
-#    easter_egg = False
-#    user_male = False
-#    user_female = False
+    #    easter_egg = False
+    #    user_male = False
+    #    user_female = False
+    from globals import version
+
     set_language(False)
     print(i18n_format("start_up").format(version))
     global kdl_client
@@ -106,29 +111,42 @@ def main():
         if config == None:
             return
         if check_key:
-            check_policy(uid = config["uid"])
+            check_policy(uid=config["uid"])
         import random
+
         headers = {
-            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/618.1.15.10.15 (KHTML, like Gecko) Mobile/21F90 BiliApp/77900100 os/ios model/iPhone 15 mobi_app/iphone build/77900100 osVer/17.5.1 network/2 channel/AppStore c_locale/zh-Hans_CN s_locale/zh-Hans_CH disable_rcmd/0 "+str(random.randint(0, 9999)),
+            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/618.1.15.10.15 (KHTML, like Gecko) Mobile/21F90 BiliApp/77900100 os/ios model/iPhone 15 mobi_app/iphone build/77900100 osVer/17.5.1 network/2 channel/AppStore c_locale/zh-Hans_CN s_locale/zh-Hans_CH disable_rcmd/0 "
+            + str(random.randint(0, 9999)),
             "Cookie": config["cookie"],
         }
         if "user-agent" in config:
             headers["User-Agent"] = config["user-agent"]
         session = requests.Session()
         if "mode" not in config:
-            mode_str = prompt([inquirer.List("mode", message=i18n_format("choose_mode"), choices=[
-                i18n_format("mode_time"), i18n_format("mode_direct"), i18n_format("mode_detect")
-            ], default=i18n_format("mode_time"))])["mode"]
+            mode_str = prompt(
+                [
+                    inquirer.List(
+                        "mode",
+                        message=i18n_format("choose_mode"),
+                        choices=[
+                            i18n_format("mode_time"),
+                            i18n_format("mode_direct"),
+                            i18n_format("mode_detect"),
+                        ],
+                        default=i18n_format("mode_time"),
+                    )
+                ]
+            )["mode"]
             if mode_str == i18n_format("mode_direct"):
-                config["mode"] = 'direct'
+                config["mode"] = "direct"
                 logger.info(i18n_format("mode_direct_on"))
             elif mode_str == i18n_format("mode_detect"):
-                config["mode"] = 'detect'
+                config["mode"] = "detect"
                 logger.info(i18n_format("mode_detect_on"))
             else:
-                config["mode"] = 'time'
+                config["mode"] = "time"
                 logger.info(i18n_format("mode_time_on"))
-        if "status_delay" not in config and config["mode"] == 'detect':
+        if "status_delay" not in config and config["mode"] == "detect":
             while True:
                 config["status_delay"] = input(i18n_format("input_status_delay"))
                 if config["status_delay"] == "":
@@ -159,14 +177,16 @@ def main():
             session.keep_alive = False
             session.get("https://show.bilibili.com")
             logger.info(
-                i18n_format("test_proxy").format(kdl_client.tps_current_ip(sign_type="hmacsha1"))
+                i18n_format("test_proxy").format(
+                    kdl_client.tps_current_ip(sign_type="hmacsha1")
+                )
             )
         if (
-                "project_id" not in config
-                or "screen_id" not in config
-                or "sku_id" not in config
-                or "pay_money" not in config
-                or "id_bind" not in config
+            "project_id" not in config
+            or "screen_id" not in config
+            or "sku_id" not in config
+            or "pay_money" not in config
+            or "id_bind" not in config
         ):
             while True:
                 logger.info(i18n_format("common_project_id"))
@@ -190,8 +210,8 @@ def main():
                         continue
                     break
                 url = (
-                        "https://show.bilibili.com/api/ticket/project/getV2?version=134&id="
-                        + config["project_id"]
+                    "https://show.bilibili.com/api/ticket/project/getV2?version=134&id="
+                    + config["project_id"]
                 )
                 response = session.get(url, headers=headers)
                 if response.status_code == 412:
@@ -210,7 +230,7 @@ def main():
                 if response["data"] == {}:
                     logger.error(i18n_format("server_no_response"))
                     continue
-                if "screen_list" not in response['data']:
+                if "screen_list" not in response["data"]:
                     logger.error(i18n_format("no_screen"))
                     continue
                 if len(response["data"]["screen_list"]) == 0:
@@ -221,17 +241,33 @@ def main():
             config["id_bind"] = response["data"]["id_bind"]
             config["is_paper_ticket"] = response["data"]["has_paper_ticket"]
             screens = response["data"]["screen_list"]
-            screen_id = prompt([
-                inquirer.List("screen_id", message=i18n_format("select_screen"),
-                              choices=[f"{i}. {screens[i]['name']}" for i in range(len(screens))])
-            ])["screen_id"].split(".")[0]
-            logger.info(i18n_format("show_screen").format(screens[int(screen_id)]["name"]))
+            screen_id = prompt(
+                [
+                    inquirer.List(
+                        "screen_id",
+                        message=i18n_format("select_screen"),
+                        choices=[
+                            f"{i}. {screens[i]['name']}" for i in range(len(screens))
+                        ],
+                    )
+                ]
+            )["screen_id"].split(".")[0]
+            logger.info(
+                i18n_format("show_screen").format(screens[int(screen_id)]["name"])
+            )
             tickets = screens[int(screen_id)]["ticket_list"]  # type: ignore
-            sku_id = prompt([
-                inquirer.List("sku_id", message=i18n_format("select_sku"),
-                              choices=[f"{i}. {tickets[i]['desc']} {tickets[i]['price'] / 100}元" for i in
-                                       range(len(tickets))])
-            ])["sku_id"].split(".")[0]
+            sku_id = prompt(
+                [
+                    inquirer.List(
+                        "sku_id",
+                        message=i18n_format("select_sku"),
+                        choices=[
+                            f"{i}. {tickets[i]['desc']} {tickets[i]['price'] / 100}元"
+                            for i in range(len(tickets))
+                        ],
+                    )
+                ]
+            )["sku_id"].split(".")[0]
             logger.info(i18n_format("show_sku").format(tickets[int(sku_id)]["desc"]))
             config["screen_id"] = str(screens[int(screen_id)]["id"])
             config["sku_id"] = str(tickets[int(sku_id)]["id"])
@@ -239,7 +275,11 @@ def main():
             config["ticket_desc"] = str(tickets[int(sku_id)]["desc"])
             config["time"] = int(tickets[int(sku_id)]["saleStart"])
             if tickets[int(sku_id)]["discount_act"] is not None:
-                logger.info(i18n_format("show_act").format(tickets[int(sku_id)]["discount_act"]["act_id"]))
+                logger.info(
+                    i18n_format("show_act").format(
+                        tickets[int(sku_id)]["discount_act"]["act_id"]
+                    )
+                )
                 config["act_id"] = tickets[int(sku_id)]["discount_act"]["act_id"]
                 config["order_type"] = tickets[int(sku_id)]["discount_act"]["act_type"]
             else:
@@ -264,14 +304,26 @@ def main():
                 if len(addr_list) == 0:
                     logger.error(i18n_format("add_address"))
                 else:
-                    addr = prompt([
-                        inquirer.List("addr", message=i18n_format("please_select_address"), \
-                        choices=[f"{i}. {addr_list[i]['prov'] + addr_list[i]['city'] + addr_list[i]['area'] + \
-                        addr_list[i]['addr']} {addr_list[i]['name']} {addr_list[i]['phone']}" for i in range(len(addr_list))])
-                    ])["addr"].split(".")[0]
+                    addr = prompt(
+                        [
+                            inquirer.List(
+                                "addr",
+                                message=i18n_format("please_select_address"),
+                                choices=[
+                                    f"{i}. {addr_list[i]['prov'] + addr_list[i]['city'] + addr_list[i]['area'] + \
+                        addr_list[i]['addr']} {addr_list[i]['name']} {addr_list[i]['phone']}"
+                                    for i in range(len(addr_list))
+                                ],
+                            )
+                        ]
+                    )["addr"].split(".")[0]
                     addr = addr_list[int(addr)]
-                    logger.info( i18n_format("already_select_address")
-                        .format(addr['prov'] + addr['city'] + addr['area'] + addr['addr'], addr['name'], addr['phone'])
+                    logger.info(
+                        i18n_format("already_select_address").format(
+                            addr["prov"] + addr["city"] + addr["area"] + addr["addr"],
+                            addr["name"],
+                            addr["phone"],
+                        )
                     )
                     config["deliver_info"] = json.dumps(
                         {
@@ -279,9 +331,9 @@ def main():
                             "tel": addr["phone"],
                             "addr_id": addr["addr"],
                             "addr": addr["prov"]
-                                    + addr["city"]
-                                    + addr["area"]
-                                    + addr["addr"],
+                            + addr["city"]
+                            + addr["area"]
+                            + addr["addr"],
                         },
                         ensure_ascii=False,
                     )
@@ -310,109 +362,157 @@ def main():
                 logger.info(i18n_format("id_bind_single"))
                 multiselect = False
             if multiselect:
-                buyerids = prompt([
-                    inquirer.Checkbox(
-                        "buyerids",
-                        message=i18n_format("select_buyer"),
-#    "*"*(len(buyer_infos[int(select)]["name"])-1)+ buyer_infos[int(select)]["name"][-1],
-#    buyer_infos[int(select)]["personal_id"][:4]+ "**********"+ buyer_infos[int(select)]["personal_id"][-4:],
-#    buyer_infos[int(select)]["tel"][:3]+ "****"+ buyer_infos[int(select)]["tel"][-4:],
-                        choices=[
-                            "{}. {} {} {}".format(
-                                i,
-                                buyer_infos[i]["name"][0] + "*"*(len(buyer_infos[i]["name"])-2)+ buyer_infos[i]["name"][-1],
-                                buyer_infos[i]["personal_id"][:4]+ "**********"+ buyer_infos[i]["personal_id"][-4:],
-                                buyer_infos[i]["tel"][:3]+ "****"+ buyer_infos[i]["tel"][-4:],
-                            ) for i in range(len(buyer_infos))],
-                        validate=lambda _, x: len(x) > 0
-                    )
-                ])["buyerids"]
+                buyerids = prompt(
+                    [
+                        inquirer.Checkbox(
+                            "buyerids",
+                            message=i18n_format("select_buyer"),
+                            #    "*"*(len(buyer_infos[int(select)]["name"])-1)+ buyer_infos[int(select)]["name"][-1],
+                            #    buyer_infos[int(select)]["personal_id"][:4]+ "**********"+ buyer_infos[int(select)]["personal_id"][-4:],
+                            #    buyer_infos[int(select)]["tel"][:3]+ "****"+ buyer_infos[int(select)]["tel"][-4:],
+                            choices=[
+                                "{}. {} {} {}".format(
+                                    i,
+                                    buyer_infos[i]["name"][0]
+                                    + "*" * (len(buyer_infos[i]["name"]) - 2)
+                                    + buyer_infos[i]["name"][-1],
+                                    buyer_infos[i]["personal_id"][:4]
+                                    + "**********"
+                                    + buyer_infos[i]["personal_id"][-4:],
+                                    buyer_infos[i]["tel"][:3]
+                                    + "****"
+                                    + buyer_infos[i]["tel"][-4:],
+                                )
+                                for i in range(len(buyer_infos))
+                            ],
+                            validate=lambda _, x: len(x) > 0,
+                        )
+                    ]
+                )["buyerids"]
                 buyerids = [int(i.split(".")[0]) for i in buyerids]
                 config["buyer_info"] = []
                 for select in buyerids:
-                    config["buyer_info"].append(
-                        buyer_infos[int(select)]
-                    )
+                    config["buyer_info"].append(buyer_infos[int(select)])
                     logger.info(
                         i18n_format("selected_buyer").format(
-                            buyer_infos[int(select)]["name"][0] + "*"*(len(buyer_infos[int(select)]["name"])-2)+ buyer_infos[int(select)]["name"][-1],
-                            buyer_infos[int(select)]["personal_id"][:4]+ "**********"+ buyer_infos[int(select)]["personal_id"][-4:],
-                            buyer_infos[int(select)]["tel"][:3]+ "****"+ buyer_infos[int(select)]["tel"][-4:],
+                            buyer_infos[int(select)]["name"][0]
+                            + "*" * (len(buyer_infos[int(select)]["name"]) - 2)
+                            + buyer_infos[int(select)]["name"][-1],
+                            buyer_infos[int(select)]["personal_id"][:4]
+                            + "**********"
+                            + buyer_infos[int(select)]["personal_id"][-4:],
+                            buyer_infos[int(select)]["tel"][:3]
+                            + "****"
+                            + buyer_infos[int(select)]["tel"][-4:],
                         )
                     )
-#                    if int(buyer_infos[int(select)]["personal_id"][16]) % 2 == 0:
-#                        user_female = True
-#                    else:
-#                        user_male = True
-#                if easter_egg:
-#                    if len(buyerids) == 1:
-#                        logger.info("单身是这样的🤣 情(xiàn)侣(chōng)们只需要相互做搭子就可以逛的很开心, 可是一个人去逛漫展的人们需要考虑的事情就多了。")
-#                    else:
-#                        if user_male and user_female:
-#                            logger.error("小情侣不得house😡")
-#                        elif user_male and not user_female:
-#                            logger.error("我朝，有南通啊！")
-#                            if len(buyerids) == 4:
-#                                logger.error("我朝，开impart啊！")
-#                        elif user_female and not user_male:
-#                            logger.error("我朝，有女同啊！")
+            #                    if int(buyer_infos[int(select)]["personal_id"][16]) % 2 == 0:
+            #                        user_female = True
+            #                    else:
+            #                        user_male = True
+            #                if easter_egg:
+            #                    if len(buyerids) == 1:
+            #                        logger.info("单身是这样的🤣 情(xiàn)侣(chōng)们只需要相互做搭子就可以逛的很开心, 可是一个人去逛漫展的人们需要考虑的事情就多了。")
+            #                    else:
+            #                        if user_male and user_female:
+            #                            logger.error("小情侣不得house😡")
+            #                        elif user_male and not user_female:
+            #                            logger.error("我朝，有南通啊！")
+            #                            if len(buyerids) == 4:
+            #                                logger.error("我朝，开impart啊！")
+            #                        elif user_female and not user_male:
+            #                            logger.error("我朝，有女同啊！")
             else:
-                index = prompt([
-                    inquirer.List("index", message=i18n_format("select_buyer"), choices=[
-                        "{}. {} {} {}".format(
-                            i,
-                            buyer_infos[i]["name"][0] + "*"*(len(buyer_infos[i]["name"])-2)+ buyer_infos[i]["name"][-1],
-                            buyer_infos[i]["personal_id"][:4]+ "**********"+ buyer_infos[i]["personal_id"][-4:],
-                            buyer_infos[i]["tel"][:3]+ "****"+ buyer_infos[i]["tel"][-4:],
-                        ) for i in range(len(buyer_infos))
-                    ])
-                ])["index"]
+                index = prompt(
+                    [
+                        inquirer.List(
+                            "index",
+                            message=i18n_format("select_buyer"),
+                            choices=[
+                                "{}. {} {} {}".format(
+                                    i,
+                                    buyer_infos[i]["name"][0]
+                                    + "*" * (len(buyer_infos[i]["name"]) - 2)
+                                    + buyer_infos[i]["name"][-1],
+                                    buyer_infos[i]["personal_id"][:4]
+                                    + "**********"
+                                    + buyer_infos[i]["personal_id"][-4:],
+                                    buyer_infos[i]["tel"][:3]
+                                    + "****"
+                                    + buyer_infos[i]["tel"][-4:],
+                                )
+                                for i in range(len(buyer_infos))
+                            ],
+                        )
+                    ]
+                )["index"]
                 config["buyer_info"].append(buyer_infos[int(index.split(".")[0])])
                 logger.info(
                     i18n_format("selected_buyer").format(
-                        "*"*(len(buyer_infos[int(index.split(".")[0])]["name"])-1)+ buyer_infos[int(index.split(".")[0])]["name"][-1],
-                        buyer_infos[int(index.split(".")[0])]["personal_id"][:4]+ "**********"+ buyer_infos[int(index.split(".")[0])]["personal_id"][-4:],
-                        buyer_infos[int(index.split(".")[0])]["tel"][:3]+ "****"+ buyer_infos[int(index.split(".")[0])]["tel"][-4:],
+                        "*" * (len(buyer_infos[int(index.split(".")[0])]["name"]) - 1)
+                        + buyer_infos[int(index.split(".")[0])]["name"][-1],
+                        buyer_infos[int(index.split(".")[0])]["personal_id"][:4]
+                        + "**********"
+                        + buyer_infos[int(index.split(".")[0])]["personal_id"][-4:],
+                        buyer_infos[int(index.split(".")[0])]["tel"][:3]
+                        + "****"
+                        + buyer_infos[int(index.split(".")[0])]["tel"][-4:],
                     )
                 )
             if "count" not in config:
                 config["count"] = len(config["buyer_info"])
             config["buyer_info"] = json.dumps(config["buyer_info"])
-        if config["id_bind"] == 0 and (
-                "buyer" not in config or "tel" not in config
-        ):
+        if config["id_bind"] == 0 and ("buyer" not in config or "tel" not in config):
             logger.info(i18n_format("add_contact_info"))
             config["buyer"] = input(i18n_format("add_contact_name"))
-            config["tel"] = prompt([
-                inquirer.Text("tel", message=i18n_format("add_contact_tel"), validate=lambda _, x: len(x) == 11)
-            ])["tel"]
+            config["tel"] = prompt(
+                [
+                    inquirer.Text(
+                        "tel",
+                        message=i18n_format("add_contact_tel"),
+                        validate=lambda _, x: len(x) == 11,
+                    )
+                ]
+            )["tel"]
             if "count" not in config:
-                config["count"] = prompt([
-                    inquirer.Text("count", message=i18n_format("add_buy_tickets"), default="1",
-                                  validate=lambda _, x: x.isdigit() and int(x) > 0)
-                ])["count"]
+                config["count"] = prompt(
+                    [
+                        inquirer.Text(
+                            "count",
+                            message=i18n_format("add_buy_tickets"),
+                            default="1",
+                            validate=lambda _, x: x.isdigit() and int(x) > 0,
+                        )
+                    ]
+                )["count"]
         if config["is_paper_ticket"]:
             if config["express_fee"] == 0:
-                config["all_price"] = int(config["pay_money"]) * int(
-                    config["count"]
-                )
+                config["all_price"] = int(config["pay_money"]) * int(config["count"])
                 logger.info(
-                    i18n_format("show_all_price_paper_ticket").format(config['count'],\
-                    config['ticket_desc'], int(config['pay_money']) / 100, 0, config['all_price'] / 100)
+                    i18n_format("show_all_price_paper_ticket").format(
+                        config["count"],
+                        config["ticket_desc"],
+                        int(config["pay_money"]) / 100,
+                        0,
+                        config["all_price"] / 100,
+                    )
                 )
             else:
                 config["all_price"] = (
-                        int(config["pay_money"]) * int(config["count"])
-                        + config["express_fee"]
+                    int(config["pay_money"]) * int(config["count"])
+                    + config["express_fee"]
                 )
                 logger.info(
-                    i18n_format("show_all_price_paper_ticket").format(config['count'], config['ticket_desc'],\
-                    int(config['pay_money']) / 100, config['express_fee'] / 100, config['all_price'] / 100)
+                    i18n_format("show_all_price_paper_ticket").format(
+                        config["count"],
+                        config["ticket_desc"],
+                        int(config["pay_money"]) / 100,
+                        config["express_fee"] / 100,
+                        config["all_price"] / 100,
+                    )
                 )
         else:
-            config["all_price"] = int(config["pay_money"]) * int(
-                config["count"]
-            )
+            config["all_price"] = int(config["pay_money"]) * int(config["count"])
             logger.info(
                 i18n_format("show_all_price_e_ticket").format(
                     config["count"],

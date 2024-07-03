@@ -14,9 +14,11 @@ from i18n import *
 from utils import save, load
 from globals import *
 
+
 class BilibiliHyg:
     global sdk
-    def __init__(self, config, sdk,client,session):
+
+    def __init__(self, config, sdk, client, session):
         self.waited = False
         self.sdk = sdk
         self.config = config
@@ -40,12 +42,16 @@ class BilibiliHyg:
         self.session = session
         if self.client != None:
             self.ip = self.client.tps_current_ip(sign_type="hmacsha1")
-        if self.config["mode"] == 'time':
+        if self.config["mode"] == "time":
             logger.info(i18n_format("now_mode_time_on"))
             logger.info(i18n_format("wait_get_token"))
-            while self.get_time() < self.config["time"]-60:
+            while self.get_time() < self.config["time"] - 60:
                 time.sleep(10)
-                logger.info(i18n_format("now_waiting_info").format((self.config["time"]-self.get_time())))
+                logger.info(
+                    i18n_format("now_waiting_info").format(
+                        (self.config["time"] - self.get_time())
+                    )
+                )
             while self.get_time() < self.config["time"]:
                 pass
         logger.info(i18n_format("get_token_finish"))
@@ -71,10 +77,10 @@ class BilibiliHyg:
             if self.config["proxy"]:
                 if self.ip == self.client.tps_current_ip(sign_type="hmacsha1"):
                     logger.info(
-                            i18n_format("manual_change_ip").format(
-                                self.client.change_tps_ip(sign_type="hmacsha1")
-                            )
+                        i18n_format("manual_change_ip").format(
+                            self.client.change_tps_ip(sign_type="hmacsha1")
                         )
+                    )
                 self.session.close()
                 return self.get_ticket_status()
             return -1, 0
@@ -147,10 +153,10 @@ class BilibiliHyg:
             if self.config["proxy"]:
                 if self.ip == self.client.tps_current_ip(sign_type="hmacsha1"):
                     logger.info(
-                            i18n_format("manual_change_ip").format(
-                                self.client.change_tps_ip(sign_type="hmacsha1")
-                            )
+                        i18n_format("manual_change_ip").format(
+                            self.client.change_tps_ip(sign_type="hmacsha1")
                         )
+                    )
                 self.session.close()
                 return self.get_prepare()
         if response.json()["errno"] != 0 and response.json()["errno"] != -401:
@@ -159,25 +165,32 @@ class BilibiliHyg:
 
     def gee_verify(self, gt, challenge, token):
         from geetest import run
+
         time_start = time.time()
-        self.captcha_data = run(gt, challenge, token, mode = self.config["captcha"], key = self.config["rrocr"])
+        self.captcha_data = run(
+            gt, challenge, token, mode=self.config["captcha"], key=self.config["rrocr"]
+        )
         delta = time.time() - time_start
         self.sdk.metrics.distribution(
-            key="gt_solve_time",
-            value=delta*1000,
-            unit="millisecond"
+            key="gt_solve_time", value=delta * 1000, unit="millisecond"
         )
         self.captcha_data["csrf"] = self.headers["Cookie"][
-                        self.headers["Cookie"].index("bili_jct")
-                        + 9 : self.headers["Cookie"].index("bili_jct")
-                        + 41
-                    ]
+            self.headers["Cookie"].index("bili_jct") + 9 : self.headers["Cookie"].index(
+                "bili_jct"
+            )
+            + 41
+        ]
         self.captcha_data["token"] = token
         success = self.session.post(
-                        "https://api.bilibili.com/x/gaia-vgate/v1/validate",
-                        headers=self.headers,
-                        data=self.captcha_data,
-        ).json()["data"]["is_valid"]
+            "https://api.bilibili.com/x/gaia-vgate/v1/validate",
+            headers=self.headers,
+            data=self.captcha_data,
+        ).json()
+        try:
+            assert success["data"]["is_valid"] = True
+            success = True
+        except:
+            success = False
         self.config["gaia_vtoken"] = token
         self.captcha_data = None
         if self.headers["Cookie"].find("x-bili-gaia-vtoken") != -1:
@@ -192,21 +205,27 @@ class BilibiliHyg:
         if "phone" in self.config:
             phone = self.config["phone"]
         else:
-            phone = input(i18n_format("input_phone_num")+": ")
+            phone = input(i18n_format("input_phone_num") + ": ")
         self.captcha_data = {
             "code": phone,
         }
         self.captcha_data["csrf"] = self.headers["Cookie"][
-                        self.headers["Cookie"].index("bili_jct")
-                        + 9 : self.headers["Cookie"].index("bili_jct")
-                        + 41
-                    ]
+            self.headers["Cookie"].index("bili_jct") + 9 : self.headers["Cookie"].index(
+                "bili_jct"
+            )
+            + 41
+        ]
         self.captcha_data["token"] = token
         success = self.session.post(
-                        "https://api.bilibili.com/x/gaia-vgate/v1/validate",
-                        headers=self.headers,
-                        data=self.captcha_data,
-        ).json()["data"]["is_valid"]
+            "https://api.bilibili.com/x/gaia-vgate/v1/validate",
+            headers=self.headers,
+            data=self.captcha_data,
+        ).json()
+        try:
+            assert success["data"]["is_valid"] = True
+            success = True
+        except:
+            success = False
         if not success:
             logger.error(i18n_format("input_verify_fail"))
             if "phone" in self.config:
@@ -238,10 +257,10 @@ class BilibiliHyg:
             if self.config["proxy"]:
                 if self.ip == self.client.tps_current_ip(sign_type="hmacsha1"):
                     logger.info(
-                            i18n_format("manual_change_ip").format(
-                                self.client.change_tps_ip(sign_type="hmacsha1")
-                            )
+                        i18n_format("manual_change_ip").format(
+                            self.client.change_tps_ip(sign_type="hmacsha1")
                         )
+                    )
                 self.session.close()
                 return self.confirm_info(token)
         response = response.json()
@@ -386,10 +405,10 @@ class BilibiliHyg:
             if self.config["proxy"]:
                 if self.ip == self.client.tps_current_ip(sign_type="hmacsha1"):
                     logger.info(
-                            i18n_format("manual_change_ip").format(
-                                self.client.change_tps_ip(sign_type="hmacsha1")
-                            )
+                        i18n_format("manual_change_ip").format(
+                            self.client.change_tps_ip(sign_type="hmacsha1")
                         )
+                    )
                 self.session.close()
             return self.create_order()
         if response.status_code == 412:
@@ -398,10 +417,10 @@ class BilibiliHyg:
             if self.config["proxy"]:
                 if self.ip == self.client.tps_current_ip(sign_type="hmacsha1"):
                     logger.info(
-                            i18n_format("manual_change_ip").format(
-                                self.client.change_tps_ip(sign_type="hmacsha1")
-                            )
+                        i18n_format("manual_change_ip").format(
+                            self.client.change_tps_ip(sign_type="hmacsha1")
                         )
+                    )
                 self.session.close()
                 return self.create_order()
             else:
@@ -411,7 +430,7 @@ class BilibiliHyg:
                 return {}
         return response.json()
 
-    def fake_ticket(self, pay_token, order_id = None):
+    def fake_ticket(self, pay_token, order_id=None):
         url = (
             "https://show.bilibili.com/api/ticket/order/createstatus?project_id="
             + self.config["project_id"]
@@ -429,10 +448,10 @@ class BilibiliHyg:
             if self.config["proxy"]:
                 if self.ip == self.client.tps_current_ip(sign_type="hmacsha1"):
                     logger.info(
-                            i18n_format("manual_change_ip").format(
-                                self.client.change_tps_ip(sign_type="hmacsha1")
-                            )
+                        i18n_format("manual_change_ip").format(
+                            self.client.change_tps_ip(sign_type="hmacsha1")
                         )
+                    )
                 self.session.close()
         response = response.json()
         logger.debug(response)
@@ -459,11 +478,13 @@ class BilibiliHyg:
             img = qr.make_image()
             img.show()
             logger.info(
-                i18n_format("bill_open") + " https://pay.bilibili.com/payplatform-h5/pccashier.html?params="
+                i18n_format("bill_open")
+                + " https://pay.bilibili.com/payplatform-h5/pccashier.html?params="
                 + urllib.parse.quote(
                     json.dumps(response["data"]["payParam"], ensure_ascii=False)
                 )
-                + " " + i18n_format("bill_pay_ok")
+                + " "
+                + i18n_format("bill_pay_ok")
             )
             logger.info(i18n_format("bill_manual"))
             return True
@@ -472,17 +493,19 @@ class BilibiliHyg:
             return False
 
     def order_status(self, order_id):
-        url = "https://show.bilibili.com/api/ticket/order/info?order_id=" + str(order_id)
+        url = "https://show.bilibili.com/api/ticket/order/info?order_id=" + str(
+            order_id
+        )
         response = self.session.get(url, headers=self.headers)
         if response.status_code == 412:
             logger.error(i18n_format("not_handled_412"))
             if self.config["proxy"]:
                 if self.ip == self.client.tps_current_ip(sign_type="hmacsha1"):
                     logger.info(
-                            i18n_format("manual_change_ip").format(
-                                self.client.change_tps_ip(sign_type="hmacsha1")
-                            )
+                        i18n_format("manual_change_ip").format(
+                            self.client.change_tps_ip(sign_type="hmacsha1")
                         )
+                    )
                 self.session.close()
         response = response.json()
         if response["data"]["status"] == 1:
@@ -495,19 +518,29 @@ class BilibiliHyg:
             return False
         else:
             logger.warning(
-                i18n_format("status_unknown") + ": "
+                i18n_format("status_unknown")
+                + ": "
                 + response["data"]["status_name"]
                 + response["data"]["sub_status_name"]
             )
             return False
 
     def logout(self):
-        #https://passport.bilibili.com/login/exit/v2
+        # https://passport.bilibili.com/login/exit/v2
         url = "https://passport.bilibili.com/login/exit/v2"
         # biliCSRF	str	CSRF Token (位于 cookie 中的 bili_jct)
-        response = self.session.post(url, headers=self.headers, data={
-            "biliCSRF": self.headers["Cookie"][self.headers["Cookie"].index("bili_jct") + 9 : self.headers["Cookie"].index("bili_jct") + 41]
-        }).json()
+        response = self.session.post(
+            url,
+            headers=self.headers,
+            data={
+                "biliCSRF": self.headers["Cookie"][
+                    self.headers["Cookie"].index("bili_jct") + 9 : self.headers[
+                        "Cookie"
+                    ].index("bili_jct")
+                    + 41
+                ]
+            },
+        ).json()
         if response["status"] == True:
             logger.success(i18n_format("quit_login"))
         else:
@@ -541,32 +574,42 @@ class BilibiliHyg:
             orderid = None
             if "orderId" in result["data"]:
                 orderid = result["data"]["orderId"]
-            if self.fake_ticket(pay_token, order_id = orderid):
+            if self.fake_ticket(pay_token, order_id=orderid):
                 # self.logout()
                 if "pushplus" in self.config:
                     # https://www.pushplus.plus/send/
                     url = "https://www.pushplus.plus/send"
-                    response = requests.post(url, json={
-                        "token": self.config["pushplus"],
-                        "title": i18n_format("BHYG_notify"),
-                        "content": i18n_format("rob_ok_paying")+self.order_id,
-                    }).json()
+                    response = requests.post(
+                        url,
+                        json={
+                            "token": self.config["pushplus"],
+                            "title": i18n_format("BHYG_notify"),
+                            "content": i18n_format("rob_ok_paying") + self.order_id,
+                        },
+                    ).json()
                     if response["code"] == 200:
-                        logger.success(i18n_format("notify_ok")+" "+response['data'])
+                        logger.success(
+                            i18n_format("notify_ok") + " " + response["data"]
+                        )
                     else:
-                        logger.error(i18n_format("notify_fail")+" "+response)
+                        logger.error(i18n_format("notify_fail") + " " + response)
                 if "webhook" in self.config:
                     url = self.config["webhook"]
-                    response = requests.post(url, json={
-                        "msg_type": "text",
-                        "text": {
-                            "content": i18n_format("rob_ok_paying")+self.order_id,
-                        }
-                    }).json()
+                    response = requests.post(
+                        url,
+                        json={
+                            "msg_type": "text",
+                            "text": {
+                                "content": i18n_format("rob_ok_paying") + self.order_id,
+                            },
+                        },
+                    ).json()
                     if response["code"] == 200:
-                        logger.success(i18n_format("notify_ok")+" "+response['data'])
+                        logger.success(
+                            i18n_format("notify_ok") + " " + response["data"]
+                        )
                     else:
-                        logger.error(i18n_format("notify_fail")+" "+response)
+                        logger.error(i18n_format("notify_fail") + " " + response)
                 if "hunter" in self.config:
                     return True
                 logger.info(i18n_format("unpaid_bill"))
@@ -591,7 +634,6 @@ class BilibiliHyg:
 
     @staticmethod
     def gen_bili_ticket():
-
         def hmac_sha256(key, message):
             """
             使用HMAC-SHA256算法对给定的消息进行加密
@@ -607,7 +649,9 @@ class BilibiliHyg:
             return hash_hex
 
         o = hmac_sha256("XgwSnGZ1p", f"ts{int(time.time())}")
-        url = "https://api.bilibili.com/bapis/bilibili.api.ticket.v1.Ticket/GenWebTicket"
+        url = (
+            "https://api.bilibili.com/bapis/bilibili.api.ticket.v1.Ticket/GenWebTicket"
+        )
         params = {
             "key_id": "ec02",
             "hexsign": o,
@@ -616,8 +660,10 @@ class BilibiliHyg:
         }
 
         import random
+
         headers = {
-            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/618.1.15.10.15 (KHTML, like Gecko) Mobile/21F90 BiliApp/77900100 os/ios model/iPhone 15 mobi_app/iphone build/77900100 osVer/17.5.1 network/2 channel/AppStore c_locale/zh-Hans_CN s_locale/zh-Hans_CH disable_rcmd/0 "+str(random.randint(0, 9999)),
+            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/618.1.15.10.15 (KHTML, like Gecko) Mobile/21F90 BiliApp/77900100 os/ios model/iPhone 15 mobi_app/iphone build/77900100 osVer/17.5.1 network/2 channel/AppStore c_locale/zh-Hans_CN s_locale/zh-Hans_CH disable_rcmd/0 "
+            + str(random.randint(0, 9999)),
         }
         resp = requests.post(url, params=params, headers=headers).json()
         return resp["data"]["ticket"]

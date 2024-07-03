@@ -12,6 +12,7 @@ from loguru import logger
 
 from i18n import i18n_format
 
+
 def run(gt, challenge, token, mode="local_gt", key=None):
     if mode == "local_gt":
         try:
@@ -36,7 +37,9 @@ def run(gt, challenge, token, mode="local_gt", key=None):
             "referer": "https://show.bilibili.com",
         }
         try:
-            response = requests.post("http://api.rrocr.com/api/recognize.html", data=param).json()
+            response = requests.post(
+                "http://api.rrocr.com/api/recognize.html", data=param
+            ).json()
         except Exception as e:
             print(f"Error: {e}")
             return
@@ -54,6 +57,7 @@ def run(gt, challenge, token, mode="local_gt", key=None):
         logger.info(i18n_format("manual_verify"))
         logger.info(gt + " " + challenge)
         import pyperclip
+
         try:
             pyperclip.copy(gt + " " + challenge)
         except pyperclip.PyperclipException:
@@ -68,12 +72,10 @@ def run(gt, challenge, token, mode="local_gt", key=None):
         return data
     else:
         logger.critical(i18n_format("captcha_mode_not_supported"))
-        
 
 
-class Validator():
+class Validator:
     def __init__(self):
-        
         try:
             logger.info(i18n_format("try_load_local_captcha"))
             bili_ticket_gt_python = importlib.import_module("bili_ticket_gt_python")
@@ -94,10 +96,13 @@ class Validator():
 
 if __name__ == "__main__":
     import random
+
     captcha = requests.get(
-        "https://passport.bilibili.com/x/passport-login/captcha", headers={
-            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/618.1.15.10.15 (KHTML, like Gecko) Mobile/21F90 BiliApp/77900100 os/ios model/iPhone 15 mobi_app/iphone build/77900100 osVer/17.5.1 network/2 channel/AppStore c_locale/zh-Hans_CN s_locale/zh-Hans_CH disable_rcmd/0 "+str(random.randint(0, 9999)),
-        }
+        "https://passport.bilibili.com/x/passport-login/captcha",
+        headers={
+            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/618.1.15.10.15 (KHTML, like Gecko) Mobile/21F90 BiliApp/77900100 os/ios model/iPhone 15 mobi_app/iphone build/77900100 osVer/17.5.1 network/2 channel/AppStore c_locale/zh-Hans_CN s_locale/zh-Hans_CH disable_rcmd/0 "
+            + str(random.randint(0, 9999)),
+        },
     ).json()
     gt = captcha["data"]["geetest"]["gt"]
     challenge = captcha["data"]["geetest"]["challenge"]

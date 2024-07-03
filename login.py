@@ -14,6 +14,7 @@ import inquirer
 from i18n import *
 from globals import *
 
+
 def cookie(cookies):
     lst = []
     for item in cookies.items():
@@ -26,32 +27,32 @@ def cookie(cookies):
 def appsign(params):
     import hashlib
     import urllib.parse
-    appkey = '1d8b6e7d45233436'
-    appsec = '560c52ccd288fed045859ed18bffd973'
-    params.update({'appkey': appkey})
+
+    appkey = "1d8b6e7d45233436"
+    appsec = "560c52ccd288fed045859ed18bffd973"
+    params.update({"appkey": appkey})
     params = dict(sorted(params.items()))  # 按照 key 重排参数
     query = urllib.parse.urlencode(params)  # 序列化参数
     sign = hashlib.md5((query + appsec).encode()).hexdigest()  # 计算 api 签名
-    params.update({'sign': sign})
+    params.update({"sign": sign})
     return params
 
 
 def _verify(gt, challenge, token):
     global sdk
     from geetest import run
+
     time_start = time.time()
     data = run(gt, challenge, token, "local_gt")
     delta = time.time() - time_start
     sdk.metrics.distribution(
-        key="gt_solve_time",
-        value=delta * 1000,
-        unit="millisecond"
+        key="gt_solve_time", value=delta * 1000, unit="millisecond"
     )
     return data
 
 
 def qr_login(session, headers):
-    #from globals import i18n_lang
+    # from globals import i18n_lang
     generate = session.get(
         "https://passport.bilibili.com/x/passport-login/web/qrcode/generate",
         headers=headers,
@@ -71,8 +72,8 @@ def qr_login(session, headers):
     while True:
         time.sleep(1)
         url = (
-                "https://passport.bilibili.com/x/passport-login/web/qrcode/poll?source=main-fe-header&qrcode_key="
-                + generate["data"]["qrcode_key"]
+            "https://passport.bilibili.com/x/passport-login/web/qrcode/poll?source=main-fe-header&qrcode_key="
+            + generate["data"]["qrcode_key"]
         )
         req = session.get(url, headers=headers)
         # read as utf-8
@@ -98,7 +99,7 @@ def qr_login(session, headers):
 
 
 def verify_code_login(session, headers):
-    #from globals import i18n_lang
+    # from globals import i18n_lang
     # https://passport.bilibili.com/x/passport-login/captcha
     captcha = session.get(
         "https://passport.bilibili.com/x/passport-login/captcha", headers=headers
@@ -146,7 +147,15 @@ def verify_code_login(session, headers):
         logger.success(i18n_format("sms_code_send_ok"))
         send_token = send["data"]["captcha_key"]
     while True:
-        code = prompt([inquirer.Text("code", message=i18n_format("input_sms_code"), validate=lambda _, x: len(x) == 6)])["code"]
+        code = prompt(
+            [
+                inquirer.Text(
+                    "code",
+                    message=i18n_format("input_sms_code"),
+                    validate=lambda _, x: len(x) == 6,
+                )
+            ]
+        )["code"]
         # https://passport.bilibili.com/x/passport-login/web/login/sms
         data = {"cid": "86", "tel": tel, "captcha_key": send_token, "code": code}
         login = session.post(
@@ -163,15 +172,17 @@ def verify_code_login(session, headers):
 
 
 def verify_code_login_app(session, headers):
-    #from globals import i18n_lang
+    # from globals import i18n_lang
     logger.warning(i18n_format("beta_test_func"))
     import uuid
+
     def buvid():
         import hashlib
         import random
+
         mac = []
         for i in range(6):
-            num = random.randint(0, 0xff)
+            num = random.randint(0, 0xFF)
             mac.append(hex(num)[2:])
         md5 = hashlib.md5(":".join(mac).encode()).hexdigest()
         md5Arr = list(md5)
@@ -184,7 +195,15 @@ def verify_code_login_app(session, headers):
     # gt = captcha["data"]["geetest"]["gt"]
     # challenge = captcha["data"]["geetest"]["challenge"]
     # token = captcha["data"]["token"]
-    tel = prompt([inquirer.Text("tel", message=i18n_format("input_phone_num"), validate=lambda _, x: len(x) == 11)])["tel"]
+    tel = prompt(
+        [
+            inquirer.Text(
+                "tel",
+                message=i18n_format("input_phone_num"),
+                validate=lambda _, x: len(x) == 11,
+            )
+        ]
+    )["tel"]
     # logger.info(i18n_format("input_auto_verify"))
     # cap_data = _verify(gt, challenge, token)
     # while cap_data == False:
@@ -212,7 +231,7 @@ def verify_code_login_app(session, headers):
         "buvid": buvid,
         "local_id": buvid,
         "statistics": '{"appId":1,"platform":3,"version":"8.0.0","abtest":""}',
-        "ts": round(time.time())
+        "ts": round(time.time()),
     }
     logger.debug(data)
     # https://passport.bilibili.com/x/passport-login/sms/send
@@ -228,10 +247,23 @@ def verify_code_login_app(session, headers):
         logger.success(i18n_format("sms_code_send_ok"))
         send_token = send["data"]["captcha_key"]
     while True:
-        code = prompt([inquirer.Text("code", message=i18n_format("input_sms_code"), validate=lambda _, x: len(x) == 6)])["code"]
+        code = prompt(
+            [
+                inquirer.Text(
+                    "code",
+                    message=i18n_format("input_sms_code"),
+                    validate=lambda _, x: len(x) == 6,
+                )
+            ]
+        )["code"]
         # https://passport.bilibili.com/x/passport-login/login/sms
-        data = {"cid": 86, "tel": int(tel), "captcha_key": send_token, "code": int(code),
-                "login_session_id": session_id}
+        data = {
+            "cid": 86,
+            "tel": int(tel),
+            "captcha_key": send_token,
+            "code": int(code),
+            "login_session_id": session_id,
+        }
         login = session.post(
             "https://passport.bilibili.com/x/passport-login/login/sms",
             headers=headers,
@@ -246,12 +278,16 @@ def verify_code_login_app(session, headers):
 
 
 def password_login(session, headers):
-    #from globals import i18n_lang
+    # from globals import i18n_lang
     from Crypto.Cipher import PKCS1_v1_5
     from Crypto.PublicKey import RSA
 
-    username = prompt([inquirer.Text("username", message=i18n_format("input_user_name"))])["username"]
-    password = prompt([inquirer.Password("password", message=i18n_format("input_user_password"))])["password"]
+    username = prompt(
+        [inquirer.Text("username", message=i18n_format("input_user_name"))]
+    )["username"]
+    password = prompt(
+        [inquirer.Password("password", message=i18n_format("input_user_password"))]
+    )["password"]
     captcha = session.get(
         "https://passport.bilibili.com/x/passport-login/captcha", headers=headers
     ).json()
@@ -361,8 +397,15 @@ def password_login(session, headers):
                 logger.success(i18n_format("sms_code_send_ok"))
                 send_token = send["data"]["captcha_key"]
             while True:
-                code = prompt([inquirer.Text("code", message=i18n_format("input_sms_code"), validate=lambda _, x: len(x) == 6)])[
-                    "code"]
+                code = prompt(
+                    [
+                        inquirer.Text(
+                            "code",
+                            message=i18n_format("input_sms_code"),
+                            validate=lambda _, x: len(x) == 6,
+                        )
+                    ]
+                )["code"]
                 data = {
                     "type": "loginTelCheck",
                     "tmp_code": tmp_token,
@@ -394,13 +437,21 @@ def password_login(session, headers):
 
 
 def sns_login(session, headers):
-    #from globals import i18n_lang
-    method = \
-    prompt([inquirer.List("method", message=i18n_format("choose_sns_login"),\
-        choices=[i18n_format("sns_micromessage"),\
-                 i18n_format("sns_qq"),\
-                 i18n_format("sns_microblog")],\
-         default=i18n_format("sns_micromessage"))])["method"]
+    # from globals import i18n_lang
+    method = prompt(
+        [
+            inquirer.List(
+                "method",
+                message=i18n_format("choose_sns_login"),
+                choices=[
+                    i18n_format("sns_micromessage"),
+                    i18n_format("sns_qq"),
+                    i18n_format("sns_microblog"),
+                ],
+                default=i18n_format("sns_micromessage"),
+            )
+        ]
+    )["method"]
     if method == i18n_format("sns_micromessage"):
         sns = "wechat"
     elif method == i18n_format("sns_qq"):
@@ -430,7 +481,9 @@ def sns_login(session, headers):
     logger.info(url)
     logger.info(i18n_format("open_in_browser"))
     # https://passport.bilibili.com/x/passport-login/web/sns/login
-    redirect = prompt([inquirer.Text("redirect", message=i18n_format("input_redirect"))])["redirect"]
+    redirect = prompt(
+        [inquirer.Text("redirect", message=i18n_format("input_redirect"))]
+    )["redirect"]
     # get params from redirect
     try:
         redirect = redirect.split("?")[1]
@@ -465,29 +518,48 @@ def sns_login(session, headers):
 
 
 def interactive_login(sentry_sdk=None):
-    #from globals import i18n_lang
+    # from globals import i18n_lang
     global sdk
     sdk = sentry_sdk
     import random
+
     headers = {
-        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/618.1.15.10.15 (KHTML, like Gecko) Mobile/21F90 BiliApp/77900100 os/ios model/iPhone 15 mobi_app/iphone build/77900100 osVer/17.5.1 network/2 channel/AppStore c_locale/zh-Hans_CN s_locale/zh-Hans_CH disable_rcmd/0 "+str(random.randint(0, 9999)),
+        "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/618.1.15.10.15 (KHTML, like Gecko) Mobile/21F90 BiliApp/77900100 os/ios model/iPhone 15 mobi_app/iphone build/77900100 osVer/17.5.1 network/2 channel/AppStore c_locale/zh-Hans_CN s_locale/zh-Hans_CH disable_rcmd/0 "
+        + str(random.randint(0, 9999)),
     }
 
     session = requests.session()
     session.get("https://www.bilibili.com/", headers=headers)
 
-    try: # 登录方式 cookie 扫码 用户名密码 web短信 app短信 sns
-        method = prompt([inquirer.List("method", message=i18n_format("bi_login_method"),
-                                       choices=[i18n_format("bi_login_cookie"), i18n_format("bi_login_qrcode"), \
-                                                i18n_format("bi_login_user_pass"), i18n_format("bi_login_web_sms"), \
-                                                i18n_format("bi_login_app_sms"), i18n_format("bi_login_sns")],
-                                       default= i18n_format("bi_login_qrcode"))]) #默认扫码
+    try:  # 登录方式 cookie 扫码 用户名密码 web短信 app短信 sns
+        method = prompt(
+            [
+                inquirer.List(
+                    "method",
+                    message=i18n_format("bi_login_method"),
+                    choices=[
+                        i18n_format("bi_login_cookie"),
+                        i18n_format("bi_login_qrcode"),
+                        i18n_format("bi_login_user_pass"),
+                        i18n_format("bi_login_web_sms"),
+                        i18n_format("bi_login_app_sms"),
+                        i18n_format("bi_login_sns"),
+                    ],
+                    default=i18n_format("bi_login_qrcode"),
+                )
+            ]
+        )  # 默认扫码
         if method["method"] == i18n_format("bi_login_cookie"):
             cookie_str = input(i18n_format("bi_input_cookie"))
             # verify cookie
             try:
-                session.get("https://www.bilibili.com/",
-                            headers={"User-Agent": "Mozilla/5.0 BiliApp/80000100", "Cookie": cookie_str})
+                session.get(
+                    "https://www.bilibili.com/",
+                    headers={
+                        "User-Agent": "Mozilla/5.0 BiliApp/80000100",
+                        "Cookie": cookie_str,
+                    },
+                )
             except Exception:
                 logger.error(i18n_format("bi_illegal_cookie"))
                 return interactive_login()

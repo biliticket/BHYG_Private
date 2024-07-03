@@ -1,6 +1,7 @@
 # Copyright (c) 2023-2024 ZianTT, FriendshipEnder
 def prompt(prompt):
     import inquirer
+
     data = inquirer.prompt(prompt)
     if data is None:
         raise KeyboardInterrupt
@@ -13,11 +14,12 @@ def save(data: dict):
     from Crypto.Util.Padding import pad, unpad
     import machineid
     import json
+
     key = machineid.id().encode()[:16]
     cipher = AES.new(key, AES.MODE_CBC)
     cipher_text = cipher.encrypt(pad(json.dumps(data).encode("utf-8"), AES.block_size))
     data = base64.b64encode(cipher_text).decode("utf-8")
-    iv = base64.b64encode(cipher.iv).decode('utf-8')
+    iv = base64.b64encode(cipher.iv).decode("utf-8")
     with open("data", "w", encoding="utf-8") as f:
         f.write(iv + "%" + data)
     return
@@ -32,6 +34,7 @@ def load() -> dict:
     import json
     from loguru import logger
     import os
+
     key = machineid.id().encode()[:16]
     try:
         with open("data", "r", encoding="utf-8") as f:
@@ -56,20 +59,22 @@ def load() -> dict:
         logger.info(i18n_format("has_destroyed"))
     return data
 
-def check_policy(uid = None):
+
+def check_policy(uid=None):
     import requests
     from i18n import i18n_format
-    from main import version
+    from globals import version, ver_int
     import os
     import sys
     from loguru import logger
     import time
     import machineid
     import base64
+
     allow = True
     if os.path.exists("bypass"):
         with open("bypass", "r") as f:
-            key = base64.b64encode((machineid.id()+"1145141919810").encode()).decode()
+            key = base64.b64encode((machineid.id() + "1145141919810").encode()).decode()
             if f.read() == key:
                 return
     for _ in range(3):
@@ -85,7 +90,7 @@ def check_policy(uid = None):
     if "policy" not in locals():
         logger.error(i18n_format("policy_get_failed"))
         sys.exit(1)
-    if version not in policy["allowed versions"]:
+    if ver_int < policy["min_version"]:  # if version not in policy["allowed versions"]:
         logger.error(i18n_format("version_not_allowed"))
         allow = False
     if policy["type"] == "blacklist":
@@ -111,6 +116,7 @@ def check_policy(uid = None):
                 with open("key", "w") as f:
                     f.write(key)
             import jwt
+
             try:
                 failed = False
                 public_key = """-----BEGIN PUBLIC KEY-----
@@ -152,13 +158,20 @@ Al8G7CqwoJOsW7Kddns=
         sys.exit(1)
     return policy["check_key"]
 
+
 def get_offset():
     import requests
     from i18n import i18n_format
     from loguru import logger
     import time
-    offset = requests.get("https://show.bilibili.com/api/ticket/project/getV2?version=134&id=85939", headers={"User-Agent": "Mozilla/5.0"}).json()["data"]["current_time"]
+
+    offset = requests.get(
+        "https://show.bilibili.com/api/ticket/project/getV2?version=134&id=85939",
+        headers={"User-Agent": "Mozilla/5.0"},
+    ).json()["data"]["current_time"]
     if offset is None:
         logger.error(i18n_format("offset_error"))
         return 0.5
-    return round(offset - time.time() + 0.5, 3)# for the time from bilibili is int, we should add a 0.5s to avoid the time error
+    return round(
+        offset - time.time() + 0.5, 3
+    )  # for the time from bilibili is int, we should add a 0.5s to avoid the time error
