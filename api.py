@@ -185,7 +185,12 @@ class BilibiliHyg:
             "https://api.bilibili.com/x/gaia-vgate/v1/validate",
             headers=self.headers,
             data=self.captcha_data,
-        ).json()["data"]["is_valid"]
+        ).json()
+        try:
+            assert success["data"]["is_valid"] = True
+            success = True
+        except:
+            success = False
         self.config["gaia_vtoken"] = token
         self.captcha_data = None
         if self.headers["Cookie"].find("x-bili-gaia-vtoken") != -1:
@@ -215,7 +220,12 @@ class BilibiliHyg:
             "https://api.bilibili.com/x/gaia-vgate/v1/validate",
             headers=self.headers,
             data=self.captcha_data,
-        ).json()["data"]["is_valid"]
+        ).json()
+        try:
+            assert success["data"]["is_valid"] = True
+            success = True
+        except:
+            success = False
         if not success:
             logger.error(i18n_format("input_verify_fail"))
             if "phone" in self.config:
