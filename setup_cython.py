@@ -28,5 +28,6 @@ setup(
         "login.py",
         "geetest.py",
         "globals.py",
+        "utils.py"
     ])
     )
