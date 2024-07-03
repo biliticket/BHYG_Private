@@ -187,7 +187,7 @@ class BilibiliHyg:
             data=self.captcha_data,
         ).json()
         try:
-            assert success["data"]["is_valid"] = True
+            assert success["data"]["is_valid"] == True
             success = True
         except:
             success = False
@@ -222,7 +222,7 @@ class BilibiliHyg:
             data=self.captcha_data,
         ).json()
         try:
-            assert success["data"]["is_valid"] = True
+            assert success["data"]["is_valid"] == True
             success = True
         except:
             success = False
