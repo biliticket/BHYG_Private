@@ -126,6 +126,7 @@ def load_config():
         import shutil
         shutil.rmtree("data")
     if os.path.exists("data"):
+        use_login = True
         run_info = prompt([
             inquirer.List(
                 "run_info",
@@ -227,6 +228,7 @@ def load_config():
     else:
         save({})
         config = {}
+        use_login = False
     if "cover_time_offset" in config:
         logger.info(i18n_format("cover_time_offset"))
         logger.info(i18n_format("time_offset").format(config["time_offset"]))

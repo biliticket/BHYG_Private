@@ -19,11 +19,25 @@ else:
     name = "BHYG"
 
 a = Analysis(
-    ['main.py'],
+    ['boot.py'],
     pathex=[],
     binaries=[],
     datas=datas,
-    hiddenimports=['bili_ticket_gt_python'],
+    hiddenimports=[
+        'bili_ticket_gt_python',
+        'loguru',
+        'pyinstaller',
+        'qrcode',
+        'requests',
+        'sentry-sdk',
+        'kdl',
+        'pycryptodome',
+        'inquirer',
+        'ntplib',
+        'machineid',
+        'pyperclip',
+        'jwt',
+        ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
