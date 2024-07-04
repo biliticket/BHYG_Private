@@ -4,6 +4,8 @@ from i18n import i18n_format
 import time
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
+from Crypto.Cipher import PKCS1_v1_5
+from Crypto.PublicKey import RSA
 import atexit
 import sys
 
