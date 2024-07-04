@@ -62,14 +62,14 @@ def init(version):
     handler_id = logger.add(
         sys.stderr,
         format=format,
-        level="DEBUG",
+        level=level,
         backtrace=debug,
         diagnose=debug,
     )
     logger.add(
         "./logs/{time:YYYYMMDD-HHmmss}.log",
         format=format,
-        level=level,
+        level="DEBUG",
         backtrace=True,
         diagnose=True,
         colorize=False,
