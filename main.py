@@ -205,6 +205,7 @@ def main():
                     config["project_id"] = input(i18n_format("input_project_id"))
                     try:
                         config["project_id"] = int(config["project_id"])
+                        config["project_id"] = str(config["project_id"])
                     except ValueError:
                         logger.error(i18n_format("wrong_input_project_id"))
                         continue
