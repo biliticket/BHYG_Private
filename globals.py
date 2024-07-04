@@ -62,7 +62,7 @@ def init(version):
     handler_id = logger.add(
         sys.stderr,
         format=format,
-        level=level,
+        level="DEBUG",
         backtrace=debug,
         diagnose=debug,
     )
