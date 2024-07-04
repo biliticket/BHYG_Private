@@ -22,7 +22,6 @@ import pyperclip
 import jwt
 import base64
 import platform
-import time
 import os
 import sys
 import json

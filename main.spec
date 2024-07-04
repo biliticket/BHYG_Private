@@ -24,7 +24,14 @@ a = Analysis(
     binaries=[],
     datas=datas,
     hiddenimports=[
-        "bili_ticket_gt_python"
+        "bili_ticket_gt_python",
+        "api",
+        "utility",
+        "i18n",
+        "login",
+        "geetest",
+        "globals",
+        "utils",
     ],
     hookspath=[],
     hooksconfig={},
