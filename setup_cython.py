@@ -20,14 +20,16 @@ else:
 
 setup(
     name=name,
-    ext_modules=cythonize([
-        "api.py",
-        "main.py",
-        "utility.py",
-        "i18n.py",
-        "login.py",
-        "geetest.py",
-        "globals.py",
-        "utils.py"
-    ])
-    )
+    ext_modules=cythonize(
+        [
+            "api.py",
+            "main.py",
+            "utility.py",
+            "i18n.py",
+            "login.py",
+            "geetest.py",
+            "globals.py",
+            "utils.py",
+        ]
+    ),
+)
