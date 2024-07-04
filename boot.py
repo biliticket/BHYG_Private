@@ -4,12 +4,9 @@ from i18n import i18n_format
 import time
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
+import atexit
 
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        logger.info(i18n_format("exit_manual"))
+def cleanup_meipass() -> None:
     from sentry_sdk import Hub
 
     client = Hub.current.client
@@ -20,3 +17,19 @@ if __name__ == "__main__":
         time.sleep(15)
     except KeyboardInterrupt:
         pass
+    if hasattr(sys, "_MEIPASS"):
+        meipass_path = sys._MEIPASS  # type: ignore
+        try:
+            shutil.rmtree(meipass_path)
+            print(f"正在清理 {meipass_path}")
+        except Exception as e:
+            print(f"清理失败 {meipass_path}: {e}")
+
+
+atexit.register(cleanup_meipass)
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        logger.info(i18n_format("exit_manual"))
