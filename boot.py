@@ -8,6 +8,25 @@ from Crypto.Cipher import PKCS1_v1_5
 from Crypto.PublicKey import RSA
 import atexit
 import sys
+import base64
+import json
+import pyinstaller
+import qrcode
+import requests
+import sentry_sdk
+import kdl
+import inquirer
+import ntplib
+import machineid
+import pyperclip
+import jwt
+import base64
+import platform
+import time
+import os
+import sys
+import json
+import importlib
 
 def cleanup_meipass() -> None:
     from sentry_sdk import Hub
