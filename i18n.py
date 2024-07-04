@@ -110,7 +110,7 @@ i18n = {
         "bi_login_sns": "第三方客户端",
         "bi_input_cookie": "请输入cookie: ",
         "bi_illegal_cookie": "cookie不合法",
-        "eula": "欢迎使用BHYG软件，使用前请阅读EULA(https://github.com/biliticket/BHYG)。若您使用时遇到问题，请查阅biliticket文档(https://docs.bitf1a5h.eu.org/)\n特别提醒，根据EULA，严禁任何形式通过本软件盈利。若您同意本软件EULA，请键入：我已阅读并同意EULA，黄牛倒卖狗死妈\n",
+        "eula": "欢迎使用BHYG软件，使用前请阅读EULA(https://docs.bitf1a5h.eu.org/bhyg/eula.html)及隐私政策(https://docs.bitf1a5h.eu.org/bhyg/privacy-policy.html)。若您使用时遇到问题，请查阅biliticket文档(https://docs.bitf1a5h.eu.org/)\n特别提醒，根据EULA，严禁任何形式通过本软件盈利。若您不同意，请立即关闭本窗口并删除软件副本；若您同意本软件EULA，请键入：我已阅读并同意EULA，黄牛倒卖狗死妈\n",
         "wrong_input": "输入不正确，请重试",
         "agree_eula": "已同意EULA",
         "new_version_1": "发现新版本{}，请前往 {} 下载并替换软件本体，大小：{:.2f}MB",
@@ -367,10 +367,10 @@ i18n = {
         "bi_login_sns": "3rd-party client",
         "bi_input_cookie": "Enter your cookie: ",
         "bi_illegal_cookie": "Invalid cookie",
-        "eula": "Welcome to use BHYG software. Please read EULA(https://github.com/biliticket/BHYG) first.\n"
+        "eula": "Welcome to use BHYG software. Please read EULA(https://docs.bitf1a5h.eu.org/bhyg/eula.html) and Privacy Policy (https://docs.bitf1a5h.eu.org/bhyg/privacy-policy.html) first.\n"
         "If you encounter any problems while using it, please refer to the Biliticket documentation(https://docs.bitf1a5h.eu.org/)\n"
         "Special reminder, according to EULA, it is strictly prohibited to make profits through this software in any form.\n"
-        "If you agree, please copy below (press Control+Insert to copy and Shift+Insert to paste): 我已阅读并同意EULA，黄牛倒卖狗死妈\n",
+        "If you disagree, please close the software window and delete the software copy. Otherwise, please copy below (press Control+Insert to copy and Shift+Insert to paste): 我已阅读并同意EULA，黄牛倒卖狗死妈\n",
         "wrong_input": "Wrong input. Please retry",
         "agree_eula": "Agreed EULA",
         "new_version_1": "New version {} available. Go to {} to download and replace. Size {:.2f}MB",
@@ -628,7 +628,6 @@ i18n = {
         "bi_login_sns": "第三方客户端nia~",
         "bi_input_cookie": "请给我曲奇饼干喵!: (cookie)",
         "bi_illegal_cookie": "曲奇饼干不好吃啊呸!",
-        "eula": "欢迎使用BHYG软件，使用前请阅读EULA(https://github.com/biliticket/BHYG)。若您使用时遇到问题，请查阅biliticket文档(https://docs.bitf1a5h.eu.org/)\n特别提醒，根据EULA，严禁任何形式通过本软件盈利。若您同意本软件EULA，请键入：我已阅读并同意EULA，黄牛倒卖狗死妈\n",
         "wrong_input": "输入不正确，请重试",
         "agree_eula": "已同意EULA",
         "new_version_1": "发现新版本{}，请前往 {} 下载并替换软件本体，大小：{:.2f}MB喵~",
