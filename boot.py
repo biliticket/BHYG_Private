@@ -10,7 +10,6 @@ import atexit
 import sys
 import base64
 import json
-import pyinstaller
 import qrcode
 import requests
 import sentry_sdk
