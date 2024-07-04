@@ -578,6 +578,7 @@ def interactive_login(sentry_sdk=None):
             return interactive_login()
     except Exception as e:
         logger.error(i18n_format("login_failed"))
+        logger.error(e)
         return interactive_login()
 
     logger.debug("=" * 20)

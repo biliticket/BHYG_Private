@@ -5,6 +5,7 @@ import time
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 import atexit
+import sys
 
 def cleanup_meipass() -> None:
     from sentry_sdk import Hub
