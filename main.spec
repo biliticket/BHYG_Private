@@ -31,7 +31,7 @@ a = Analysis(
         "requests",
         "sentry_sdk",
         "kdl",
-        "pycryptodome",
+        "Crypto",
         "inquirer",
         "ntplib",
         "machineid",
