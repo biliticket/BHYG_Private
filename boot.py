@@ -25,6 +25,7 @@ import os
 import sys
 import json
 import importlib
+import shutil
 
 def cleanup_meipass() -> None:
     from sentry_sdk import Hub

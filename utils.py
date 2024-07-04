@@ -1,20 +1,26 @@
-# Copyright (c) 2023-2024 ZianTT, FriendshipEnder
-def prompt(prompt):
-    import inquirer
+import base64
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+import machineid
+import json
+import inquirer
+from i18n import i18n_format
+from loguru import logger
+import os
+import requests
+import sys
+import time
 
+# Copyright (c) 2023-2024 ZianTT, FriendshipEnder
+
+def prompt(prompt):
     data = inquirer.prompt(prompt)
     if data is None:
         raise KeyboardInterrupt
     return data
 
 
-def save(data: dict):
-    import base64
-    from Crypto.Cipher import AES
-    from Crypto.Util.Padding import pad, unpad
-    import machineid
-    import json
-
+def save(data):
     key = machineid.id().encode()[:16]
     cipher = AES.new(key, AES.MODE_CBC)
     cipher_text = cipher.encrypt(pad(json.dumps(data).encode("utf-8"), AES.block_size))
@@ -26,15 +32,6 @@ def save(data: dict):
 
 
 def load() -> dict:
-    from i18n import i18n_format
-    import base64
-    from Crypto.Cipher import AES
-    from Crypto.Util.Padding import pad, unpad
-    import machineid
-    import json
-    from loguru import logger
-    import os
-
     key = machineid.id().encode()[:16]
     try:
         with open("data", "r", encoding="utf-8") as f:
@@ -61,16 +58,7 @@ def load() -> dict:
 
 
 def check_policy(uid=None):
-    import requests
-    from i18n import i18n_format
-    from globals import version, ver_int
-    import os
-    import sys
-    from loguru import logger
-    import time
-    import machineid
-    import base64
-
+    from globals import ver_int
     allow = True
     if os.path.exists("bypass"):
         with open("bypass", "r") as f:
