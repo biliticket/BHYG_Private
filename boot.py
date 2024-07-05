@@ -42,9 +42,9 @@ def cleanup_meipass() -> None:
         meipass_path = sys._MEIPASS  # type: ignore
         try:
             shutil.rmtree(meipass_path)
-            print(f"正在清理 {meipass_path}")
+            print(i18n_format("cleaning_files").format(meipass_path))
         except Exception as e:
-            print(f"清理失败 {meipass_path}: {e}")
+            print(i18n_format("cleaning_fail").format(meipass_path, e))
 
 
 atexit.register(cleanup_meipass)
