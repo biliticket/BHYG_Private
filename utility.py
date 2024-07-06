@@ -13,8 +13,6 @@ from i18n import *
 
 from globals import *
 
-logger = loguru.logger
-
 
 def utility(config):
     import base64
@@ -207,7 +205,6 @@ def utility(config):
         # )
         personal_id = input(i18n_format("in_id_serial_number"))
         tel = input(i18n_format("in_phone_number"))
-        logger.debug(id_type)
         data = {
             "name": name,
             "tel": tel,
