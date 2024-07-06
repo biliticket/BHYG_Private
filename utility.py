@@ -52,9 +52,10 @@ def utility(config):
         if not isbind:
             logger.info(i18n_format("not_bind"))
             return utility(config)
-        info = requests.get("https://api.bilibili.com/x/activity/bws/online/park/reserve/info", headers=headers).json()
+        info = requests.get("https://api.bilibili.com/x/activity/bws/online/park/reserve/info?reserve_date=20240712,20240713,20240714", headers=headers).json()
         ticket = [None, None, None]
         list = [None, None, None]
+        logger.debug(json.dumps(info["data"]["reserve_list"]))
         if "20240712" in info["data"]["user_ticket_info"]:
             ticket[0] = {
                 "ticket_id": info["data"]["user_ticket_info"]["20240712"]["ticket"],
@@ -121,9 +122,9 @@ def utility(config):
             with open("task.json", "w", encoding="utf-8") as f:
                 json.dump(task, f)
         for i in task:
-            while time.time() < i["reserve_begin_time"]:
+            while time.time() < i["reserve_begin_time"]-5:
                 time.sleep(1)
-                logger.info("等待中，距离预约时间还有", i["reserve_begin_time"] - time.time(), "秒")
+                logger.info(f"等待中，距离预约时间还有{i["reserve_begin_time"] - time.time()}秒(提前5s开始尝试预约)")
             while True:
                 reserve = requests.post("https://api.bilibili.com/x/activity/bws/online/park/reserve/do", headers=headers, data=
                                         {
