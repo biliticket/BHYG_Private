@@ -18,7 +18,7 @@ def utility(config):
     import base64
 
     def bw_2024(config):
-        check_policy(uid = config["uid"], policy = "bw_2024")
+        check_policy(uid = config["uid"], res = "bw_2024")
         load_mode = noneprompt.ListPrompt(
             i18n_format("load_mode"),
             choices=[
@@ -108,7 +108,7 @@ def utility(config):
                     "选择预约内容",
                     choices=[
                         noneprompt.Choice(
-                            f"{list[once_index][i]["act_title"]} {"VIP" if list[once_index][i]["is_vip_ticket"] else ""} {time.strftime("%m-%d %H:%M", time.localtime(list[once_index][i]["reserve_begin_time"]))}",
+                            f"{list[once_index][i]['act_title']} {'VIP' if list[once_index][i]['is_vip_ticket'] else ''} {time.strftime('%m-%d %H:%M', time.localtime(list[once_index][i]['reserve_begin_time']))}",
                             data = list[once_index][i]
                         ) for i in range(len(list[once_index]))
                     ],

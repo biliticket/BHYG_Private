@@ -113,7 +113,6 @@ PDZ0VEnsaUFLEYpTzb90nITtJUcPUbvOsdZIZ1Q8fnbquAYgxXL5UgHMoywAib47
 6MkyyYgPk0BXZq3mq4zImTRNuaU9slj9TVJ3ScT3L1bXwVuPJDzpr5GOFpaj+WwM
 Al8G7CqwoJOsW7Kddns=
 -----END PUBLIC KEY-----"""
-                print(key)
                 data = jwt.decode(key, public_key, algorithms="ES512")
                 if "uid" in data:
                     if data["uid"] == uid:
@@ -134,6 +133,9 @@ Al8G7CqwoJOsW7Kddns=
                         else:
                             logger.error(i18n_format("key_not_match"))
                             failed = True
+                    else:
+                        logger.error(i18n_format("key_not_match"))
+                        failed = True
                 if failed:
                     continue
                 break

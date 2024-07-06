@@ -21,3 +21,4 @@ logs
 *.c
 *.pyd
 *.so
+task.json
