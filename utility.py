@@ -3,7 +3,7 @@ import inquirer
 import requests
 from loguru import logger
 
-from noneprompt import ListPrompt, Choice, InputPrompt
+import noneprompt
 
 import sentry_sdk
 
@@ -19,11 +19,11 @@ def utility(config):
 
     def bw_2024(config):
         check_policy(uid = config["uid"], policy = "bw_2024")
-        load_mode = ListPrompt(
+        load_mode = noneprompt.ListPrompt(
             i18n_format("load_mode"),
             choices=[
-                Choice(i18n_format("load_config"), data="read"),
-                Choice(i18n_format("new_config"), data="new"),
+                noneprompt.Choice(i18n_format("load_config"), data="read"),
+                noneprompt.Choice(i18n_format("new_config"), data="new"),
             ]
         ).prompt().data
         if load_mode == "read":
@@ -84,17 +84,17 @@ def utility(config):
             return utility(config)
         if task == []:
             while True:
-                choices = [
-                        Choice(
+                noneprompt.Choices = [
+                        noneprompt.Choice(
                             f"{i['ticket_id']}. {i['sku_name']}" if i is not None else "无票，不支持选择",
                             data = i
                         ) for i in ticket
                     ]
-                choices.append(Choice("返回", data="back"))
+                noneprompt.Choices.append(noneprompt.Choice("返回", data="back"))
                 
-                result: Choice[str] = ListPrompt(
+                result: noneprompt.Choice[str] = noneprompt.ListPrompt(
                     "选择票时间",
-                    choices=choices,
+                    choices=noneprompt.Choices,
                 ).prompt()
                 if result.data == "back":
                     break
@@ -104,10 +104,10 @@ def utility(config):
                 once_ticket_id = result.data["ticket_id"]
                 once_index = result.data["index"]
 
-                result: Choice[str] = ListPrompt(
+                result: noneprompt.Choice[str] = noneprompt.ListPrompt(
                     "选择预约内容",
                     choices=[
-                        Choice(
+                        noneprompt.Choice(
                             f"{list[once_index][i]["act_title"]} {"VIP" if list[once_index][i]["is_vip_ticket"] else ""} {time.strftime("%m-%d %H:%M", time.localtime(list[once_index][i]["reserve_begin_time"]))}",
                             data = list[once_index][i]
                         ) for i in range(len(list[once_index]))
@@ -270,7 +270,7 @@ def utility(config):
             save(config)
 
     def use_proxy(config):
-        choice = prompt(
+        noneprompt.Choice = prompt(
             [
                 inquirer.List(
                     "proxy",
@@ -280,7 +280,7 @@ def utility(config):
                 )
             ]
         )["proxy"]
-        if choice == i18n_format("yes"):
+        if noneprompt.Choice == i18n_format("yes"):
             while True:
                 try:
                     config["proxy_auth"] = input(i18n_format("input_proxy")).split(" ")
@@ -304,7 +304,7 @@ def utility(config):
         save(config)
 
     def captcha_mode(config):
-        choice = prompt(
+        noneprompt.Choice = prompt(
             [
                 inquirer.List(
                     "captcha",
@@ -318,17 +318,17 @@ def utility(config):
                 )
             ]
         )["captcha"]
-        if choice == i18n_format("local_gt"):
+        if noneprompt.Choice == i18n_format("local_gt"):
             config["captcha"] = "local_gt"
             sentry_sdk.set_tag("captcha", "local_gt")
-        elif choice == i18n_format("rrocr"):
+        elif noneprompt.Choice == i18n_format("rrocr"):
             config["captcha"] = "rrocr"
             while True:
                 config["rrocr"] = input(i18n_format("input_rrocr_key"))
                 if config["rrocr"] != "":
                     break
             sentry_sdk.set_tag("captcha", "rrocr")
-        elif choice == i18n_format("manual"):
+        elif noneprompt.Choice == i18n_format("manual"):
             config["captcha"] = "manual"
             sentry_sdk.set_tag("captcha", "manual")
         else:
@@ -406,7 +406,7 @@ def utility(config):
     elif select["select"] == i18n_format("back"):
         return
     elif select["select"] == i18n_format("tool_hide_module"):
-        name = InputPrompt(i18n_format("input_hide_tool")).prompt()
+        name = noneprompt.InputPrompt(i18n_format("input_hide_tool")).prompt()
         if name == "bw_2024":
             bw_2024(config)
         else:
