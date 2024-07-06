@@ -1,7 +1,7 @@
 # Copyright (c) 2023-2024 ZianTT, FriendshipEnder
 import inquirer
+import loguru
 import requests
-from loguru import logger
 
 import noneprompt
 
@@ -12,6 +12,8 @@ from utils import prompt, save, check_policy
 from i18n import *
 
 from globals import *
+
+logger = loguru.logger
 
 
 def utility(config):
@@ -193,8 +195,19 @@ def utility(config):
                 ),
             ]
         )
+        # id_type = noneprompt.ListPrompt(
+        #     question=i18n_format("id_type"),
+        #     choices=[
+        #         noneprompt.Choice(i18n_format("id_idcard"), data="1"),
+        #         noneprompt.Choice(i18n_format("id_passport"), data="2"),
+        #         noneprompt.Choice(i18n_format("id_Hong_Kong"), data="3"),
+        #         noneprompt.Choice(i18n_format("id_Taiwan"), data="4"),
+        #     ],
+        #     default_select=1,
+        # )
         personal_id = input(i18n_format("in_id_serial_number"))
         tel = input(i18n_format("in_phone_number"))
+        logger.debug(id_type)
         data = {
             "name": name,
             "tel": tel,

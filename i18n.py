@@ -831,8 +831,8 @@ def i18n_format(key: str):
     global i18n, i18n_lang
     try:
         return i18n[i18n_lang][key]
-    except:
+    except KeyError:
         try:
             return i18n["中文"][key]
-        except:
+        except KeyError:
             return key
