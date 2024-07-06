@@ -519,9 +519,6 @@ i18n = {
         "offset_error": "Failed to get time offset",
         "cover_time_offset": "Time offset overwritten",
         "auto_time_offset": "Auto time offset used, default is NTP time + 0.5s",
-        "2. In advance in the utility pre-fill account binding mobile phone number, you can not fill in the ticket when scrambling!\n"
-        "3. Grabbing one ticket, open more windows is useless!\n"
-        "4. You can use RROCR module if your GeeTest module can't work. But it will be slower. Or use another computer!\n",
         "manual_verify": "Please manually complete the verification at https://bhyg.bitf1a5h.eu.org/",
         "manual_copy": "Please copy the verification code manually. If you are using Linux, please run `sudo apt-get install xclip`",
         "input_captcha": "Enter the verification code",
