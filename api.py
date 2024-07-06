@@ -169,7 +169,7 @@ class BilibiliHyg:
         time_start = time.time()
         if "key" in self.config:
             self.captcha_data = run(
-                gt, challenge, token, mode=self.config["captcha"], key=self.config["key"]
+                gt, challenge, token, mode=self.config["captcha"], key=self.config["rrocr"]
             )
         else:
             self.captcha_data = run(
