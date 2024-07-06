@@ -121,7 +121,7 @@ def utility(config):
             with open("task.json", "w", encoding="utf-8") as f:
                 json.dump(task, f)
         for i in task:
-            while time.time() < i["reserve_begin_time"]-1000000:
+            while time.time() < i["reserve_begin_time"]:
                 time.sleep(1)
                 logger.info("等待中，距离预约时间还有", i["reserve_begin_time"] - time.time(), "秒")
             while True:
@@ -151,7 +151,7 @@ def utility(config):
                     logger.info("操作频繁")
                 else:
                     logger.info(f"{reserve.json()['code']} {reserve.json()['message']}")
-                time.sleep(0.95)
+                time.sleep(0.9)
         return utility(config)
 
     def add_buyer(headers):
