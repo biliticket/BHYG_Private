@@ -3,9 +3,11 @@ import inquirer
 import requests
 from loguru import logger
 
+from noneprompt import ListPrompt, Choice, InputPrompt
+
 import sentry_sdk
 
-from utils import prompt, save, load
+from utils import prompt, save, check_policy
 
 from i18n import *
 
@@ -14,6 +16,143 @@ from globals import *
 
 def utility(config):
     import base64
+
+    def bw_2024(config):
+        check_policy(config["uid"])
+        load_mode = ListPrompt(
+            i18n_format("load_mode"),
+            choices=[
+                Choice(i18n_format("load_config"), data="read"),
+                Choice(i18n_format("new_config"), data="new"),
+            ]
+        ).prompt().data
+        if load_mode == "read":
+            logger.info(i18n_format("load_config"))
+            if os.path.exists("config.json"):
+                with open("config.json", "r", encoding="utf-8") as f:
+                    task = json.load(f)
+            else:
+                logger.info(i18n_format("no_config"))
+                task = []
+        else:
+            logger.info(i18n_format("new_config"))
+            task = []
+
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+            "Cookie": config["cookie"]
+        }
+        csrf = headers["Cookie"][
+                    headers["Cookie"].index("bili_jct") + 9 : headers["Cookie"].index(
+                        "bili_jct"
+                    )
+                    + 41
+                ]
+        isbind = requests.get("https://api.bilibili.com/x/activity/bws/online/park/ticket/check", headers=headers).json()["data"]["is_bind"]
+        if not isbind:
+            logger.info(i18n_format("not_bind"))
+            return utility(config)
+        info = requests.get("https://api.bilibili.com/x/activity/bws/online/park/reserve/info", headers=headers).json()
+        ticket = [None, None, None]
+        list = [None, None, None]
+        if "20240712" in info["data"]["user_ticket_info"]:
+            ticket[0] = {
+                "ticket_id": info["data"]["user_ticket_info"]["20240712"]["ticket"],
+                "type": info["data"]["user_ticket_info"]["20240712"]["type"],
+                "sku_name": "7.12"+info["data"]["user_ticket_info"]["20240712"]["sku_name"],
+                "index": 0
+            }
+            list[0] = info["data"]["reserve_list"]["20240712"]
+        if "20240713" in info["data"]["user_ticket_info"]:
+            ticket[1] = {
+                "ticket_id": info["data"]["user_ticket_info"]["20240713"]["ticket"],
+                "type": info["data"]["user_ticket_info"]["20240713"]["type"],
+                "sku_name": "7.13"+info["data"]["user_ticket_info"]["20240713"]["sku_name"],
+                "index": 1
+            }
+            list[1] = info["data"]["reserve_list"]["20240713"]
+        if "20240714" in info["data"]["user_ticket_info"]:
+            ticket[2] = {
+                "ticket_id": info["data"]["user_ticket_info"]["20240714"]["ticket"],
+                "type": info["data"]["user_ticket_info"]["20240714"]["type"],
+                "sku_name": "7.14"+info["data"]["user_ticket_info"]["20240714"]["sku_name"],
+                "index": 2
+            }
+            list[2] = info["data"]["reserve_list"]["20240714"]
+        if ticket == [None, None, None]:
+            logger.info("没票玩你妈逼")
+            return utility(config)
+        if task == []:
+            while True:
+                choices = [
+                        Choice(
+                            f"{i['ticket_id']}. {i['sku_name']}" if i is not None else "无票，不支持选择",
+                            data = i
+                        ) for i in ticket
+                    ]
+                choices.append(Choice("返回", data="back"))
+                
+                result: Choice[str] = ListPrompt(
+                    "选择票时间",
+                    choices=choices,
+                ).prompt()
+                if result.data == "back":
+                    break
+                if result.data is None:
+                    logger.info("无票，不支持选择")
+                    continue
+                once_ticket_id = result.data["ticket_id"]
+                once_index = result.data["index"]
+
+                result: Choice[str] = ListPrompt(
+                    "选择预约内容",
+                    choices=[
+                        Choice(
+                            f"{list[once_index][i]["act_title"]} {"VIP" if list[once_index][i]["is_vip_ticket"] else ""} {time.strftime("%m-%d %H:%M", time.localtime(list[once_index][i]["reserve_begin_time"]))}",
+                            data = list[once_index][i]
+                        ) for i in range(len(list[once_index]))
+                    ],
+                ).prompt()
+                task_detail = result.data
+                task_detail["ticket_id"] = once_ticket_id
+                task.append(task_detail)
+
+            task.sort(key=lambda x: x["reserve_begin_time"])
+            with open("config.json", "w", encoding="utf-8") as f:
+                json.dump(task, f)
+        for i in task:
+            while time.time() < i["reserve_begin_time"]-1000000:
+                time.sleep(1)
+                logger.info("等待中，距离预约时间还有", i["reserve_begin_time"] - time.time(), "秒")
+            while True:
+                reserve = requests.post("https://api.bilibili.com/x/activity/bws/online/park/reserve/do", headers=headers, data=
+                                        {
+                                            "csrf": csrf,
+                                            "ticket_no": i["ticket_id"],
+                                            "inter_reserve_id": i["reserve_id"],
+                                        }
+                                        )
+                if reserve.json()["code"] == 0:
+                    logger.info("预约成功")
+                    break
+                elif reserve.json()["code"] == 412:
+                    logger.info("预约失败，重试412")
+                elif reserve.json()["code"] == 429:
+                    logger.info("预约失败，重试429")
+                elif reserve.json()["code"] == -702:
+                    logger.info("请求频率过高，请稍后再试")
+                elif reserve.json()["code"] == -75574:
+                    logger.info("没了")
+                    break
+                elif reserve.json()["code"] == -76647:
+                    logger.info("上限了")
+                    break
+                elif reserve.json()["code"] == -76650:
+                    logger.info("操作频繁")
+                else:
+                    logger.info(f"{reserve.json()['code']} {reserve.json()['message']}")
+                time.sleep(0.95)
+        return utility(config)
 
     def add_buyer(headers):
         name = input(i18n_format("buyer_name"))
@@ -222,6 +361,7 @@ def utility(config):
                     i18n_format("tool_capacha_mode"),
                     i18n_format("tool_webhook"),
                     i18n_format("tool_set_offset"),
+                    i18n_format("tool_hide_module"),
                     i18n_format("back"),
                 ],
             )
@@ -265,6 +405,10 @@ def utility(config):
         return utility(config)
     elif select["select"] == i18n_format("back"):
         return
-    else:
-        logger.error(i18n_format("tool_not_supported"))
+    elif select["select"] == i18n_format("tool_hide_module"):
+        name = InputPrompt(i18n_format("input_hide_tool")).prompt()
+        if name == "bw_2024":
+            bw_2024(config)
+        else:
+            logger.error(i18n_format("tool_not_supported"))
         return utility()

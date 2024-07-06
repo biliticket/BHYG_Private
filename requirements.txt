@@ -12,3 +12,4 @@ ntplib
 py-machineid
 pyperclip
 pyjwt[crypto]
+noneprompt
