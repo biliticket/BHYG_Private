@@ -167,9 +167,14 @@ class BilibiliHyg:
         from geetest import run
 
         time_start = time.time()
-        self.captcha_data = run(
-            gt, challenge, token, mode=self.config["captcha"], key=self.config["rrocr"]
-        )
+        if "key" in self.config:
+            self.captcha_data = run(
+                gt, challenge, token, mode=self.config["captcha"], key=self.config["key"]
+            )
+        else:
+            self.captcha_data = run(
+                gt, challenge, token, mode=self.config["captcha"]
+            )
         delta = time.time() - time_start
         self.sdk.metrics.distribution(
             key="gt_solve_time", value=delta * 1000, unit="millisecond"
