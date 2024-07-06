@@ -254,7 +254,7 @@ i18n = {
         "try_load_local_captcha": "尝试加载本地验证码模块",
         "load_success": "加载成功",
         "local_captcha_load_failed": "本地验证码模块加载失败，错误信息：{}，请使用其他验证方式",
-        "tips": "提示: \n1. 抢票前1小时左右使用直接抢票模式通过验证码，速度大大提升！\n2. 提前在实用工具预填账号绑定手机号，可以不用开票时手忙脚乱填写！\n3. 抢一张票，多开是没有用的！\n4. GT模块不能用可以使用RROCR模块，但是速度会慢一点，或者换台电脑！\n",
+        "tips": "提示: \n1. 提前在实用工具预填账号绑定手机号，可以不用开票时手忙脚乱填写！\n2. 抢一张票，多开是没有用的！\n3. 提前测试GT模块是否可用，方式：验证码登录/用户名密码登录，GT模块不能用建议换台电脑/系统！\n",
         "key_not_match": "密钥使用条件错误，请检查登录机器和UID",
         "key_expired": "密钥已过期，请重新获取",
         "key_invalid": "密钥无效，请重新获取",
@@ -519,7 +519,6 @@ i18n = {
         "offset_error": "Failed to get time offset",
         "cover_time_offset": "Time offset overwritten",
         "auto_time_offset": "Auto time offset used, default is NTP time + 0.5s",
-        "tips": "Tips: \n1. About 1 hour before the ticket grab, use the DIRECT GRABBING mode to pass the captcha, will be much faster!\n"
         "2. In advance in the utility pre-fill account binding mobile phone number, you can not fill in the ticket when scrambling!\n"
         "3. Grabbing one ticket, open more windows is useless!\n"
         "4. You can use RROCR module if your GeeTest module can't work. But it will be slower. Or use another computer!\n",
@@ -785,7 +784,6 @@ i18n = {
         "offset_error": "获取时间偏移失败了喵~",
         "cover_time_offset": "时间偏移已覆盖喵~",
         "auto_time_offset": "我使用了自动时间偏移法术，默认为NTP时间+0.5秒喵~",
-        "tips": "本猫给你们一点点小小的提示喵~: \n1. 在主人准备开抢前的1小时左右用直接抢票模式通过验证码，速度大大提升喵！\n2. 提前在我的实用工具里面喂给我账号绑定的手机号，开票时就不用手忙脚乱的填写啦喵！\n3. 主人如果只想抢一张票，多开是没什么大用的喵！\n4. GT模块不能用可以使用RROCR模块喵~，仅仅只是自动过验证码的速度会慢喵，或者咬咬牙加钱换台电脑喵！\n",
         "manual_verify": "请手动在https://bhyg.bitf1a5h.eu.org/ 完成验证码, 验证完了记得给我喵!",
         "manual_copy": "请手动复制验证码，若您的电脑是linux系统，请运行`sudo apt-get install xclip`命令喵#",
         "input_captcha": "请给我验证码喵!",
