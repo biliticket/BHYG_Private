@@ -124,7 +124,7 @@ def utility(config):
         for i in task:
             while time.time() < i["reserve_begin_time"]-5:
                 time.sleep(1)
-                logger.info(f"等待中，距离预约时间还有{i["reserve_begin_time"] - time.time()}秒(提前5s开始尝试预约)")
+                logger.info(f"等待中，距离预约时间还有{i['reserve_begin_time'] - time.time()}秒(提前5s开始尝试预约)")
             while True:
                 reserve = requests.post("https://api.bilibili.com/x/activity/bws/online/park/reserve/do", headers=headers, data=
                                         {
