@@ -18,14 +18,18 @@ def utility(config):
     import base64
 
     def bw_2024(config):
-        check_policy(uid = config["uid"], res = "bw_2024")
-        load_mode = noneprompt.ListPrompt(
-            i18n_format("load_mode"),
-            choices=[
-                noneprompt.Choice(i18n_format("load_config"), data="read"),
-                noneprompt.Choice(i18n_format("new_config"), data="new"),
-            ]
-        ).prompt().data
+        check_policy(uid=config["uid"], res="bw_2024")
+        load_mode = (
+            noneprompt.ListPrompt(
+                i18n_format("load_mode"),
+                choices=[
+                    noneprompt.Choice(i18n_format("load_config"), data="read"),
+                    noneprompt.Choice(i18n_format("new_config"), data="new"),
+                ],
+            )
+            .prompt()
+            .data
+        )
         if load_mode == "read":
             logger.info(i18n_format("load_config"))
             if os.path.exists("task.json"):
@@ -40,19 +44,25 @@ def utility(config):
 
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
-            "Cookie": config["cookie"]
+            "Cookie": config["cookie"],
         }
         csrf = headers["Cookie"][
-                    headers["Cookie"].index("bili_jct") + 9 : headers["Cookie"].index(
-                        "bili_jct"
-                    )
-                    + 41
-                ]
-        isbind = requests.get("https://api.bilibili.com/x/activity/bws/online/park/ticket/check", headers=headers).json()["data"]["is_bind"]
+            headers["Cookie"].index("bili_jct") + 9 : headers["Cookie"].index(
+                "bili_jct"
+            )
+            + 41
+        ]
+        isbind = requests.get(
+            "https://api.bilibili.com/x/activity/bws/online/park/ticket/check",
+            headers=headers,
+        ).json()["data"]["is_bind"]
         if not isbind:
             logger.info(i18n_format("not_bind"))
             return utility(config)
-        info = requests.get("https://api.bilibili.com/x/activity/bws/online/park/reserve/info?reserve_date=20240712,20240713,20240714", headers=headers).json()
+        info = requests.get(
+            "https://api.bilibili.com/x/activity/bws/online/park/reserve/info?reserve_date=20240712,20240713,20240714",
+            headers=headers,
+        ).json()
         ticket = [None, None, None]
         list = [None, None, None]
         logger.debug(json.dumps(info["data"]["reserve_list"]))
@@ -60,24 +70,27 @@ def utility(config):
             ticket[0] = {
                 "ticket_id": info["data"]["user_ticket_info"]["20240712"]["ticket"],
                 "type": info["data"]["user_ticket_info"]["20240712"]["type"],
-                "sku_name": "7.12"+info["data"]["user_ticket_info"]["20240712"]["sku_name"],
-                "index": 0
+                "sku_name": "7.12"
+                + info["data"]["user_ticket_info"]["20240712"]["sku_name"],
+                "index": 0,
             }
             list[0] = info["data"]["reserve_list"]["20240712"]
         if "20240713" in info["data"]["user_ticket_info"]:
             ticket[1] = {
                 "ticket_id": info["data"]["user_ticket_info"]["20240713"]["ticket"],
                 "type": info["data"]["user_ticket_info"]["20240713"]["type"],
-                "sku_name": "7.13"+info["data"]["user_ticket_info"]["20240713"]["sku_name"],
-                "index": 1
+                "sku_name": "7.13"
+                + info["data"]["user_ticket_info"]["20240713"]["sku_name"],
+                "index": 1,
             }
             list[1] = info["data"]["reserve_list"]["20240713"]
         if "20240714" in info["data"]["user_ticket_info"]:
             ticket[2] = {
                 "ticket_id": info["data"]["user_ticket_info"]["20240714"]["ticket"],
                 "type": info["data"]["user_ticket_info"]["20240714"]["type"],
-                "sku_name": "7.14"+info["data"]["user_ticket_info"]["20240714"]["sku_name"],
-                "index": 2
+                "sku_name": "7.14"
+                + info["data"]["user_ticket_info"]["20240714"]["sku_name"],
+                "index": 2,
             }
             list[2] = info["data"]["reserve_list"]["20240714"]
         if ticket == [None, None, None]:
@@ -86,13 +99,16 @@ def utility(config):
         if task == []:
             while True:
                 noneprompt.Choices = [
-                        noneprompt.Choice(
-                            f"{i['ticket_id']}. {i['sku_name']}" if i is not None else "无票，不支持选择",
-                            data = i
-                        ) for i in ticket
-                    ]
+                    noneprompt.Choice(
+                        f"{i['ticket_id']}. {i['sku_name']}"
+                        if i is not None
+                        else "无票，不支持选择",
+                        data=i,
+                    )
+                    for i in ticket
+                ]
                 noneprompt.Choices.append(noneprompt.Choice("返回", data="back"))
-                
+
                 result: noneprompt.Choice[str] = noneprompt.ListPrompt(
                     "选择票时间",
                     choices=noneprompt.Choices,
@@ -110,8 +126,9 @@ def utility(config):
                     choices=[
                         noneprompt.Choice(
                             f"{list[once_index][i]['act_title']} {'VIP' if list[once_index][i]['is_vip_ticket'] else ''} {time.strftime('%m-%d %H:%M', time.localtime(list[once_index][i]['reserve_begin_time']))}",
-                            data = list[once_index][i]
-                        ) for i in range(len(list[once_index]))
+                            data=list[once_index][i],
+                        )
+                        for i in range(len(list[once_index]))
                     ],
                 ).prompt()
                 task_detail = result.data
@@ -122,17 +139,21 @@ def utility(config):
             with open("task.json", "w", encoding="utf-8") as f:
                 json.dump(task, f)
         for i in task:
-            while time.time() < i["reserve_begin_time"]-5:
+            while time.time() < i["reserve_begin_time"] - 5:
                 time.sleep(1)
-                logger.info(f"等待中，距离预约时间还有{i['reserve_begin_time'] - time.time()}秒(提前5s开始尝试预约)")
+                logger.info(
+                    f"等待中，距离预约时间还有{i['reserve_begin_time'] - time.time()}秒(提前5s开始尝试预约)"
+                )
             while True:
-                reserve = requests.post("https://api.bilibili.com/x/activity/bws/online/park/reserve/do", headers=headers, data=
-                                        {
-                                            "csrf": csrf,
-                                            "ticket_no": i["ticket_id"],
-                                            "inter_reserve_id": i["reserve_id"],
-                                        }
-                                        )
+                reserve = requests.post(
+                    "https://api.bilibili.com/x/activity/bws/online/park/reserve/do",
+                    headers=headers,
+                    data={
+                        "csrf": csrf,
+                        "ticket_no": i["ticket_id"],
+                        "inter_reserve_id": i["reserve_id"],
+                    },
+                )
                 if reserve.json()["code"] == 0:
                     logger.info("预约成功")
                     break

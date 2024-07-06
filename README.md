@@ -78,6 +78,8 @@ BHYG 团队有权判断用户的行为是否符合本协议条款规定，如果
 
 ## Star History
 
+<!-- markdownlint-disable MD033 -->
+
 <a href="https://star-history.com/#biliticket/BHYG&Date">
  <picture>
    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=biliticket/BHYG&type=Date&theme=dark" />
@@ -85,3 +87,5 @@ BHYG 团队有权判断用户的行为是否符合本协议条款规定，如果
    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=biliticket/BHYG&type=Date" />
  </picture>
 </a>
+
+<!-- markdownlint-restore -->

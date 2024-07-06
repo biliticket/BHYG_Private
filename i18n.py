@@ -260,7 +260,7 @@ i18n = {
         "key_invalid": "密钥无效，请重新获取",
         "input_key": "云控系统要求您进行密钥激活，请输入密钥",
         "wrong_input_project_id": "输入的项目ID格式不正确，请重新输入，项目id一般为至少5位数字",
-        "auto_save_phone": "未预填手机号, 自动保存默认购票人手机号 {}****{} 作为账号绑定手机号", # 自动保存购票人的手机号用于预填手机号
+        "auto_save_phone": "未预填手机号, 自动保存默认购票人手机号 {}****{} 作为账号绑定手机号",  # 自动保存购票人的手机号用于预填手机号
         "already_save_phone": "已经预填账号绑定手机号 {}****{}",
         "cleaning_files": "正在清理 {}",
         "cleaning_fail": "清理失败 {}: {}",
@@ -539,7 +539,7 @@ i18n = {
         "key_invalid": "The secret key is invalid. Please get it again.",
         "input_key": "The cloud requires you to activate the secret key. Please enter the secret key.",
         "wrong_input_project_id": "Wrong project ID format. Please re-enter.(Usually at least 5 digits)",
-        "auto_save_phone": "No pre-filled number found. Auto saved buyer's number: {}****{}.", # 自动保存购票人的手机号用于预填手机号
+        "auto_save_phone": "No pre-filled number found. Auto saved buyer's number: {}****{}.",  # 自动保存购票人的手机号用于预填手机号
         "already_save_phone": "Pre-filled number {}****{} has already found. It's in use.",
         "cleaning_files": "Cleaning {} ...",
         "cleaning_fail": "Clean error occured {}: {}!",
@@ -798,7 +798,7 @@ i18n = {
         "load_success": "预热成功喵!",
         "local_captcha_load_failed": "本地验证码模块预热失败喵，错误信息：{}，请使用其他验证方式喵呜~",
         "wrong_input_project_id": "输入的项目ID格式不正确喵，请再一次给我喵! 项目id一般为至少5位数字喵~",
-        "auto_save_phone": "主人你没预填账号绑定的手机号咪, 我帮你找到并保存默认购票人的手机号 {}****{} 喵~", # 自动保存购票人的手机号用于预填手机号
+        "auto_save_phone": "主人你没预填账号绑定的手机号咪, 我帮你找到并保存默认购票人的手机号 {}****{} 喵~",  # 自动保存购票人的手机号用于预填手机号
         "already_save_phone": "我已经找到你曾经预填的账号绑定手机号 {}****{} 了喵!",
     },
 }

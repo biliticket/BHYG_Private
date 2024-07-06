@@ -98,7 +98,8 @@ if __name__ == "__main__":
     import random
 
     captcha = requests.get(
-        "https://www.geetest.com/demo/gt/register-slide-official?t="+str(random.randint(0, 9999)),
+        "https://www.geetest.com/demo/gt/register-slide-official?t="
+        + str(random.randint(0, 9999)),
         headers={
             "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/618.1.15.10.15 (KHTML, like Gecko) Mobile/21F90 BiliApp/77900100 os/ios model/iPhone 15 mobi_app/iphone build/77900100 osVer/17.5.1 network/2 channel/AppStore c_locale/zh-Hans_CN s_locale/zh-Hans_CH disable_rcmd/0 "
             + str(random.randint(0, 9999)),
@@ -106,7 +107,7 @@ if __name__ == "__main__":
     ).json()
     gt = captcha["gt"]
     challenge = captcha["challenge"]
-    token = '1'
+    token = "1"
     # validate = run(gt, challenge, token)
     start_time = time.time()
     validate = run(gt, challenge, token, mode="local_gt")

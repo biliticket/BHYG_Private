@@ -417,14 +417,24 @@ def main():
                             + buyer_infos[int(select)]["tel"][-4:],
                         )
                     )
-                if "phone" not in config or config["phone"] == "":         # 如果未预约填写手机号
-                    config["phone"] = buyer_infos[0]["tel"]                # 自动保存默认购票人的手机号
-                    logger.info( i18n_format("auto_save_phone")            # 用作预填手机号
-                        .format(config["phone"][:3], config["phone"][-4:]) # 可用于手机号短信验证
-                    )                                                      # 小影 2024.7.6
-                else:                                                      # 目前问题就是能通过cookie
-                    logger.info(i18n_format("already_save_phone")          # 获取账号绑定的手机号
-                        .format(config["phone"][:3], config["phone"][-4:]) # 这样就更完美了 @@ZianTT
+                if (
+                    "phone" not in config or config["phone"] == ""
+                ):  # 如果未预约填写手机号
+                    config["phone"] = buyer_infos[0][
+                        "tel"
+                    ]  # 自动保存默认购票人的手机号
+                    logger.info(
+                        i18n_format("auto_save_phone").format(  # 用作预填手机号
+                            config["phone"][:3], config["phone"][-4:]
+                        )  # 可用于手机号短信验证
+                    )  # 小影 2024.7.6
+                else:  # 目前问题就是能通过cookie
+                    logger.info(
+                        i18n_format(
+                            "already_save_phone"
+                        ).format(  # 获取账号绑定的手机号
+                            config["phone"][:3], config["phone"][-4:]
+                        )  # 这样就更完美了 @@ZianTT
                     )
             #                    if int(buyer_infos[int(select)]["personal_id"][16]) % 2 == 0:
             #                        user_female = True
@@ -480,14 +490,24 @@ def main():
                         + buyer_infos[int(index.split(".")[0])]["tel"][-4:],
                     )
                 )
-                if "phone" not in config or config["phone"] == "":         # 如果未预约填写手机号
-                    config["phone"] = buyer_infos[0]["tel"]                # 自动保存默认购票人的手机号
-                    logger.info( i18n_format("auto_save_phone")            # 用作预填手机号
-                        .format(config["phone"][:3], config["phone"][-4:]) # 可用于手机号短信验证
-                    )                                                      # 小影 2024.7.6
-                else:                                                      # 目前问题就是能通过cookie
-                    logger.info(i18n_format("already_save_phone")          # 获取账号绑定的手机号
-                        .format(config["phone"][:3], config["phone"][-4:]) # 这样就更完美了
+                if (
+                    "phone" not in config or config["phone"] == ""
+                ):  # 如果未预约填写手机号
+                    config["phone"] = buyer_infos[0][
+                        "tel"
+                    ]  # 自动保存默认购票人的手机号
+                    logger.info(
+                        i18n_format("auto_save_phone").format(  # 用作预填手机号
+                            config["phone"][:3], config["phone"][-4:]
+                        )  # 可用于手机号短信验证
+                    )  # 小影 2024.7.6
+                else:  # 目前问题就是能通过cookie
+                    logger.info(
+                        i18n_format(
+                            "already_save_phone"
+                        ).format(  # 获取账号绑定的手机号
+                            config["phone"][:3], config["phone"][-4:]
+                        )  # 这样就更完美了
                     )
             if "count" not in config:
                 config["count"] = len(config["buyer_info"])
@@ -504,14 +524,20 @@ def main():
                     )
                 ]
             )["tel"]
-            if "phone" not in config or config["phone"] == "":         # 如果未预约填写手机号
-                config["phone"] = config["tel"] # 自动保存填写的手机号(这种票应该用不到手机号验证吧)
-                logger.info( i18n_format("auto_save_phone")            # 用作预填手机号
-                    .format(config["phone"][:3], config["phone"][-4:]) # 可用于手机号短信验证
-                )                                                      # 小影 2024.7.6
-            else:                                                      # 目前问题就是能通过cookie
-                logger.info(i18n_format("already_save_phone")          # 获取账号绑定的手机号
-                    .format(config["phone"][:3], config["phone"][-4:]) # 这样就更完美了
+            if "phone" not in config or config["phone"] == "":  # 如果未预约填写手机号
+                config["phone"] = config[
+                    "tel"
+                ]  # 自动保存填写的手机号(这种票应该用不到手机号验证吧)
+                logger.info(
+                    i18n_format("auto_save_phone").format(  # 用作预填手机号
+                        config["phone"][:3], config["phone"][-4:]
+                    )  # 可用于手机号短信验证
+                )  # 小影 2024.7.6
+            else:  # 目前问题就是能通过cookie
+                logger.info(
+                    i18n_format("already_save_phone").format(  # 获取账号绑定的手机号
+                        config["phone"][:3], config["phone"][-4:]
+                    )  # 这样就更完美了
                 )
             if "count" not in config:
                 config["count"] = prompt(
