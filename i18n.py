@@ -268,6 +268,12 @@ i18n = {
         "captcha_mode_gt": "您当前使用的是本地GT模块验证码模式（推荐）",
         "captcha_mode_rrocr": "您当前使用的是RROCR验证码模式",
         "captcha_mode_manual": "您当前使用的是手动验证码模式",
+        "load_mode": "模块启动模式",
+        "load_config": "加载已有配置文件",
+        "new_config": "新建配置文件",
+        "not_bind": "该账户未绑定门票，请前往绑定",
+        "tool_hide_module": "隐藏模块",
+        "input_hide_tool": "请输入隐藏模块名称",
     },
     i18n_tuple[1]: {
         "data_error": "Data error! Environment is not OK!",

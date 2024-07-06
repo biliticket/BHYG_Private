@@ -28,8 +28,8 @@ def utility(config):
         ).prompt().data
         if load_mode == "read":
             logger.info(i18n_format("load_config"))
-            if os.path.exists("config.json"):
-                with open("config.json", "r", encoding="utf-8") as f:
+            if os.path.exists("task.json"):
+                with open("task.json", "r", encoding="utf-8") as f:
                     task = json.load(f)
             else:
                 logger.info(i18n_format("no_config"))
@@ -118,7 +118,7 @@ def utility(config):
                 task.append(task_detail)
 
             task.sort(key=lambda x: x["reserve_begin_time"])
-            with open("config.json", "w", encoding="utf-8") as f:
+            with open("task.json", "w", encoding="utf-8") as f:
                 json.dump(task, f)
         for i in task:
             while time.time() < i["reserve_begin_time"]-1000000:
