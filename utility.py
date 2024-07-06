@@ -18,7 +18,7 @@ def utility(config):
     import base64
 
     def bw_2024(config):
-        check_policy(config["uid"])
+        check_policy(uid = config["uid"], policy = "bw_2024")
         load_mode = ListPrompt(
             i18n_format("load_mode"),
             choices=[

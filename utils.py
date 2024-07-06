@@ -57,7 +57,7 @@ def load() -> dict:
     return data
 
 
-def check_policy(uid=None):
+def check_policy(uid=None, res=None):
     from globals import ver_int
     allow = True
     if os.path.exists("bypass"):
@@ -127,6 +127,13 @@ Al8G7CqwoJOsW7Kddns=
                     else:
                         logger.error(i18n_format("key_not_match"))
                         failed = True
+                if res is not None:
+                    if "res" in data:
+                        if res in data["res"]:
+                            pass
+                        else:
+                            logger.error(i18n_format("key_not_match"))
+                            failed = True
                 if failed:
                     continue
                 break
