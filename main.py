@@ -164,7 +164,17 @@ def main():
         if "captcha" not in config:
             logger.info(i18n_format("captcha_mode_gt_by_default"))
             config["captcha"] = "local_gt"
+        if "rrocr" not in config:
             config["rrocr"] = None
+        if config["captcha"] == "local_gt":
+            logger.info(i18n_format("captcha_mode_gt"))
+        elif config["captcha"] == "rrocr":
+            logger.info(i18n_format("captcha_mode_rrocr"))
+        elif config["captcha"] == "manual":
+            logger.info(i18n_format("captcha_mode_manual"))
+        else:
+            logger.error(i18n_format("captcha_mode_not_supported"))
+            return
         if config["proxy"] == True:
             auth = kdl.Auth(config["proxy_auth"][0], config["proxy_auth"][1])
             kdl_client = kdl.Client(auth)

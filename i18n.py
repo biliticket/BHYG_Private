@@ -264,6 +264,10 @@ i18n = {
         "already_save_phone": "已经预填账号绑定手机号 {}****{}",
         "cleaning_files": "正在清理 {}",
         "cleaning_fail": "清理失败 {}: {}",
+        "captcha_mode_not_supported": "不支持的验证码模式",
+        "captcha_mode_gt": "您当前使用的是本地GT模块验证码模式（推荐）",
+        "captcha_mode_rrocr": "您当前使用的是RROCR验证码模式",
+        "captcha_mode_manual": "您当前使用的是手动验证码模式",
     },
     i18n_tuple[1]: {
         "data_error": "Data error! Environment is not OK!",
@@ -820,9 +824,10 @@ def set_language(force_reload: bool):
 
 def i18n_format(key: str):
     global i18n, i18n_lang
-    if key in i18n[i18n_lang]:
+    try:
         return i18n[i18n_lang][key]
-    elif key in i18n["中文"]:
-        return i18n["中文"][key]
-    else:
-        return key
+    except:
+        try:
+            return i18n["中文"][key]
+        except:
+            return key
