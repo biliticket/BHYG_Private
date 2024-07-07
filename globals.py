@@ -28,9 +28,10 @@ version = "v{}.{}.{}".format(
 
 
 def agree_terms():
+    logger.info(i18n_format("eula"))
     try:
         _ = noneprompt.InputPrompt(
-            question=i18n_format("eula"),
+            question="Please input",
             validator=lambda x: (
                 all(keyword in x for keyword in ["同意", "死妈", "黄牛"])
                 and "不" not in x
