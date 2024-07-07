@@ -6,7 +6,7 @@ import sys
 import os
 import json
 
-import inquirer
+import noneprompt
 
 import sentry_sdk
 from loguru import logger
@@ -144,25 +144,20 @@ def load_config():
         shutil.rmtree("data")
     if os.path.exists("data"):
         use_login = True
-        run_info = prompt(
-            [
-                inquirer.List(
-                    "run_info",
-                    message=i18n_format("select_setting"),
-                    choices=[
-                        i18n_format("select_keep_all"),
-                        i18n_format("select_keep_login"),
-                        i18n_format("select_new_boot"),
-                        i18n_format("select_tools"),
-                        i18n_format("select_tools_relogin"),
-                        i18n_format("select_reset"),
-                        "语言设置/Language setting",
-                    ],
-                    default=i18n_format("select_keep_all"),
-                )
-            ]
-        )["run_info"]
-        if run_info == i18n_format("select_new_boot"):
+        run_info = noneprompt.ListPrompt(
+            i18n_format("select_setting"),
+            choices=[
+                noneprompt.Choice(i18n_format("select_keep_all"), data="select_keep_all"),
+                noneprompt.Choice(i18n_format("select_keep_login"), data="select_keep_login"),
+                noneprompt.Choice(i18n_format("select_new_boot"), data="select_new_boot"),
+                noneprompt.Choice(i18n_format("select_tools"), data="select_tools"),
+                noneprompt.Choice(i18n_format("select_tools_relogin"), data="select_tools_relogin"),
+                noneprompt.Choice(i18n_format("select_reset"), data="select_reset"),
+                noneprompt.Choice("语言设置/Language setting", data="语言设置/Language setting"),
+            ],
+        ).prompt(default=noneprompt.Choice(i18n_format("select_keep_all"), data="select_keep_all")).data
+
+        if run_info == "select_new_boot":
             logger.info(i18n_format("select_new_boot_msg"))
             temp = load()
             config = {}
@@ -185,7 +180,7 @@ def load_config():
                 if "proxy_channel" in temp:
                     config["proxy_channel"] = temp["proxy_channel"]
             use_login = False
-        elif run_info == i18n_format("select_keep_login"):
+        elif run_info == "select_keep_login":
             logger.info(i18n_format("select_keep_login_msg"))
             temp = load()
             config = {}
@@ -214,32 +209,29 @@ def load_config():
                 if "proxy_channel" in temp:
                     config["proxy_channel"] = temp["proxy_channel"]
             use_login = True
-        elif run_info == i18n_format("select_keep_all"):
+        elif run_info == "select_keep_all":
             logger.info(i18n_format("select_keep_all_msg"))
             config = load()
             use_login = True
-        elif run_info == i18n_format("select_tools"):
+        elif run_info == "select_tools":
             logger.info(i18n_format("select_tools"))
             go_utility = True
             use_login = True
             config = load()
-        elif run_info == i18n_format("select_tools_relogin"):
+        elif run_info == "select_tools_relogin":
             logger.info(i18n_format("select_tools_relogin"))
             go_utility = True
             use_login = False
             config = {}
-        elif run_info == i18n_format("select_reset"):
-            choice = prompt(
-                [
-                    inquirer.List(
-                        "again",
-                        message=i18n_format("select_reset_msg"),
-                        choices=[i18n_format("no"), i18n_format("yes")],
-                        default=i18n_format("no"),
-                    )
-                ]
-            )["again"]
-            if choice == i18n_format("yes"):
+        elif run_info == "select_reset":
+            choice = noneprompt.ListPrompt(
+                i18n_format("select_reset_msg"),
+                choices=[
+                    noneprompt.Choice(i18n_format("no"), data=False),
+                    noneprompt.Choice(i18n_format("yes"), data=True),
+                ],
+            ).prompt(default=noneprompt.Choice(i18n_format("no"), data=False)).data
+            if choice:
                 os.remove("language")
                 os.remove("data")
                 os.remove("agree-terms")

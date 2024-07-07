@@ -125,7 +125,7 @@ def utility(config):
                     "选择预约内容",
                     choices=[
                         noneprompt.Choice(
-                            f"{list[once_index][i]['act_title']} {'VIP' if list[once_index][i]['is_vip_ticket'] else ''} {time.strftime('%m-%d %H:%M', time.localtime(list[once_index][i]['reserve_begin_time']))}",
+                            f"{list[once_index][i]['act_title']} {'VIP场次(非VIP票请勿选择)' if list[once_index][i]['is_vip_ticket'] else ''} {time.strftime('%m-%d %H:%M', time.localtime(list[once_index][i]['reserve_begin_time']))}",
                             data=list[once_index][i],
                         )
                         for i in range(len(list[once_index]))
@@ -138,6 +138,8 @@ def utility(config):
             task.sort(key=lambda x: x["reserve_begin_time"])
             with open("task.json", "w", encoding="utf-8") as f:
                 json.dump(task, f)
+        for i in task:
+            logger.info(f"{i['act_title']} {time.strftime('%m-%d %H:%M', time.localtime(i['reserve_begin_time']))}")
         for i in task:
             while time.time() < i["reserve_begin_time"] - 5:
                 time.sleep(1)
@@ -375,70 +377,65 @@ def utility(config):
         + str(random.randint(0, 9999)),
         "Referer": "https://show.bilibili.com",
     }
-    select = prompt(
-        [
-            inquirer.List(
-                "select",
-                message=i18n_format("select_tool"),
-                choices=[
-                    i18n_format("tool_add_buyer"),
-                    i18n_format("tool_modify_ua"),
-                    i18n_format("tool_modify_gaia"),
-                    i18n_format("tool_hunter_mode"),
-                    i18n_format("tool_hunter_off"),
-                    i18n_format("tool_share_mode"),
-                    i18n_format("tool_pushplus"),
-                    i18n_format("tool_phone_prefill"),
-                    i18n_format("tool_proxy_setting"),
-                    i18n_format("tool_capacha_mode"),
-                    i18n_format("tool_webhook"),
-                    i18n_format("tool_set_offset"),
-                    i18n_format("tool_hide_module"),
-                    i18n_format("back"),
-                ],
-            )
-        ]
-    )
-    if select["select"] == i18n_format("tool_add_buyer"):
+    select = noneprompt.ListPrompt(
+        question=i18n_format("select_tool"),
+        choices=[
+            noneprompt.Choice(i18n_format("tool_add_buyer"), data=i18n_format("tool_add_buyer")),
+            noneprompt.Choice(i18n_format("tool_modify_ua"), data=i18n_format("tool_modify_ua")),
+            noneprompt.Choice(i18n_format("tool_modify_gaia"), data=i18n_format("tool_modify_gaia")),
+            noneprompt.Choice(i18n_format("tool_hunter_mode"), data=i18n_format("tool_hunter_mode")),
+            noneprompt.Choice(i18n_format("tool_hunter_off"), data=i18n_format("tool_hunter_off")),
+            noneprompt.Choice(i18n_format("tool_share_mode"), data=i18n_format("tool_share_mode")),
+            noneprompt.Choice(i18n_format("tool_pushplus"), data=i18n_format("tool_pushplus")),
+            noneprompt.Choice(i18n_format("tool_phone_prefill"), data=i18n_format("tool_phone_prefill")),
+            noneprompt.Choice(i18n_format("tool_proxy_setting"), data=i18n_format("tool_proxy_setting")),
+            noneprompt.Choice(i18n_format("tool_capacha_mode"), data=i18n_format("tool_capacha_mode")),
+            noneprompt.Choice(i18n_format("tool_webhook"), data=i18n_format("tool_webhook")),
+            noneprompt.Choice(i18n_format("tool_set_offset"), data=i18n_format("tool_set_offset")),
+            noneprompt.Choice(i18n_format("tool_hide_module"), data=i18n_format("tool_hide_module")),
+            noneprompt.Choice(i18n_format("back"), data=i18n_format("back")),
+        ],
+    ).prompt().data
+    if select == i18n_format("tool_add_buyer"):
         add_buyer(headers)
         return utility(config)
-    elif select["select"] == i18n_format("tool_modify_ua"):
+    elif select == i18n_format("tool_modify_ua"):
         modify_ua()
         return utility(config)
-    elif select["select"] == i18n_format("tool_modify_gaia"):
+    elif select == i18n_format("tool_modify_gaia"):
         modify_gaia_vtoken()
         return utility(config)
-    elif select["select"] == i18n_format("tool_hunter_mode"):
+    elif select == i18n_format("tool_hunter_mode"):
         hunter_mode()
         return utility(config)
-    elif select["select"] == i18n_format("tool_hunter_off"):
+    elif select == i18n_format("tool_hunter_off"):
         hunter_mode_off()
         return utility(config)
-    elif select["select"] == i18n_format("tool_share_mode"):
+    elif select == i18n_format("tool_share_mode"):
         share_mode(config)
         return utility(config)
-    elif select["select"] == i18n_format("tool_pushplus"):
+    elif select == i18n_format("tool_pushplus"):
         pushplus_config(config)
         return utility(config)
-    elif select["select"] == i18n_format("tool_phone_prefill"):
+    elif select == i18n_format("tool_phone_prefill"):
         save_phone(config)
         return utility(config)
-    elif select["select"] == i18n_format("tool_proxy_setting"):
+    elif select == i18n_format("tool_proxy_setting"):
         use_proxy(config)
         return utility(config)
-    elif select["select"] == i18n_format("tool_capacha_mode"):
+    elif select == i18n_format("tool_capacha_mode"):
         captcha_mode(config)
         return utility(config)
-    elif select["select"] == i18n_format("tool_webhook"):
+    elif select == i18n_format("tool_webhook"):
         webhook_config(config)
         return utility(config)
-    elif select["select"] == i18n_format("tool_set_offset"):
+    elif select == i18n_format("tool_set_offset"):
         set_offset(config)
         return utility(config)
-    elif select["select"] == i18n_format("back"):
+    elif select == i18n_format("back"):
         return
-    elif select["select"] == i18n_format("tool_hide_module"):
-        name = noneprompt.InputPrompt(i18n_format("input_hide_tool")).prompt()
+    elif select == i18n_format("tool_hide_module"):
+        name = noneprompt.InputPrompt(i18n_format("input_hide_tool"), validator=lambda x: x != "" and x.isidentifier()).prompt(default="")
         if name == "bw_2024":
             bw_2024(config)
         else:

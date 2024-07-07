@@ -7,6 +7,8 @@ import time
 
 import kdl
 
+import noneprompt
+
 import requests
 from loguru import logger
 
@@ -210,18 +212,9 @@ def main():
                     )
                 if len(common_project_id) == 0:
                     logger.info(i18n_format("empty"))
-                # config["project_id"] = prompt([
-                #     inquirer.Text("project_id", message=i18n_format("input_project_id"),
-                #                   validate=lambda _, x: x.isdigit())
-                while True:
-                    config["project_id"] = input(i18n_format("input_project_id"))
-                    try:
-                        config["project_id"] = int(config["project_id"])
-                        config["project_id"] = str(config["project_id"])
-                    except ValueError:
-                        logger.error(i18n_format("wrong_input_project_id"))
-                        continue
-                    break
+                config["project_id"] = noneprompt.InputPrompt(
+                    i18n_format("input_project_id"), validator=lambda x: x.isdigit()
+                ).prompt()
                 url = (
                     "https://show.bilibili.com/api/ticket/project/getV2?version=134&id="
                     + config["project_id"]
@@ -254,33 +247,29 @@ def main():
             config["id_bind"] = response["data"]["id_bind"]
             config["is_paper_ticket"] = response["data"]["has_paper_ticket"]
             screens = response["data"]["screen_list"]
-            screen_id = prompt(
-                [
-                    inquirer.List(
-                        "screen_id",
-                        message=i18n_format("select_screen"),
-                        choices=[
-                            f"{i}. {screens[i]['name']}" for i in range(len(screens))
-                        ],
-                    )
-                ]
-            )["screen_id"].split(".")[0]
+            # screen_id = prompt(
+            #     [
+            #         inquirer.List(
+            #             "screen_id",
+            #             message=i18n_format("select_screen"),
+            #             choices=[
+            #                 f"{i}. {screens[i]['name']}" for i in range(len(screens))
+            #             ],
+            #         )
+            #     ]
+            # )["screen_id"].split(".")[0]
+            screen_id = noneprompt.ListPrompt(
+                i18n_format("select_screen"),
+                choices=[noneprompt.Choice(f"{i}. {screens[i]['name']}", data=i) for i in range(len(screens))],
+            ).prompt().data
             logger.info(
                 i18n_format("show_screen").format(screens[int(screen_id)]["name"])
             )
             tickets = screens[int(screen_id)]["ticket_list"]  # type: ignore
-            sku_id = prompt(
-                [
-                    inquirer.List(
-                        "sku_id",
-                        message=i18n_format("select_sku"),
-                        choices=[
-                            f"{i}. {tickets[i]['desc']} {tickets[i]['price'] / 100}元"
-                            for i in range(len(tickets))
-                        ],
-                    )
-                ]
-            )["sku_id"].split(".")[0]
+            sku_id = noneprompt.ListPrompt(
+                i18n_format("select_sku"),
+                choices=[noneprompt.Choice(f"{i}. {tickets[i]['desc']} {tickets[i]['price'] / 100}元", data=i) for i in range(len(tickets))],
+            ).prompt().data
             logger.info(i18n_format("show_sku").format(tickets[int(sku_id)]["desc"]))
             config["screen_id"] = str(screens[int(screen_id)]["id"])
             config["sku_id"] = str(tickets[int(sku_id)]["id"])
@@ -375,48 +364,54 @@ def main():
                 logger.info(i18n_format("id_bind_single"))
                 multiselect = False
             if multiselect:
-                buyerids = prompt(
-                    [
-                        inquirer.Checkbox(
-                            "buyerids",
-                            message=i18n_format("select_buyer"),
-                            #    "*"*(len(buyer_infos[int(select)]["name"])-1)+ buyer_infos[int(select)]["name"][-1],
-                            #    buyer_infos[int(select)]["personal_id"][:4]+ "**********"+ buyer_infos[int(select)]["personal_id"][-4:],
-                            #    buyer_infos[int(select)]["tel"][:3]+ "****"+ buyer_infos[int(select)]["tel"][-4:],
-                            choices=[
-                                "{}. {} {} {}".format(
-                                    i,
-                                    buyer_infos[i]["name"][0]
-                                    + "*" * (len(buyer_infos[i]["name"]) - 2)
-                                    + buyer_infos[i]["name"][-1],
-                                    buyer_infos[i]["personal_id"][:4]
-                                    + "**********"
-                                    + buyer_infos[i]["personal_id"][-4:],
-                                    buyer_infos[i]["tel"][:3]
-                                    + "****"
-                                    + buyer_infos[i]["tel"][-4:],
-                                )
-                                for i in range(len(buyer_infos))
-                            ],
-                            validate=lambda _, x: len(x) > 0,
-                        )
-                    ]
-                )["buyerids"]
-                buyerids = [int(i.split(".")[0]) for i in buyerids]
+                # buyerids = prompt(
+                #     [
+                #         inquirer.Checkbox(
+                #             "buyerids",
+                #             message=i18n_format("select_buyer"),
+                #             #    "*"*(len(buyer_infos[int(select)]["name"])-1)+ buyer_infos[int(select)]["name"][-1],
+                #             #    buyer_infos[int(select)]["personal_id"][:4]+ "**********"+ buyer_infos[int(select)]["personal_id"][-4:],
+                #             #    buyer_infos[int(select)]["tel"][:3]+ "****"+ buyer_infos[int(select)]["tel"][-4:],
+                #             choices=[
+                #                 "{}. {} {} {}".format(
+                #                     i,
+                #                     buyer_infos[i]["name"][0]
+                #                     + "*" * (len(buyer_infos[i]["name"]) - 2)
+                #                     + buyer_infos[i]["name"][-1],
+                #                     buyer_infos[i]["personal_id"][:4]
+                #                     + "**********"
+                #                     + buyer_infos[i]["personal_id"][-4:],
+                #                     buyer_infos[i]["tel"][:3]
+                #                     + "****"
+                #                     + buyer_infos[i]["tel"][-4:],
+                #                 )
+                #                 for i in range(len(buyer_infos))
+                #             ],
+                #             validate=lambda _, x: len(x) > 0,
+                #         )
+                #     ]
+                # )["buyerids"]
+                # buyerids = [int(i.split(".")[0]) for i in buyerids]
+                
+                buyers = noneprompt.CheckboxPrompt(
+                    i18n_format("select_buyer"),
+                    choices=[noneprompt.Choice(f"{i['name'][0] + '*' * (len(i['name']) - 2) + i['name'][-1]} {i['personal_id'][:4] + '**********' + i['personal_id'][-4:]} {i['tel'][:3] + '****' + i['tel'][-4:]}", data=i) for i in buyer_infos],
+                    validator=lambda x: len(x) > 0,
+                ).prompt()
                 config["buyer_info"] = []
-                for select in buyerids:
-                    config["buyer_info"].append(buyer_infos[int(select)])
+                for select in buyers:
+                    config["buyer_info"].append(select.data)
                     logger.info(
                         i18n_format("selected_buyer").format(
-                            buyer_infos[int(select)]["name"][0]
-                            + "*" * (len(buyer_infos[int(select)]["name"]) - 2)
-                            + buyer_infos[int(select)]["name"][-1],
-                            buyer_infos[int(select)]["personal_id"][:4]
+                            select.data["name"][0]
+                            + "*" * (len(select.data["name"]) - 2)
+                            + select.data["name"][-1],
+                            select.data["personal_id"][:4]
                             + "**********"
-                            + buyer_infos[int(select)]["personal_id"][-4:],
-                            buyer_infos[int(select)]["tel"][:3]
+                            + select.data["personal_id"][-4:],
+                            select.data["tel"][:3]
                             + "****"
-                            + buyer_infos[int(select)]["tel"][-4:],
+                            + select.data["tel"][-4:],
                         )
                     )
                 if (
