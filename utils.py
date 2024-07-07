@@ -13,6 +13,7 @@ import time
 
 # Copyright (c) 2023-2024 ZianTT, FriendshipEnder
 
+
 def prompt(prompt):
     data = inquirer.prompt(prompt)
     if data is None:
@@ -59,6 +60,7 @@ def load() -> dict:
 
 def check_policy(uid=None, res=None):
     from globals import ver_int
+
     allow = True
     if os.path.exists("bypass"):
         with open("bypass", "r") as f:

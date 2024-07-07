@@ -28,6 +28,7 @@ import importlib
 import shutil
 import noneprompt
 
+
 def cleanup_meipass() -> None:
     from sentry_sdk import Hub
 
