@@ -2,12 +2,12 @@ import noneprompt
 from pathlib import Path
 import sys
 import json
-from typing import Any, cast
+from typing import Any, cast  # type: ignore[reportAny]
 from loguru import logger
 
 # Copyright (c) 2023-2024 ZianTT, FriendshipEnder
 i18n_lang = "NaN"
-i18n: dict[str, Any] = {}
+i18n: dict[str, str | list[str]] = {}
 
 LANGUAGE_FILE = Path.cwd() / "language"
 PROGRAM_BASEDIR = Path(sys._MEIPASS) if getattr(sys, "frozen", None) else Path.cwd()  # type: ignore[all]
@@ -18,26 +18,15 @@ def set_language(force_reload: bool):
     global i18n, i18n_lang
     if not force_reload and LANGUAGE_FILE.exists():  # 加载语言文件
         i18n_lang = LANGUAGE_FILE.read_text(encoding="utf-8")
+        logger.info(f"Lauguage loaded: {i18n_lang}")
         i18n = json.loads(
             (LANGUAGE_PATH / f"{i18n_lang}.json").read_text(encoding="utf-8")
-        )
-        logger.info(f"Lauguage loaded: {i18n['name']} ({i18n['id']})")
-        i18n = i18n["data"]
-
+        )["data"]
     else:  # 加载语言文件不存在时, 创建一个语言文件
-        # i18n_lang = inquirer.prompt(
-        #     [
-        #         inquirer.List(
-        #             name="lang_select",
-        #             message="Please select language",
-        #             choices=i18n_tuple,
-        #         )
-        #     ]
-        # )["lang_select"]
         language_list = [
             (cast(str, j["id"]), cast(str, j["name"]))
             for j in (
-                json.loads(i.read_text(encoding="utf-8"))
+                cast(dict[str, Any], json.loads(i.read_text(encoding="utf-8")))
                 for i in LANGUAGE_PATH.glob("*.json")
             )
         ]
@@ -61,12 +50,16 @@ def set_language(force_reload: bool):
 def i18n_format(key: str) -> str:
     global i18n
     try:
-        return cast(str, i18n[key])
+        return "\n".join(i18n[key]) if isinstance(i18n[key], list) else str(i18n[key])
     except KeyError:
         try:
-            temp_lang: dict[str, Any] = json.loads(
+            temp_lang: dict[str, str] = json.loads(
                 (LANGUAGE_PATH / "zh_cn.json").read_text(encoding="utf-8")
             )["data"]
-            return cast(str, temp_lang[key])
+            return (
+                "\n".join(temp_lang[key])
+                if isinstance(temp_lang[key], list)
+                else str(temp_lang[key])
+            )
         except KeyError:
             return key
