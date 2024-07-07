@@ -628,7 +628,7 @@ class BilibiliHyg:
                 return True
             else:
                 logger.error(i18n_format("fake_ticket"))
-        elif result["errno"] == 100051:
+        elif result["errno"] == 100051 or result["errno"] == 100051:
             self.token = self.get_token()
         elif result["errno"] == 100079 or result["errno"] == 100048:
             logger.info(result["msg"])
@@ -637,6 +637,7 @@ class BilibiliHyg:
             return True
         elif result["errno"] == 219:
             logger.info(i18n_format("ticket_sto_less"))
+            self.sold_out=True
         else:
             logger.error(i18n_format("unknown_error") + str(result))
         return False
