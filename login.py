@@ -7,9 +7,8 @@ import qrcode
 import requests
 from loguru import logger
 
-from utils import prompt
-
 import inquirer
+import noneprompt
 
 from i18n import *
 from globals import *
@@ -147,15 +146,9 @@ def verify_code_login(session, headers):
         logger.success(i18n_format("sms_code_send_ok"))
         send_token = send["data"]["captcha_key"]
     while True:
-        code = prompt(
-            [
-                inquirer.Text(
-                    "code",
-                    message=i18n_format("input_sms_code"),
-                    validate=lambda _, x: len(x) == 6,
-                )
-            ]
-        )["code"]
+        code = noneprompt.InputPrompt(
+            question=i18n_format("input_sms_code"), validator=lambda x: len(x) == 6
+        ).prompt()
         # https://passport.bilibili.com/x/passport-login/web/login/sms
         data = {"cid": "86", "tel": tel, "captcha_key": send_token, "code": code}
         login = session.post(
@@ -195,15 +188,9 @@ def verify_code_login_app(session, headers):
     # gt = captcha["data"]["geetest"]["gt"]
     # challenge = captcha["data"]["geetest"]["challenge"]
     # token = captcha["data"]["token"]
-    tel = prompt(
-        [
-            inquirer.Text(
-                "tel",
-                message=i18n_format("input_phone_num"),
-                validate=lambda _, x: len(x) == 11,
-            )
-        ]
-    )["tel"]
+    tel = noneprompt.InputPrompt(
+        question=i18n_format("input_phone_num"), validator=lambda x: len(x) == 11
+    ).prompt()
     # logger.info(i18n_format("input_auto_verify"))
     # cap_data = _verify(gt, challenge, token)
     # while cap_data == False:
@@ -247,15 +234,9 @@ def verify_code_login_app(session, headers):
         logger.success(i18n_format("sms_code_send_ok"))
         send_token = send["data"]["captcha_key"]
     while True:
-        code = prompt(
-            [
-                inquirer.Text(
-                    "code",
-                    message=i18n_format("input_sms_code"),
-                    validate=lambda _, x: len(x) == 6,
-                )
-            ]
-        )["code"]
+        code = noneprompt.InputPrompt(
+            question=i18n_format("input_sms_code"), validator=lambda x: len(x) == 6
+        ).prompt()
         # https://passport.bilibili.com/x/passport-login/login/sms
         data = {
             "cid": 86,
@@ -282,12 +263,10 @@ def password_login(session, headers):
     from Crypto.Cipher import PKCS1_v1_5
     from Crypto.PublicKey import RSA
 
-    username = prompt(
-        [inquirer.Text("username", message=i18n_format("input_user_name"))]
-    )["username"]
-    password = prompt(
-        [inquirer.Password("password", message=i18n_format("input_user_password"))]
-    )["password"]
+    username = noneprompt.InputPrompt(question=i18n_format("input_user_name")).prompt()
+    password = noneprompt.InputPrompt(
+        question=i18n_format("input_user_password"), is_password=True
+    ).prompt()
     captcha = session.get(
         "https://passport.bilibili.com/x/passport-login/captcha", headers=headers
     ).json()
@@ -397,15 +376,10 @@ def password_login(session, headers):
                 logger.success(i18n_format("sms_code_send_ok"))
                 send_token = send["data"]["captcha_key"]
             while True:
-                code = prompt(
-                    [
-                        inquirer.Text(
-                            "code",
-                            message=i18n_format("input_sms_code"),
-                            validate=lambda _, x: len(x) == 6,
-                        )
-                    ]
-                )["code"]
+                code = noneprompt.InputPrompt(
+                    question=i18n_format("input_sms_code"),
+                    validator=lambda x: len(x) == 6,
+                ).prompt()
                 data = {
                     "type": "loginTelCheck",
                     "tmp_code": tmp_token,
@@ -438,29 +412,22 @@ def password_login(session, headers):
 
 def sns_login(session, headers):
     # from globals import i18n_lang
-    method = prompt(
-        [
-            inquirer.List(
-                "method",
-                message=i18n_format("choose_sns_login"),
-                choices=[
-                    i18n_format("sns_micromessage"),
-                    i18n_format("sns_qq"),
-                    i18n_format("sns_microblog"),
-                ],
-                default=i18n_format("sns_micromessage"),
-            )
-        ]
-    )["method"]
-    if method == i18n_format("sns_micromessage"):
-        sns = "wechat"
-    elif method == i18n_format("sns_qq"):
-        sns = "qq"
-    elif method == i18n_format("sns_microblog"):
-        sns = "weibo"
-    else:
-        logger.error(i18n_format("login_not_supported"))
-        return sns_login(session, headers)
+    sns = (
+        noneprompt.ListPrompt(
+            question=i18n_format("choose_sns_login"),
+            choices=[
+                noneprompt.Choice(name=i18n_format(x), data=y)
+                for x, y in [
+                    ("sns_micromessage", "wechat"),
+                    ("sns_qq", "qq"),
+                    ("sns_microblog", "weibo"),
+                ]
+            ],
+            default_select=0,
+        )
+        .prompt()
+        .data
+    )
     # https://passport.bilibili.com/x/passport-login/web/sns/state/generate
     state = session.get(
         "https://passport.bilibili.com/x/passport-login/web/sns/state/generate",
@@ -481,9 +448,7 @@ def sns_login(session, headers):
     logger.info(url)
     logger.info(i18n_format("open_in_browser"))
     # https://passport.bilibili.com/x/passport-login/web/sns/login
-    redirect = prompt(
-        [inquirer.Text("redirect", message=i18n_format("input_redirect"))]
-    )["redirect"]
+    redirect = noneprompt.InputPrompt(question=i18n_format("input_redirect")).prompt()
     # get params from redirect
     try:
         redirect = redirect.split("?")[1]
@@ -532,24 +497,45 @@ def interactive_login(sentry_sdk=None):
     session.get("https://www.bilibili.com/", headers=headers)
 
     try:  # 登录方式 cookie 扫码 用户名密码 web短信 app短信 sns
-        method = prompt(
-            [
-                inquirer.List(
-                    "method",
-                    message=i18n_format("bi_login_method"),
+        # method = prompt(
+        #     [
+        #         inquirer.List(
+        #             "method",
+        #             message=i18n_format("bi_login_method"),
+        #             choices=[
+        #                 i18n_format("bi_login_cookie"),
+        #                 i18n_format("bi_login_qrcode"),
+        #                 i18n_format("bi_login_user_pass"),
+        #                 i18n_format("bi_login_web_sms"),
+        #                 i18n_format("bi_login_app_sms"),
+        #                 i18n_format("bi_login_sns"),
+        #             ],
+        #             default=i18n_format("bi_login_qrcode"),
+        #         )
+        #     ]
+        # )
+        try:
+            method = (
+                noneprompt.ListPrompt(
+                    question=i18n_format("bi_login_method"),
                     choices=[
-                        i18n_format("bi_login_cookie"),
-                        i18n_format("bi_login_qrcode"),
-                        i18n_format("bi_login_user_pass"),
-                        i18n_format("bi_login_web_sms"),
-                        i18n_format("bi_login_app_sms"),
-                        i18n_format("bi_login_sns"),
+                        noneprompt.Choice(name=i18n_format(x), data=x)
+                        for x in [
+                            "bi_login_cookie",
+                            "bi_login_qrcode",
+                            "bi_login_user_pass",
+                            "bi_login_web_sms",
+                            "bi_login_app_sms",
+                            "bi_login_sns",
+                        ]
                     ],
-                    default=i18n_format("bi_login_qrcode"),
                 )
-            ]
-        )  # 默认扫码
-        if method["method"] == i18n_format("bi_login_cookie"):
+                .prompt()
+                .data
+            )  # 默认扫码
+        except noneprompt.CancelledError as e:
+            raise KeyboardInterrupt from e
+        if method == "bi_login_cookie":
             cookie_str = input(i18n_format("bi_input_cookie"))
             # verify cookie
             try:
@@ -563,15 +549,15 @@ def interactive_login(sentry_sdk=None):
             except Exception:
                 logger.error(i18n_format("bi_illegal_cookie"))
                 return interactive_login()
-        elif method["method"] == i18n_format("bi_login_qrcode"):
+        elif method == "bi_login_qrcode":
             cookie_str = qr_login(session, headers)
-        elif method["method"] == i18n_format("bi_login_user_pass"):
+        elif method == "bi_login_user_pass":
             cookie_str = password_login(session, headers)
-        elif method["method"] == i18n_format("bi_login_web_sms"):
+        elif method == "bi_login_web_sms":
             cookie_str = verify_code_login(session, headers)
-        elif method["method"] == i18n_format("bi_login_sns"):
+        elif method == "bi_login_sns":
             cookie_str = sns_login(session, headers)
-        elif method["method"] == i18n_format("bi_login_app_sms"):
+        elif method == "bi_login_app_sms":
             cookie_str = verify_code_login_app(session, headers)
         else:
             logger.error(i18n_format("login_not_supported"))
