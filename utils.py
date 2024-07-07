@@ -3,7 +3,6 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 import machineid
 import json
-import inquirer
 from i18n import i18n_format
 from loguru import logger
 import os
@@ -12,13 +11,6 @@ import sys
 import time
 
 # Copyright (c) 2023-2024 ZianTT, FriendshipEnder
-
-
-def prompt(prompt):
-    data = inquirer.prompt(prompt)
-    if data is None:
-        raise KeyboardInterrupt
-    return data
 
 
 def save(data):

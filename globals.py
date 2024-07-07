@@ -16,7 +16,7 @@ from login import *
 
 from utility import utility
 
-from utils import prompt, save, load
+from utils import save, load
 
 import time
 from i18n import *
@@ -144,18 +144,36 @@ def load_config():
         shutil.rmtree("data")
     if os.path.exists("data"):
         use_login = True
-        run_info = noneprompt.ListPrompt(
-            i18n_format("select_setting"),
-            choices=[
-                noneprompt.Choice(i18n_format("select_keep_all"), data="select_keep_all"),
-                noneprompt.Choice(i18n_format("select_keep_login"), data="select_keep_login"),
-                noneprompt.Choice(i18n_format("select_new_boot"), data="select_new_boot"),
-                noneprompt.Choice(i18n_format("select_tools"), data="select_tools"),
-                noneprompt.Choice(i18n_format("select_tools_relogin"), data="select_tools_relogin"),
-                noneprompt.Choice(i18n_format("select_reset"), data="select_reset"),
-                noneprompt.Choice("语言设置/Language setting", data="语言设置/Language setting"),
-            ],
-        ).prompt(default=noneprompt.Choice(i18n_format("select_keep_all"), data="select_keep_all")).data
+        run_info = (
+            noneprompt.ListPrompt(
+                i18n_format("select_setting"),
+                choices=[
+                    noneprompt.Choice(
+                        i18n_format("select_keep_all"), data="select_keep_all"
+                    ),
+                    noneprompt.Choice(
+                        i18n_format("select_keep_login"), data="select_keep_login"
+                    ),
+                    noneprompt.Choice(
+                        i18n_format("select_new_boot"), data="select_new_boot"
+                    ),
+                    noneprompt.Choice(i18n_format("select_tools"), data="select_tools"),
+                    noneprompt.Choice(
+                        i18n_format("select_tools_relogin"), data="select_tools_relogin"
+                    ),
+                    noneprompt.Choice(i18n_format("select_reset"), data="select_reset"),
+                    noneprompt.Choice(
+                        "语言设置/Language setting", data="语言设置/Language setting"
+                    ),
+                ],
+            )
+            .prompt(
+                default=noneprompt.Choice(
+                    i18n_format("select_keep_all"), data="select_keep_all"
+                )
+            )
+            .data
+        )
 
         if run_info == "select_new_boot":
             logger.info(i18n_format("select_new_boot_msg"))
@@ -224,13 +242,17 @@ def load_config():
             use_login = False
             config = {}
         elif run_info == "select_reset":
-            choice = noneprompt.ListPrompt(
-                i18n_format("select_reset_msg"),
-                choices=[
-                    noneprompt.Choice(i18n_format("no"), data=False),
-                    noneprompt.Choice(i18n_format("yes"), data=True),
-                ],
-            ).prompt(default=noneprompt.Choice(i18n_format("no"), data=False)).data
+            choice = (
+                noneprompt.ListPrompt(
+                    i18n_format("select_reset_msg"),
+                    choices=[
+                        noneprompt.Choice(i18n_format("no"), data=False),
+                        noneprompt.Choice(i18n_format("yes"), data=True),
+                    ],
+                )
+                .prompt(default=noneprompt.Choice(i18n_format("no"), data=False))
+                .data
+            )
             if choice:
                 os.remove("language")
                 os.remove("data")

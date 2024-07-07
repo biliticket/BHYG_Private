@@ -15,7 +15,7 @@ from loguru import logger
 from api import BilibiliHyg
 from globals import *
 
-from utils import prompt, save, load, check_policy
+from utils import save, load, check_policy
 
 import noneprompt
 
@@ -434,29 +434,6 @@ def main():
             #                        elif user_female and not user_male:
             #                            logger.error("我朝，有女同啊！")
             else:
-                # index = prompt(
-                #     [
-                #         inquirer.List(
-                #             "index",
-                #             message=i18n_format("select_buyer"),
-                #             choices=[
-                #                 "{}. {} {} {}".format(
-                #                     i,
-                #                     buyer_infos[i]["name"][0]
-                #                     + "*" * (len(buyer_infos[i]["name"]) - 2)
-                #                     + buyer_infos[i]["name"][-1],
-                #                     buyer_infos[i]["personal_id"][:4]
-                #                     + "**********"
-                #                     + buyer_infos[i]["personal_id"][-4:],
-                #                     buyer_infos[i]["tel"][:3]
-                #                     + "****"
-                #                     + buyer_infos[i]["tel"][-4:],
-                #                 )
-                #                 for i in range(len(buyer_infos))
-                #             ],
-                #         )
-                #     ]
-                # )["index"]
                 index = noneprompt.CheckboxPrompt(
                     question=i18n_format("select_buyer"),
                     choices=[
