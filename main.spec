@@ -19,6 +19,10 @@ elif platform.system() == "Darwin":
 else:
     name = "BHYG"
 
+import os
+env = os.environ.get("debug", "distribution")
+name = f"{env}-" + name
+
 a = Analysis(
     ["boot.py"],
     pathex=[],

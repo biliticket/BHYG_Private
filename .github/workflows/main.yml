@@ -33,6 +33,8 @@ jobs:
           - os: macos-latest
             build: BHYG-macOS-Apple_Silicon
     runs-on: ${{ matrix.os }}
+    env:
+      debug: ${{ matrix.debug }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -59,10 +61,10 @@ jobs:
       # - name: Upload Artifacts
       #   uses: actions/upload-artifact@v4
       #   with:
-      #     path: dist/${{ matrix.build }}
+      #     path: dist/${{ matrix.debug }}-${{ matrix.build }}
 
       - name: Upload Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: dist/${{ matrix.build }}
+          files: dist/${{ matrix.debug }}-${{ matrix.build }}
