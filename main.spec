@@ -2,7 +2,7 @@
 from PyInstaller.utils.hooks import copy_metadata
 import platform
 
-datas.append(("langs", "langs"))
+datas = [("langs", "langs")]
 
 if platform.system() == "Windows":
     name = "BHYG-Windows"
