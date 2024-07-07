@@ -14,14 +14,24 @@ PROGRAM_BASEDIR = Path(sys._MEIPASS) if getattr(sys, "frozen", None) else Path.c
 LANGUAGE_PATH = PROGRAM_BASEDIR / "langs"
 
 
+class LamguageLoadError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
 def set_language(force_reload: bool):
     global i18n, i18n_lang
     if not force_reload and LANGUAGE_FILE.exists():  # 加载语言文件
         i18n_lang = LANGUAGE_FILE.read_text(encoding="utf-8")
-        logger.info(f"Lauguage loaded: {i18n_lang}")
-        i18n = json.loads(
-            (LANGUAGE_PATH / f"{i18n_lang}.json").read_text(encoding="utf-8")
-        )["data"]
+        logger.info(f"Try loading lauguage: {i18n_lang}")
+        try:
+            i18n = json.loads(
+                (LANGUAGE_PATH / f"{i18n_lang}.json").read_text(encoding="utf-8")
+            )["data"]
+        except FileNotFoundError as e:
+            raise LamguageLoadError(
+                "Language loading failed, please restart the program."
+            ) from e
     else:  # 加载语言文件不存在时, 创建一个语言文件
         language_list = [
             (cast(str, j["id"]), cast(str, j["name"]))
