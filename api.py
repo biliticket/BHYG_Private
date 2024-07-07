@@ -584,6 +584,7 @@ class BilibiliHyg:
             if "orderId" in result["data"]:
                 orderid = result["data"]["orderId"]
             if self.fake_ticket(pay_token, order_id=orderid):
+                self.sdk.capture_message("Get order!")
                 # self.logout()
                 if "pushplus" in self.config:
                     # https://www.pushplus.plus/send/
