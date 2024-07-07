@@ -59,7 +59,7 @@ def run(hyg):
                 elif status == 8:
                     logger.warning(i18n_format("pro_tem_sold_out"))
                 start_time = time.time()
-                while time.time() - start_time < 150:
+                while time.time() - start_time < 150 or hyg.sold_out:
                     if hyg.try_create_order():
                         if "hunter" not in hyg.config:
                             hyg.sdk.capture_message("Pay success!")
