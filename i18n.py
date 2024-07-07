@@ -29,6 +29,7 @@ def set_language(force_reload: bool):
                 (LANGUAGE_PATH / f"{i18n_lang}.json").read_text(encoding="utf-8")
             )["data"]
         except FileNotFoundError as e:
+            LANGUAGE_FILE.unlink(missing_ok=True)
             raise LamguageLoadError(
                 "Language loading failed, please restart the program."
             ) from e
