@@ -3,6 +3,8 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 import machineid
 import json
+
+import noneprompt
 from i18n import i18n_format
 from loguru import logger
 import os
@@ -94,7 +96,7 @@ def check_policy(uid=None, res=None):
                 with open("key", "r") as f:
                     key = f.read()
             else:
-                key = input(i18n_format("input_key"))
+                key = noneprompt.InputPrompt(question=i18n_format("input_key")).prompt()
                 with open("key", "w") as f:
                     f.write(key)
             import jwt

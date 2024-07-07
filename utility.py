@@ -227,11 +227,13 @@ def utility(config):
             return add_buyer(headers)
 
     def modify_ua():
-        ua = input(i18n_format("modify_ua"))
+        ua = noneprompt.InputPrompt(question=i18n_format("modify_ua")).prompt()
         config["ua"] = ua
 
     def modify_gaia_vtoken():
-        gaia_vtoken = input(i18n_format("modify_gaia_vtoken"))
+        gaia_vtoken = noneprompt.InputPrompt(
+            question=i18n_format("modify_gaia_vtoken")
+        ).prompt()
         config["gaia_vtoken"] = gaia_vtoken
 
     def hunter_mode():
@@ -258,7 +260,7 @@ def utility(config):
         return
 
     def pushplus_config(config):
-        token = input(i18n_format("pushplus_token"))
+        token = noneprompt.InputPrompt(question=i18n_format("pushplus_token")).prompt()
         if token == "":
             if "pushplus" in config:
                 config.pop("pushplus")
@@ -270,7 +272,7 @@ def utility(config):
         save(config)
 
     def webhook_config(config):
-        webhook = input(i18n_format("webhook"))
+        webhook = noneprompt.InputPrompt(question=i18n_format("webhook")).prompt()
         if webhook == "":
             if "webhook" in config:
                 config.pop("webhook")
@@ -282,13 +284,16 @@ def utility(config):
         save(config)
 
     def save_phone(config):
-        phone = input(i18n_format("input_your_phone"))
+        phone = noneprompt.InputPrompt(
+            question=i18n_format("input_your_phone"),
+            validator=lambda x: x.isdigit() and len(x) == 11,
+        ).prompt()
         config["phone"] = phone
         logger.info(i18n_format("save_your_phone"))
         save(config)
 
     def set_offset(config):
-        offset = input(i18n_format("input_offset"))
+        offset = noneprompt.InputPrompt(question=i18n_format("input_offset")).prompt()
         if offset == "":
             if "time_offset" in config:
                 config.pop("time_offset")
@@ -310,7 +315,11 @@ def utility(config):
         if confirm_proxy:
             while True:
                 try:
-                    config["proxy_auth"] = input(i18n_format("input_proxy")).split(" ")
+                    config["proxy_auth"] = (
+                        noneprompt.InputPrompt(question=i18n_format("input_proxy"))
+                        .prompt()
+                        .split(" ")
+                    )
                     assert len(config["proxy_auth"]) == 3
                     break
                 except:

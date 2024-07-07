@@ -1,6 +1,7 @@
 # Copyright (c) 2023-2024 ZianTT, FriendshipEnder
 import time
 import importlib
+import noneprompt
 import requests
 
 
@@ -62,7 +63,9 @@ def run(gt, challenge, token, mode="local_gt", key=None):
             pyperclip.copy(gt + " " + challenge)
         except pyperclip.PyperclipException:
             logger.error(i18n_format("manual_copy"))
-        validate = input(i18n_format("input_captcha"))
+        validate = noneprompt.InputPrompt(
+            question=i18n_format("input_captcha")
+        ).prompt()
         data = {
             "success": True,
             "challenge": challenge,

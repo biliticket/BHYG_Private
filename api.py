@@ -99,10 +99,10 @@ class BilibiliHyg:
                 else:
                     self.risk = True
                     logger.error(i18n_format("net_method"))
-                    input(i18n_format("res_3_returns"))
-                    input(i18n_format("res_2_returns"))
-                    input(i18n_format("res_1_return"))
-                    return -1, 0
+                    if noneprompt.ConfirmPrompt(
+                        question=i18n_format("res_return")
+                    ).prompt():
+                        return -1, 0
             screens = response.json()["data"]["screen_list"]
             # 找到 字段id为screen_id的screen
             screen = {}
@@ -212,7 +212,10 @@ class BilibiliHyg:
         if "phone" in self.config:
             phone = self.config["phone"]
         else:
-            phone = input(i18n_format("input_phone_num") + ": ")
+            phone = noneprompt.InputPrompt(
+                question=i18n_format("input_phone_num"),
+                validator=lambda x: x.isdigit() and len(x) == 11,
+            ).prompt()
         self.captcha_data = {
             "code": phone,
         }

@@ -106,7 +106,10 @@ def verify_code_login(session, headers):
     challenge = captcha["data"]["geetest"]["challenge"]
     token = captcha["data"]["token"]
     while True:
-        tel = input(i18n_format("input_phone_num"))
+        tel = noneprompt.InputPrompt(
+            question=i18n_format("input_phone_num"),
+            validator=lambda x: x.isdigit() and len(x) == 11,
+        ).prompt()
         if not tel.isdigit() and len(tel) != 11:
             logger.error(i18n_format("wrong_input"))
         else:
@@ -544,7 +547,9 @@ def interactive_login(sentry_sdk=None):
         except noneprompt.CancelledError as e:
             raise KeyboardInterrupt("Cancelled by user.") from e
         if method == "bi_login_cookie":
-            cookie_str = input(i18n_format("bi_input_cookie"))
+            cookie_str = noneprompt.InputPrompt(
+                question=i18n_format("bi_input_cookie"), is_password=True
+            ).prompt()
             # verify cookie
             try:
                 session.get(

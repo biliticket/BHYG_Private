@@ -28,15 +28,16 @@ version = "v{}.{}.{}".format(
 
 
 def agree_terms():
-    while True:
-        agree_prompt = input(i18n_format("eula"))
-        if (
-            all(keyword in agree_prompt for keyword in ["同意", "死妈", "黄牛"])
-            and "不" not in agree_prompt
-        ):
-            break
-        else:
-            logger.error(i18n_format("wrong_input"))
+    try:
+        _ = noneprompt.InputPrompt(
+            question=i18n_format("eula"),
+            validator=lambda x: (
+                all(keyword in x for keyword in ["同意", "死妈", "黄牛"])
+                and "不" not in x
+            ),
+        ).prompt()
+    except noneprompt.CancelledError as e:
+        raise KeyboardInterrupt("Cancelled by user.") from e
     with open("agree-terms", "w") as f:
         import machineid
 

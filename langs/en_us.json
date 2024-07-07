@@ -194,9 +194,7 @@
       "This kind of risk control must suspend in time, otherwise it may cause more problems."
     ],
     "net_method": "You can also try to change the network environment (IP), such as restarting modem.",
-    "res_3_returns": "Please confirm the problem and hint return 3 times to continue",
-    "res_2_returns": "2 left",
-    "res_1_return": "1 left",
+    "res_return": "Please confirm solving the problem and check the confirmation box to continue",
     "no_found_screen": "No screen found",
     "no_found_sku": "No SKU found",
     "may_wind_control": "May be risk controlled",
