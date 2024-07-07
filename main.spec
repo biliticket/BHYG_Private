@@ -21,7 +21,8 @@ else:
 
 import os
 env = os.environ.get("debug", "distribution")
-name = f"{env}-" + name
+version = os.environ.get("version", "unknown")
+name = f"{env}-{version}" + name
 
 a = Analysis(
     ["boot.py"],
