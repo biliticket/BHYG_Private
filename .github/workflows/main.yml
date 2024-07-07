@@ -22,6 +22,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-13, macos-latest]
+        debug: [true, false]
         include:
           - os: windows-latest
             build: BHYG-Windows.exe
@@ -45,9 +46,11 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Install Cython
+        if: matrix.debug == 'false'
         run: pip install Cython
 
       - name: Run Cython
+        if: matrix.debug == 'false'
         run: python setup_cython.py build_ext --inplace
 
       - name: Build Binary
