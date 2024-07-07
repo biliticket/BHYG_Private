@@ -443,4 +443,4 @@ def utility(config):
             bw_2024(config)
         else:
             logger.error(i18n_format("tool_not_supported"))
-        return utility()
+        return utility(config)
