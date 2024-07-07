@@ -420,7 +420,6 @@ class BilibiliHyg:
             return self.create_order()
         if response.status_code == 412:
             logger.error(i18n_format("wind_control"))
-            logger.info(response.text)
             if self.config["proxy"]:
                 if self.ip == self.client.tps_current_ip(sign_type="hmacsha1"):
                     logger.info(
