@@ -45,7 +45,7 @@ def run(hyg):
             if hyg.risk:
                 status = -1
             status, clickable = hyg.get_ticket_status()
-            if status == 2 or clickable:
+            if status == 2 or clickable or status == 8:
                 if status == 1:
                     logger.warning(i18n_format("not_begin"))
                 elif status == 3:
@@ -54,7 +54,10 @@ def run(hyg):
                     logger.warning(i18n_format("cannot_buy"))
                 elif status == 102:
                     logger.warning(i18n_format("has_end"))
-                while True:
+                elif status == 8:
+                    logger.warning(i18n_format("pro_tem_sold_out"))
+                start_time = time.time()
+                while time.time() - start_time < 60:
                     if hyg.try_create_order():
                         if "hunter" not in hyg.config:
                             hyg.sdk.capture_message("Pay success!")
@@ -81,8 +84,7 @@ def run(hyg):
                 logger.error(i18n_format("free_not_supported"))
                 sentry_sdk.capture_message("Exit by in-app exit")
                 return
-            elif status == 8:
-                logger.warning(i18n_format("pro_tem_sold_out"))
+                
 
             elif status == -1:
                 continue
