@@ -17,7 +17,7 @@ from globals import *
 
 from utils import prompt, save, load, check_policy
 
-import inquirer
+import noneprompt
 
 from i18n import *
 
@@ -86,7 +86,6 @@ def run(hyg):
                 logger.error(i18n_format("free_not_supported"))
                 sentry_sdk.capture_message("Exit by in-app exit")
                 return
-                
 
             elif status == -1:
                 continue
@@ -127,24 +126,24 @@ def main():
             headers["User-Agent"] = config["user-agent"]
         session = requests.Session()
         if "mode" not in config:
-            mode_str = prompt(
-                [
-                    inquirer.List(
-                        "mode",
-                        message=i18n_format("choose_mode"),
+            try:
+                mode_str = (
+                    noneprompt.ListPrompt(
+                        question=i18n_format("choose_mode"),
                         choices=[
-                            i18n_format("mode_time"),
-                            i18n_format("mode_direct"),
-                            i18n_format("mode_detect"),
+                            noneprompt.Choice(name=i18n_format(x), data=x)
+                            for x in ["mode_time", "mode_direct", "mode_detect"]
                         ],
-                        default=i18n_format("mode_time"),
                     )
-                ]
-            )["mode"]
-            if mode_str == i18n_format("mode_direct"):
+                    .prompt()
+                    .data
+                )
+            except noneprompt.CancelledError as e:
+                raise KeyboardInterrupt("Cancelled by user") from e
+            if mode_str == "mode_direct":
                 config["mode"] = "direct"
                 logger.info(i18n_format("mode_direct_on"))
-            elif mode_str == i18n_format("mode_detect"):
+            elif mode_str == "mode_detect":
                 config["mode"] = "detect"
                 logger.info(i18n_format("mode_detect_on"))
             else:
@@ -152,7 +151,9 @@ def main():
                 logger.info(i18n_format("mode_time_on"))
         if "status_delay" not in config and config["mode"] == "detect":
             while True:
-                config["status_delay"] = input(i18n_format("input_status_delay"))
+                config["status_delay"] = noneprompt.InputPrompt(
+                    question=i18n_format("input_status_delay")
+                ).prompt()
                 if config["status_delay"] == "":
                     config["status_delay"] = 0.2
                 try:
@@ -247,29 +248,35 @@ def main():
             config["id_bind"] = response["data"]["id_bind"]
             config["is_paper_ticket"] = response["data"]["has_paper_ticket"]
             screens = response["data"]["screen_list"]
-            # screen_id = prompt(
-            #     [
-            #         inquirer.List(
-            #             "screen_id",
-            #             message=i18n_format("select_screen"),
-            #             choices=[
-            #                 f"{i}. {screens[i]['name']}" for i in range(len(screens))
-            #             ],
-            #         )
-            #     ]
-            # )["screen_id"].split(".")[0]
-            screen_id = noneprompt.ListPrompt(
-                i18n_format("select_screen"),
-                choices=[noneprompt.Choice(f"{i}. {screens[i]['name']}", data=i) for i in range(len(screens))],
-            ).prompt().data
+            screen_id = (
+                noneprompt.ListPrompt(
+                    i18n_format("select_screen"),
+                    choices=[
+                        noneprompt.Choice(f"{i}. {screens[i]['name']}", data=i)
+                        for i in range(len(screens))
+                    ],
+                )
+                .prompt()
+                .data
+            )
             logger.info(
                 i18n_format("show_screen").format(screens[int(screen_id)]["name"])
             )
             tickets = screens[int(screen_id)]["ticket_list"]  # type: ignore
-            sku_id = noneprompt.ListPrompt(
-                i18n_format("select_sku"),
-                choices=[noneprompt.Choice(f"{i}. {tickets[i]['desc']} {tickets[i]['price'] / 100}元", data=i) for i in range(len(tickets))],
-            ).prompt().data
+            sku_id = (
+                noneprompt.ListPrompt(
+                    i18n_format("select_sku"),
+                    choices=[
+                        noneprompt.Choice(
+                            f"{i}. {tickets[i]['desc']} {tickets[i]['price'] / 100}元",
+                            data=i,
+                        )
+                        for i in range(len(tickets))
+                    ],
+                )
+                .prompt()
+                .data
+            )
             logger.info(i18n_format("show_sku").format(tickets[int(sku_id)]["desc"]))
             config["screen_id"] = str(screens[int(screen_id)]["id"])
             config["sku_id"] = str(tickets[int(sku_id)]["id"])
@@ -306,20 +313,22 @@ def main():
                 if len(addr_list) == 0:
                     logger.error(i18n_format("add_address"))
                 else:
-                    addr = prompt(
-                        [
-                            inquirer.List(
-                                "addr",
-                                message=i18n_format("please_select_address"),
+                    addr = addr_list[
+                        (
+                            noneprompt.ListPrompt(
+                                question=i18n_format("please_select_address"),
                                 choices=[
-                                    f"{i}. {addr_list[i]['prov'] + addr_list[i]['city'] + addr_list[i]['area'] + \
-                        addr_list[i]['addr']} {addr_list[i]['name']} {addr_list[i]['phone']}"
+                                    noneprompt.Choice(
+                                        name=f"{i}. {addr_list[i]['prov'] + addr_list[i]['city'] + addr_list[i]['area'] + addr_list[i]['addr']} {addr_list[i]['name']} {addr_list[i]['phone']}",
+                                        data=i,
+                                    )
                                     for i in range(len(addr_list))
                                 ],
                             )
-                        ]
-                    )["addr"].split(".")[0]
-                    addr = addr_list[int(addr)]
+                            .prompt()
+                            .data
+                        )
+                    ]
                     logger.info(
                         i18n_format("already_select_address").format(
                             addr["prov"] + addr["city"] + addr["area"] + addr["addr"],
@@ -364,38 +373,15 @@ def main():
                 logger.info(i18n_format("id_bind_single"))
                 multiselect = False
             if multiselect:
-                # buyerids = prompt(
-                #     [
-                #         inquirer.Checkbox(
-                #             "buyerids",
-                #             message=i18n_format("select_buyer"),
-                #             #    "*"*(len(buyer_infos[int(select)]["name"])-1)+ buyer_infos[int(select)]["name"][-1],
-                #             #    buyer_infos[int(select)]["personal_id"][:4]+ "**********"+ buyer_infos[int(select)]["personal_id"][-4:],
-                #             #    buyer_infos[int(select)]["tel"][:3]+ "****"+ buyer_infos[int(select)]["tel"][-4:],
-                #             choices=[
-                #                 "{}. {} {} {}".format(
-                #                     i,
-                #                     buyer_infos[i]["name"][0]
-                #                     + "*" * (len(buyer_infos[i]["name"]) - 2)
-                #                     + buyer_infos[i]["name"][-1],
-                #                     buyer_infos[i]["personal_id"][:4]
-                #                     + "**********"
-                #                     + buyer_infos[i]["personal_id"][-4:],
-                #                     buyer_infos[i]["tel"][:3]
-                #                     + "****"
-                #                     + buyer_infos[i]["tel"][-4:],
-                #                 )
-                #                 for i in range(len(buyer_infos))
-                #             ],
-                #             validate=lambda _, x: len(x) > 0,
-                #         )
-                #     ]
-                # )["buyerids"]
-                # buyerids = [int(i.split(".")[0]) for i in buyerids]
-                
                 buyers = noneprompt.CheckboxPrompt(
                     i18n_format("select_buyer"),
-                    choices=[noneprompt.Choice(f"{i['name'][0] + '*' * (len(i['name']) - 2) + i['name'][-1]} {i['personal_id'][:4] + '**********' + i['personal_id'][-4:]} {i['tel'][:3] + '****' + i['tel'][-4:]}", data=i) for i in buyer_infos],
+                    choices=[
+                        noneprompt.Choice(
+                            f"{i['name'][0] + '*' * (len(i['name']) - 2) + i['name'][-1]} {i['personal_id'][:4] + '**********' + i['personal_id'][-4:]} {i['tel'][:3] + '****' + i['tel'][-4:]}",
+                            data=i,
+                        )
+                        for i in buyer_infos
+                    ],
                     validator=lambda x: len(x) > 0,
                 ).prompt()
                 config["buyer_info"] = []
@@ -409,9 +395,7 @@ def main():
                             select.data["personal_id"][:4]
                             + "**********"
                             + select.data["personal_id"][-4:],
-                            select.data["tel"][:3]
-                            + "****"
-                            + select.data["tel"][-4:],
+                            select.data["tel"][:3] + "****" + select.data["tel"][-4:],
                         )
                     )
                 if (
@@ -450,30 +434,50 @@ def main():
             #                        elif user_female and not user_male:
             #                            logger.error("我朝，有女同啊！")
             else:
-                index = prompt(
-                    [
-                        inquirer.List(
-                            "index",
-                            message=i18n_format("select_buyer"),
-                            choices=[
-                                "{}. {} {} {}".format(
-                                    i,
-                                    buyer_infos[i]["name"][0]
-                                    + "*" * (len(buyer_infos[i]["name"]) - 2)
-                                    + buyer_infos[i]["name"][-1],
-                                    buyer_infos[i]["personal_id"][:4]
-                                    + "**********"
-                                    + buyer_infos[i]["personal_id"][-4:],
-                                    buyer_infos[i]["tel"][:3]
-                                    + "****"
-                                    + buyer_infos[i]["tel"][-4:],
-                                )
-                                for i in range(len(buyer_infos))
-                            ],
+                # index = prompt(
+                #     [
+                #         inquirer.List(
+                #             "index",
+                #             message=i18n_format("select_buyer"),
+                #             choices=[
+                #                 "{}. {} {} {}".format(
+                #                     i,
+                #                     buyer_infos[i]["name"][0]
+                #                     + "*" * (len(buyer_infos[i]["name"]) - 2)
+                #                     + buyer_infos[i]["name"][-1],
+                #                     buyer_infos[i]["personal_id"][:4]
+                #                     + "**********"
+                #                     + buyer_infos[i]["personal_id"][-4:],
+                #                     buyer_infos[i]["tel"][:3]
+                #                     + "****"
+                #                     + buyer_infos[i]["tel"][-4:],
+                #                 )
+                #                 for i in range(len(buyer_infos))
+                #             ],
+                #         )
+                #     ]
+                # )["index"]
+                index = noneprompt.CheckboxPrompt(
+                    question=i18n_format("select_buyer"),
+                    choices=[
+                        noneprompt.Choice(
+                            name="{}. {} {} {}".format(
+                                i,
+                                buyer_infos[i]["name"][0]
+                                + "*" * (len(buyer_infos[i]["name"]) - 2)
+                                + buyer_infos[i]["name"][-1],
+                                buyer_infos[i]["personal_id"][:4]
+                                + "**********"
+                                + buyer_infos[i]["personal_id"][-4:],
+                                buyer_infos[i]["tel"][:3]
+                                + "****"
+                                + buyer_infos[i]["tel"][-4:],
+                            ),
+                            data=i,
                         )
-                    ]
-                )["index"]
-                config["buyer_info"].append(buyer_infos[int(index.split(".")[0])])
+                    ],
+                ).prompt()
+                config["buyer_info"].append(buyer_infos[i.data] for i in index)
                 logger.info(
                     i18n_format("selected_buyer").format(
                         buyer_infos[int(index.split(".")[0])]["name"][0]
@@ -511,16 +515,16 @@ def main():
             config["buyer_info"] = json.dumps(config["buyer_info"])
         if config["id_bind"] == 0 and ("buyer" not in config or "tel" not in config):
             logger.info(i18n_format("add_contact_info"))
-            config["buyer"] = input(i18n_format("add_contact_name"))
-            config["tel"] = prompt(
-                [
-                    inquirer.Text(
-                        "tel",
-                        message=i18n_format("add_contact_tel"),
-                        validate=lambda _, x: len(x) == 11,
-                    )
-                ]
-            )["tel"]
+            try:
+                config["buyer"] = noneprompt.InputPrompt(
+                    question=i18n_format("add_contact_name")
+                ).prompt()
+                config["tel"] = noneprompt.InputPrompt(
+                    question=i18n_format("add_contact_tel"),
+                    validator=lambda x: len(x) == 11,
+                ).prompt()
+            except noneprompt.CancelledError as e:
+                raise KeyboardInterrupt("Cancelled by user") from e
             if "phone" not in config or config["phone"] == "":  # 如果未预约填写手机号
                 config["phone"] = config[
                     "tel"
@@ -537,16 +541,11 @@ def main():
                     )  # 这样就更完美了
                 )
             if "count" not in config:
-                config["count"] = prompt(
-                    [
-                        inquirer.Text(
-                            "count",
-                            message=i18n_format("add_buy_tickets"),
-                            default="1",
-                            validate=lambda _, x: x.isdigit() and int(x) > 0,
-                        )
-                    ]
-                )["count"]
+                config["count"] = noneprompt.InputPrompt(
+                    question=i18n_format("add_buy_tickets"),
+                    default_text="1",
+                    validator=lambda x: x.isdigit() and int(x) > 0,
+                ).prompt()
         if config["is_paper_ticket"]:
             if config["express_fee"] == 0:
                 config["all_price"] = int(config["pay_money"]) * int(config["count"])
