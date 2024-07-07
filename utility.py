@@ -1,6 +1,4 @@
 # Copyright (c) 2023-2024 ZianTT, FriendshipEnder
-import inquirer
-import loguru
 import requests
 
 import noneprompt
@@ -139,7 +137,9 @@ def utility(config):
             with open("task.json", "w", encoding="utf-8") as f:
                 json.dump(task, f)
         for i in task:
-            logger.info(f"{i['screen_date']} {i['act_title']} {time.strftime('%m-%d %H:%M', time.localtime(i['reserve_begin_time']))}")
+            logger.info(
+                f"{i['screen_date']} {i['act_title']} {time.strftime('%m-%d %H:%M', time.localtime(i['reserve_begin_time']))}"
+            )
         for i in task:
             while time.time() < i["reserve_begin_time"] - 5:
                 time.sleep(1)
@@ -179,34 +179,33 @@ def utility(config):
         return utility(config)
 
     def add_buyer(headers):
-        name = input(i18n_format("buyer_name"))
-        id_type = prompt(
-            [
-                inquirer.List(
-                    "id_type",
-                    message=i18n_format("id_type"),
+        try:
+            name = noneprompt.InputPrompt(question=i18n_format("buyer_name")).prompt()
+            id_type = (
+                noneprompt.ListPrompt(
+                    question=i18n_format("id_type"),
                     choices=[
-                        i18n_format("id_idcard"),
-                        i18n_format("id_passport"),
-                        i18n_format("id_Hong_Kong"),
-                        i18n_format("id_Taiwan"),
+                        noneprompt.Choice(name=i18n_format(x), data=x)
+                        for x in [
+                            "id_idcard",
+                            "id_passport",
+                            "id_Hong_Kong",
+                            "id_Taiwan",
+                        ]
                     ],
-                    default=i18n_format("id_idcard"),
-                ),
-            ]
-        )
-        # id_type = noneprompt.ListPrompt(
-        #     question=i18n_format("id_type"),
-        #     choices=[
-        #         noneprompt.Choice(i18n_format("id_idcard"), data="1"),
-        #         noneprompt.Choice(i18n_format("id_passport"), data="2"),
-        #         noneprompt.Choice(i18n_format("id_Hong_Kong"), data="3"),
-        #         noneprompt.Choice(i18n_format("id_Taiwan"), data="4"),
-        #     ],
-        #     default_select=1,
-        # )
-        personal_id = input(i18n_format("in_id_serial_number"))
-        tel = input(i18n_format("in_phone_number"))
+                    default_select=1,
+                )
+                .prompt()
+                .data
+            )
+            personal_id = noneprompt.InputPrompt(
+                question=i18n_format("in_id_serial_number")
+            ).prompt()
+            tel = noneprompt.InputPrompt(
+                question=i18n_format("in_phone_number")
+            ).prompt()
+        except noneprompt.CancelledError as e:
+            raise KeyboardInterrupt("Cancelled by user.") from e
         data = {
             "name": name,
             "tel": tel,
@@ -304,17 +303,11 @@ def utility(config):
             save(config)
 
     def use_proxy(config):
-        noneprompt.Choice = prompt(
-            [
-                inquirer.List(
-                    "proxy",
-                    message=i18n_format("input_is_use_proxy"),
-                    choices=[i18n_format("yes"), i18n_format("no")],
-                    default=i18n_format("no"),
-                )
-            ]
-        )["proxy"]
-        if noneprompt.Choice == i18n_format("yes"):
+        confirm_proxy = noneprompt.ConfirmPrompt(
+            question=i18n_format("input_is_use_proxy"),
+            default_choice=False,
+        ).prompt()
+        if confirm_proxy:
             while True:
                 try:
                     config["proxy_auth"] = input(i18n_format("input_proxy")).split(" ")
@@ -323,46 +316,43 @@ def utility(config):
                 except:
                     logger.error(i18n_format("wrong_proxy_format"))
                     continue
-            config["proxy_channel"] = prompt(
-                [
-                    inquirer.Text(
-                        "proxy_channel",
-                        message=i18n_format("input_proxy_channel"),
-                        validate=lambda _, x: x.isdigit(),
-                    )
-                ]
-            )["proxy_channel"]
+            config["proxy_channel"] = noneprompt.InputPrompt(
+                question=i18n_format("input_proxy_channel"),
+                validator=lambda x: x.isdigit(),
+            ).prompt()
             config["proxy"] = True
         else:
             config["proxy"] = False
         save(config)
 
     def captcha_mode(config):
-        noneprompt.Choice = prompt(
-            [
-                inquirer.List(
-                    "captcha",
-                    message=i18n_format("input_use_captcha_mode"),
+        try:
+            cap_pass = (
+                noneprompt.ListPrompt(
+                    question=i18n_format("input_use_captcha_mode"),
                     choices=[
-                        i18n_format("local_gt"),
-                        i18n_format("rrocr"),
-                        i18n_format("manual"),
+                        noneprompt.Choice(name=i18n_format(x), data=x)
+                        for x in ["local_gt", "rrocr", "manual"]
                     ],
-                    default=i18n_format("local_gt"),
                 )
-            ]
-        )["captcha"]
-        if noneprompt.Choice == i18n_format("local_gt"):
+                .prompt()
+                .data
+            )
+        except noneprompt.CancelledError as e:
+            raise KeyboardInterrupt("Cancelled by user.") from e
+        if cap_pass == "local_gt":
             config["captcha"] = "local_gt"
             sentry_sdk.set_tag("captcha", "local_gt")
-        elif noneprompt.Choice == i18n_format("rrocr"):
+        elif cap_pass == "rrocr":
             config["captcha"] = "rrocr"
             while True:
-                config["rrocr"] = input(i18n_format("input_rrocr_key"))
+                config["rrocr"] = noneprompt.InputPrompt(
+                    question=i18n_format("input_rrocr_key")
+                ).prompt()
                 if config["rrocr"] != "":
                     break
             sentry_sdk.set_tag("captcha", "rrocr")
-        elif noneprompt.Choice == i18n_format("manual"):
+        elif cap_pass == "manual":
             config["captcha"] = "manual"
             sentry_sdk.set_tag("captcha", "manual")
         else:
@@ -377,25 +367,61 @@ def utility(config):
         + str(random.randint(0, 9999)),
         "Referer": "https://show.bilibili.com",
     }
-    select = noneprompt.ListPrompt(
-        question=i18n_format("select_tool"),
-        choices=[
-            noneprompt.Choice(i18n_format("tool_add_buyer"), data=i18n_format("tool_add_buyer")),
-            noneprompt.Choice(i18n_format("tool_modify_ua"), data=i18n_format("tool_modify_ua")),
-            noneprompt.Choice(i18n_format("tool_modify_gaia"), data=i18n_format("tool_modify_gaia")),
-            noneprompt.Choice(i18n_format("tool_hunter_mode"), data=i18n_format("tool_hunter_mode")),
-            noneprompt.Choice(i18n_format("tool_hunter_off"), data=i18n_format("tool_hunter_off")),
-            noneprompt.Choice(i18n_format("tool_share_mode"), data=i18n_format("tool_share_mode")),
-            noneprompt.Choice(i18n_format("tool_pushplus"), data=i18n_format("tool_pushplus")),
-            noneprompt.Choice(i18n_format("tool_phone_prefill"), data=i18n_format("tool_phone_prefill")),
-            noneprompt.Choice(i18n_format("tool_proxy_setting"), data=i18n_format("tool_proxy_setting")),
-            noneprompt.Choice(i18n_format("tool_capacha_mode"), data=i18n_format("tool_capacha_mode")),
-            noneprompt.Choice(i18n_format("tool_webhook"), data=i18n_format("tool_webhook")),
-            noneprompt.Choice(i18n_format("tool_set_offset"), data=i18n_format("tool_set_offset")),
-            noneprompt.Choice(i18n_format("tool_hide_module"), data=i18n_format("tool_hide_module")),
-            noneprompt.Choice(i18n_format("back"), data=i18n_format("back")),
-        ],
-    ).prompt().data
+    select = (
+        noneprompt.ListPrompt(
+            question=i18n_format("select_tool"),
+            choices=[
+                noneprompt.Choice(
+                    i18n_format("tool_add_buyer"), data=i18n_format("tool_add_buyer")
+                ),
+                noneprompt.Choice(
+                    i18n_format("tool_modify_ua"), data=i18n_format("tool_modify_ua")
+                ),
+                noneprompt.Choice(
+                    i18n_format("tool_modify_gaia"),
+                    data=i18n_format("tool_modify_gaia"),
+                ),
+                noneprompt.Choice(
+                    i18n_format("tool_hunter_mode"),
+                    data=i18n_format("tool_hunter_mode"),
+                ),
+                noneprompt.Choice(
+                    i18n_format("tool_hunter_off"), data=i18n_format("tool_hunter_off")
+                ),
+                noneprompt.Choice(
+                    i18n_format("tool_share_mode"), data=i18n_format("tool_share_mode")
+                ),
+                noneprompt.Choice(
+                    i18n_format("tool_pushplus"), data=i18n_format("tool_pushplus")
+                ),
+                noneprompt.Choice(
+                    i18n_format("tool_phone_prefill"),
+                    data=i18n_format("tool_phone_prefill"),
+                ),
+                noneprompt.Choice(
+                    i18n_format("tool_proxy_setting"),
+                    data=i18n_format("tool_proxy_setting"),
+                ),
+                noneprompt.Choice(
+                    i18n_format("tool_capacha_mode"),
+                    data=i18n_format("tool_capacha_mode"),
+                ),
+                noneprompt.Choice(
+                    i18n_format("tool_webhook"), data=i18n_format("tool_webhook")
+                ),
+                noneprompt.Choice(
+                    i18n_format("tool_set_offset"), data=i18n_format("tool_set_offset")
+                ),
+                noneprompt.Choice(
+                    i18n_format("tool_hide_module"),
+                    data=i18n_format("tool_hide_module"),
+                ),
+                noneprompt.Choice(i18n_format("back"), data=i18n_format("back")),
+            ],
+        )
+        .prompt()
+        .data
+    )
     if select == i18n_format("tool_add_buyer"):
         add_buyer(headers)
         return utility(config)
@@ -435,7 +461,10 @@ def utility(config):
     elif select == i18n_format("back"):
         return
     elif select == i18n_format("tool_hide_module"):
-        name = noneprompt.InputPrompt(i18n_format("input_hide_tool"), validator=lambda x: x != "" and x.isidentifier()).prompt(default="")
+        name = noneprompt.InputPrompt(
+            i18n_format("input_hide_tool"),
+            validator=lambda x: x != "" and x.isidentifier(),
+        ).prompt(default="")
         if name == "bw_2024":
             bw_2024(config)
         else:
