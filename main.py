@@ -73,7 +73,7 @@ def run(hyg):
                                     hyg.config["hunter"]
                                 )
                             )
-                break
+                    break
             elif status == 1:
                 logger.warning(i18n_format("not_begin"))
             elif status == 3:

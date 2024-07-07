@@ -139,7 +139,7 @@ def utility(config):
             with open("task.json", "w", encoding="utf-8") as f:
                 json.dump(task, f)
         for i in task:
-            logger.info(f"{i['act_title']} {time.strftime('%m-%d %H:%M', time.localtime(i['reserve_begin_time']))}")
+            logger.info(f"{i['screen_date']} {i['act_title']} {time.strftime('%m-%d %H:%M', time.localtime(i['reserve_begin_time']))}")
         for i in task:
             while time.time() < i["reserve_begin_time"] - 5:
                 time.sleep(1)
