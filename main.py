@@ -48,6 +48,7 @@ def run(hyg):
                 status = -1
             status, clickable = hyg.get_ticket_status()
             if status == 2 or clickable or status == 8:
+                logger.info(i18n_format("begin_buy"))
                 if status == 1:
                     logger.warning(i18n_format("not_begin"))
                 elif status == 3:
@@ -155,7 +156,7 @@ def main():
             while True:
                 config["status_delay"] = noneprompt.InputPrompt(
                     question=i18n_format("input_status_delay")
-                ).prompt()
+                ).prompt(default="0.2")
                 if config["status_delay"] == "":
                     config["status_delay"] = 0.2
                 try:
@@ -217,7 +218,7 @@ def main():
                     logger.info(i18n_format("empty"))
                 config["project_id"] = noneprompt.InputPrompt(
                     i18n_format("input_project_id"), validator=lambda x: x.isdigit()
-                ).prompt()
+                ).prompt(default="0")
                 url = (
                     "https://show.bilibili.com/api/ticket/project/getV2?version=134&id="
                     + config["project_id"]

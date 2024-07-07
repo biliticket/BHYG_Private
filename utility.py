@@ -5,7 +5,7 @@ import noneprompt
 
 import sentry_sdk
 
-from utils import prompt, save, check_policy
+from utils import save, check_policy
 
 from i18n import *
 
