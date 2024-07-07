@@ -2,7 +2,6 @@
 from PyInstaller.utils.hooks import copy_metadata
 import platform
 
-datas = copy_metadata("readchar")
 datas.append(("langs", "langs"))
 
 if platform.system() == "Windows":
