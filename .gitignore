@@ -13,6 +13,7 @@ srland/
 srland.py
 srlandpic.py
 venv
+.venv
 inquirer
 agree-terms
 share.json
