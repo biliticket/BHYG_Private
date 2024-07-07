@@ -623,7 +623,7 @@ class BilibiliHyg:
                     return True
                 logger.info(i18n_format("unpaid_bill"))
                 while self.order_status(self.order_id):
-                    time.sleep(1)
+                    time.sleep(2)
                 self.sdk.capture_message("Exit by in-app exit")
                 return True
             else:
