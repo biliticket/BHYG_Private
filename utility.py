@@ -1,9 +1,11 @@
 # Copyright (c) 2023-2024 ZianTT, FriendshipEnder
+from os import pathsep
 import requests
 
 import noneprompt
 
 import sentry_sdk
+import pyperclip
 
 from utils import save, check_policy
 
@@ -260,7 +262,19 @@ def utility(config):
         return
 
     def pushplus_config(config):
-        token = noneprompt.InputPrompt(question=i18n_format("pushplus_token")).prompt()
+        try:
+            try:
+                clip_value = pyperclip.paste()
+                logger.info("已成功读取剪贴板内容。")
+            except pyperclip.PyperclipException:
+                clip_value = ""
+            token = noneprompt.InputPrompt(
+                question=i18n_format("pushplus_token"),
+                default_text=clip_value,
+            ).prompt()
+        except noneprompt.CancelledError:
+            logger.info("已取消操作，将不进行更改，直接返回上一页。")
+            return
         if token == "":
             if "pushplus" in config:
                 config.pop("pushplus")
