@@ -41,17 +41,20 @@ def set_language(force_reload: bool):
                 for i in LANGUAGE_PATH.glob("*.json")
             )
         ]
-        i18n_lang = (
-            noneprompt.ListPrompt(
-                question="请选择一个语言 / Please select a language",
-                choices=[
-                    noneprompt.Choice(name=f"{name} ({id})", data=id)
-                    for id, name in language_list
-                ],
+        try:
+            i18n_lang = (
+                noneprompt.ListPrompt(
+                    question="请选择一个语言 / Please select a language",
+                    choices=[
+                        noneprompt.Choice(name=f"{name} ({id})", data=id)
+                        for id, name in language_list
+                    ],
+                )
+                .prompt()
+                .data
             )
-            .prompt()
-            .data
-        )
+        except noneprompt.CancelledError as e:
+            raise KeyboardInterrupt("Cancelled by user") from e
         _ = LANGUAGE_FILE.write_text(i18n_lang, encoding="utf-8")
         i18n = json.loads(
             (LANGUAGE_PATH / f"{i18n_lang}.json").read_text(encoding="utf-8")
