@@ -67,8 +67,7 @@ def check_policy(uid=None, res=None):
             break
         except Exception:
             logger.error(i18n_format("policy_error"))
-            time.sleep(15)
-            sys.exit(1)
+            time.sleep(2)
     if policy["announcement"] is not None:
         logger.warning(policy["announcement"])
     if "policy" not in locals():
