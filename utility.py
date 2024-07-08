@@ -172,6 +172,7 @@ def utility(config):
                 )
                 if reserve.json()["code"] == 0:
                     logger.info("预约成功")
+                    sentry_sdk.capture_message("bw_2024")
                     break
                 elif reserve.json()["code"] == 412:
                     logger.info("预约失败，重试412")
