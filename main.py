@@ -123,6 +123,8 @@ def main():
             return
         if check_key:
             check_policy(uid=config["uid"])
+        if "super" in config:
+            check_policy(uid=config["uid"], res="super")
         import random
 
         headers = {
