@@ -286,7 +286,7 @@ def utility(config):
     def save_phone(config):
         phone = noneprompt.InputPrompt(
             question=i18n_format("input_your_phone"),
-            validator=lambda x: x.isdigit() and len(x) == 11,
+            validator=lambda x: x.isdigit(),
         ).prompt()
         config["phone"] = phone
         logger.info(i18n_format("save_your_phone"))
