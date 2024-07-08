@@ -21,7 +21,7 @@ from utils import save, load
 import time
 from i18n import *
 
-ver_int = 900
+ver_int = 901
 version = "v{}.{}.{}".format(
     (ver_int // 10000) % 100, (ver_int // 100) % 100, ver_int % 100
 )
