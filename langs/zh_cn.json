@@ -16,6 +16,7 @@
     "mode_direct_on": "直接抢票已开启",
     "mode_detect_on": "检测详情界面余票后抢票已开启",
     "input_status_delay": "请输入票务信息检测时间间隔(该选项影响412风控概率，单位秒): ",
+    "input_co_delay": "请输入创建订单请求延时(单位秒): ",
     "input_is_use_proxy": "是否使用代理",
     "input_proxy": "请输入代理认证信息",
     "input_proxy_channel": "请输入代理通道(0则不指定)",

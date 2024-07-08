@@ -557,6 +557,7 @@ class BilibiliHyg:
             logger.error(i18n_format("logout_fail"))
 
     def try_create_order(self):
+        time.sleep(self.config["co_delay"])
         if not self.waited:
             if "super" not in self.config:
                 logger.info(i18n_format("wait_4_96s"))

@@ -173,6 +173,20 @@ def main():
                     break
                 except ValueError:
                     logger.error(i18n_format("wrong_input"))
+        if "co_delay" not in config:
+            while True:
+                config["co_delay"] = noneprompt.InputPrompt(
+                    question=i18n_format("input_co_delay")
+                ).prompt(default="0")
+                if config["co_delay"] == "":
+                    config["co_delay"] = 0
+                try:
+                    config["co_delay"] = float(config["co_delay"])
+                    if config["co_delay"] < 0:
+                        raise ValueError
+                    break
+                except ValueError:
+                    logger.error(i18n_format("wrong_input"))
         if "proxy" not in config:
             logger.info(i18n_format("no_proxy_by_default"))
             config["proxy"] = False
