@@ -214,7 +214,7 @@ class BilibiliHyg:
         else:
             phone = noneprompt.InputPrompt(
                 question=i18n_format("input_phone_num"),
-                validator=lambda x: x.isdigit() and len(x) == 11,
+                validator=lambda x: x.isdigit(),
             ).prompt()
         self.captcha_data = {
             "code": phone,
