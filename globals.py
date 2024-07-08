@@ -204,6 +204,8 @@ def load_config():
             logger.info(i18n_format("select_keep_login_msg"))
             temp = load()
             config = {}
+            if "super" in temp:
+                config["super"] = temp["super"]
             if "gaia_vtoken" in temp:
                 config["gaia_vtoken"] = temp["gaia_vtoken"]
             if "ua" in temp:

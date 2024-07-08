@@ -387,12 +387,13 @@ class BilibiliHyg:
             "project_id": self.config["project_id"],
             "pay_money": self.config["all_price"],
             "count": self.config["count"],
-            "timestamp": int(time.time() + 5),
-            "order_type": self.config["order_type"],
+            "timestamp": int(time.time()),
             "newRisk": "true",
             "requestSource": "neul-next",
             "clickPosition": self.generate_clickPosition(),
         }
+        if "super" not in self.config:
+            data["order_type"] = self.config["order_type"],
         if self.config["id_bind"] == 0:
             data["buyer"] = self.config["buyer"]
             data["tel"] = self.config["tel"]
@@ -557,10 +558,12 @@ class BilibiliHyg:
 
     def try_create_order(self):
         if not self.waited:
-            logger.info(i18n_format("wait_4_96s"))
-            time.sleep(4.96)
+            if "super" not in self.config:
+                logger.info(i18n_format("wait_4_96s"))
+                time.sleep(4.96)
             self.waited = True
         result = self.create_order()
+        logger.debug(result)
         if result == {}:
             return False
         if result["errno"] == 100009:

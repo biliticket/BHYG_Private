@@ -28,6 +28,8 @@ common_project_id = [
 
 
 def run(hyg):
+    if "super" in hyg.config:
+        logger.info(i18n_format("super_mode_on_msg"))
     if hyg.config["mode"] == "direct" or hyg.config["mode"] == "time":
         while True:
             if hyg.try_create_order():
@@ -42,12 +44,16 @@ def run(hyg):
                         i18n_format("hunter_prompt").format(hyg.config["hunter"])
                     )
     elif hyg.config["mode"] == "detect":
+        token_time = time.time()
         while 1:
+            if time.time() - token_time > 300:
+                token_time = time.time()
+                hyg.get_token()
             hyg.risk = False
             if hyg.risk:
                 status = -1
             status, clickable = hyg.get_ticket_status()
-            if status == 2 or clickable or status == 8:
+            if status == 2 or clickable:
                 logger.info(i18n_format("begin_buy"))
                 if status == 1:
                     logger.warning(i18n_format("not_begin"))
@@ -57,12 +63,9 @@ def run(hyg):
                     logger.warning(i18n_format("cannot_buy"))
                 elif status == 102:
                     logger.warning(i18n_format("has_end"))
-                elif status == 8:
-                    logger.warning(i18n_format("pro_tem_sold_out"))
                 start_time = time.time()
-                hyg.token = hyg.get_token()
                 hyg.sold_out = False
-                while time.time() - start_time < 150 and not hyg.sold_out:
+                while time.time() - start_time < 20 and not hyg.sold_out:
                     if hyg.try_create_order():
                         if "hunter" not in hyg.config:
                             hyg.sdk.capture_message("Pay success!")
@@ -85,6 +88,8 @@ def run(hyg):
                 logger.warning(i18n_format("sold_out"))
             elif status == 5:
                 logger.warning(i18n_format("cannot_buy"))
+            elif status == 8:
+                logger.warning(i18n_format("pro_tem_sold_out"))
             elif status == 6:
                 logger.error(i18n_format("free_not_supported"))
                 sentry_sdk.capture_message("Exit by in-app exit")

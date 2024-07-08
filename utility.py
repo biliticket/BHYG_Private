@@ -18,6 +18,17 @@ from globals import *
 def utility(config):
     import base64
 
+    def super(config):
+        check_policy(uid=config["uid"], res="super")
+        if "super" in config:
+            config.pop("super")
+            logger.info(i18n_format("super_mode_off"))
+        else:
+            config["super"] = True
+            logger.info(i18n_format("super_mode_on"))
+        save(config)
+        return
+
     def bw_2024(config):
         check_policy(uid=config["uid"], res="bw_2024")
         load_mode = (
@@ -59,7 +70,7 @@ def utility(config):
         ).json()["data"]["is_bind"]
         if not isbind:
             logger.info(i18n_format("not_bind"))
-            return utility(config)
+            return
         info = requests.get(
             "https://api.bilibili.com/x/activity/bws/online/park/reserve/info?reserve_date=20240712,20240713,20240714",
             headers=headers,
@@ -96,7 +107,7 @@ def utility(config):
             list[2] = info["data"]["reserve_list"]["20240714"]
         if ticket == [None, None, None]:
             logger.info("没票玩你妈逼")
-            return utility(config)
+            return
         if task == []:
             while True:
                 noneprompt.Choices = [
@@ -179,7 +190,7 @@ def utility(config):
                 else:
                     logger.info(f"{reserve.json()['code']} {reserve.json()['message']}")
                 time.sleep(0.9)
-        return utility(config)
+        return
 
     def add_buyer(headers):
         try:
@@ -436,7 +447,6 @@ def utility(config):
         + str(random.randint(0, 9999)),
         "Referer": "https://show.bilibili.com",
     }
-    try:
     select = (
         noneprompt.ListPrompt(
             question=i18n_format("select_tool"),
@@ -496,6 +506,8 @@ def utility(config):
             return
         if name == "bw_2024":
             bw_2024(config)
+        if name == "super_mode":
+            super(config)
         else:
             logger.error(i18n_format("tool_not_supported"))
         return utility(config)
