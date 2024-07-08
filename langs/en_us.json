@@ -274,6 +274,7 @@
     "auto_save_phone": "No pre-filled number found. Auto saved buyer's number: {}****{}.",
     "already_save_phone": "Pre-filled number {}****{} has already found. It's in use.",
     "cleaning_files": "Cleaning {} ...",
-    "cleaning_fail": "Clean error occured {}: {}!"
+    "cleaning_fail": "Clean error occured {}: {}!",
+    "cancelled": "Cancelled"
   }
 }

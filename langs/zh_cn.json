@@ -280,6 +280,8 @@
     "not_bind": "该账户未绑定门票，请前往绑定",
     "tool_hide_module": "隐藏模块",
     "input_hide_tool": "请输入隐藏模块名称",
-    "begin_buy": "正在进入抢票流程，刷新Token中..."
+    "begin_buy": "正在进入抢票流程，刷新Token中...",
+    "cancelled": "已取消操作",
+    "clip_paste_success": "已成功从剪贴板获取到内容"
   }
 }

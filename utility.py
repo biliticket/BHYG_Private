@@ -1,4 +1,5 @@
 # Copyright (c) 2023-2024 ZianTT, FriendshipEnder
+from logging import log
 from os import pathsep
 import requests
 
@@ -265,7 +266,7 @@ def utility(config):
         try:
             try:
                 clip_value = pyperclip.paste()
-                logger.info("已成功读取剪贴板内容。")
+                logger.info(i18n_format("clip_paste_success"))
             except pyperclip.PyperclipException:
                 clip_value = ""
             token = noneprompt.InputPrompt(
@@ -273,7 +274,7 @@ def utility(config):
                 default_text=clip_value,
             ).prompt()
         except noneprompt.CancelledError:
-            logger.info("已取消操作，将不进行更改，直接返回上一页。")
+            logger.info(i18n_format("cancelled"))
             return
         if token == "":
             if "pushplus" in config:
@@ -286,7 +287,18 @@ def utility(config):
         save(config)
 
     def webhook_config(config):
-        webhook = noneprompt.InputPrompt(question=i18n_format("webhook")).prompt()
+        try:
+            try:
+                clip_value = pyperclip.paste()
+                logger.info(i18n_format("clip_paste_success"))
+            except pyperclip.PyperclipException:
+                clip_value = ""
+            webhook = noneprompt.InputPrompt(
+                question=i18n_format("webhook"), default_text=clip_value
+            ).prompt()
+        except noneprompt.CancelledError:
+            logger.info(i18n_format("cancelled"))
+            return
         if webhook == "":
             if "webhook" in config:
                 config.pop("webhook")
@@ -298,16 +310,25 @@ def utility(config):
         save(config)
 
     def save_phone(config):
-        phone = noneprompt.InputPrompt(
-            question=i18n_format("input_your_phone"),
-            validator=lambda x: x.isdigit(),
-        ).prompt()
+        try:
+            phone = noneprompt.InputPrompt(
+                question=i18n_format("input_your_phone"),
+                validator=lambda x: x.isdigit(),
+            ).prompt()
+        except noneprompt.CancelledError as e:
+            logger.info(i18n_format("cancelled"))
         config["phone"] = phone
         logger.info(i18n_format("save_your_phone"))
         save(config)
 
     def set_offset(config):
-        offset = noneprompt.InputPrompt(question=i18n_format("input_offset")).prompt()
+        try:
+            offset = noneprompt.InputPrompt(
+                question=i18n_format("input_offset")
+            ).prompt()
+        except noneprompt.CancelledError:
+            logger.info(i18n_format("cancelled"))
+            return
         if offset == "":
             if "time_offset" in config:
                 config.pop("time_offset")
@@ -322,27 +343,47 @@ def utility(config):
             save(config)
 
     def use_proxy(config):
-        confirm_proxy = noneprompt.ConfirmPrompt(
-            question=i18n_format("input_is_use_proxy"),
-            default_choice=False,
-        ).prompt()
+        try:
+            confirm_proxy = noneprompt.ConfirmPrompt(
+                question=i18n_format("input_is_use_proxy"),
+                default_choice=False,
+            ).prompt()
+        except noneprompt.CancelledError:
+            logger.info(i18n_format("cancelled"))
+            return
         if confirm_proxy:
             while True:
                 try:
-                    config["proxy_auth"] = (
-                        noneprompt.InputPrompt(question=i18n_format("input_proxy"))
-                        .prompt()
-                        .split(" ")
-                    )
+                    try:
+                        try:
+                            clip_value = pyperclip.paste()
+                            logger.info(i18n_format("clip_paste_success"))
+                        except pyperclip.PyperclipException:
+                            clip_value = ""
+                        config["proxy_auth"] = (
+                            noneprompt.InputPrompt(
+                                question=i18n_format("input_proxy"),
+                                default_text=clip_value,
+                            )
+                            .prompt()
+                            .split(" ")
+                        )
+                    except noneprompt.CancelledError:
+                        logger.info(i18n_format("cancelled"))
+                        return
                     assert len(config["proxy_auth"]) == 3
                     break
                 except:
                     logger.error(i18n_format("wrong_proxy_format"))
                     continue
-            config["proxy_channel"] = noneprompt.InputPrompt(
-                question=i18n_format("input_proxy_channel"),
-                validator=lambda x: x.isdigit(),
-            ).prompt()
+            try:
+                config["proxy_channel"] = noneprompt.InputPrompt(
+                    question=i18n_format("input_proxy_channel"),
+                    validator=lambda x: x.isdigit(),
+                ).prompt()
+            except noneprompt.CancelledError:
+                logger.info(i18n_format("cancelled"))
+                return
             config["proxy"] = True
         else:
             config["proxy"] = False
@@ -362,16 +403,21 @@ def utility(config):
                 .data
             )
         except noneprompt.CancelledError as e:
-            raise KeyboardInterrupt("Cancelled by user.") from e
+            logger.info(i18n_format("cancelled"))
+            return
         if cap_pass == "local_gt":
             config["captcha"] = "local_gt"
             sentry_sdk.set_tag("captcha", "local_gt")
         elif cap_pass == "rrocr":
             config["captcha"] = "rrocr"
             while True:
-                config["rrocr"] = noneprompt.InputPrompt(
-                    question=i18n_format("input_rrocr_key")
-                ).prompt()
+                try:
+                    config["rrocr"] = noneprompt.InputPrompt(
+                        question=i18n_format("input_rrocr_key")
+                    ).prompt()
+                except noneprompt.CancelledError:
+                    logger.info(i18n_format("cancelled"))
+                    return
                 if config["rrocr"] != "":
                     break
             sentry_sdk.set_tag("captcha", "rrocr")
@@ -390,104 +436,64 @@ def utility(config):
         + str(random.randint(0, 9999)),
         "Referer": "https://show.bilibili.com",
     }
+    try:
     select = (
         noneprompt.ListPrompt(
             question=i18n_format("select_tool"),
             choices=[
-                noneprompt.Choice(
-                    i18n_format("tool_add_buyer"), data=i18n_format("tool_add_buyer")
-                ),
-                noneprompt.Choice(
-                    i18n_format("tool_modify_ua"), data=i18n_format("tool_modify_ua")
-                ),
-                noneprompt.Choice(
-                    i18n_format("tool_modify_gaia"),
-                    data=i18n_format("tool_modify_gaia"),
-                ),
-                noneprompt.Choice(
-                    i18n_format("tool_hunter_mode"),
-                    data=i18n_format("tool_hunter_mode"),
-                ),
-                noneprompt.Choice(
-                    i18n_format("tool_hunter_off"), data=i18n_format("tool_hunter_off")
-                ),
-                noneprompt.Choice(
-                    i18n_format("tool_share_mode"), data=i18n_format("tool_share_mode")
-                ),
-                noneprompt.Choice(
-                    i18n_format("tool_pushplus"), data=i18n_format("tool_pushplus")
-                ),
-                noneprompt.Choice(
-                    i18n_format("tool_phone_prefill"),
-                    data=i18n_format("tool_phone_prefill"),
-                ),
-                noneprompt.Choice(
-                    i18n_format("tool_proxy_setting"),
-                    data=i18n_format("tool_proxy_setting"),
-                ),
-                noneprompt.Choice(
-                    i18n_format("tool_capacha_mode"),
-                    data=i18n_format("tool_capacha_mode"),
-                ),
-                noneprompt.Choice(
-                    i18n_format("tool_webhook"), data=i18n_format("tool_webhook")
-                ),
-                noneprompt.Choice(
-                    i18n_format("tool_set_offset"), data=i18n_format("tool_set_offset")
-                ),
-                noneprompt.Choice(
-                    i18n_format("tool_hide_module"),
-                    data=i18n_format("tool_hide_module"),
-                ),
-                noneprompt.Choice(i18n_format("back"), data=i18n_format("back")),
-            ],
+                noneprompt.Choice(i18n_format(x), data=x)
+                for x in ["tool_add_buyer", "tool_modify_ua", "tool_modify_gaia", "tool_hunter_mode", "tool_hunter_off", "tool_share_mode", "tool_pushplus", "tool_phone_prefill", "tool_proxy_setting", "tool_capacha_mode", "tool_webhook", "tool_set_offset", "tool_hide_module", "back",]],
         )
         .prompt()
         .data
     )
-    if select == i18n_format("tool_add_buyer"):
+    if select == "tool_add_buyer":
         add_buyer(headers)
         return utility(config)
-    elif select == i18n_format("tool_modify_ua"):
+    elif select == "tool_modify_ua":
         modify_ua()
         return utility(config)
-    elif select == i18n_format("tool_modify_gaia"):
+    elif select == "tool_modify_gaia":
         modify_gaia_vtoken()
         return utility(config)
-    elif select == i18n_format("tool_hunter_mode"):
+    elif select == "tool_hunter_mode":
         hunter_mode()
         return utility(config)
-    elif select == i18n_format("tool_hunter_off"):
+    elif select == "tool_hunter_off":
         hunter_mode_off()
         return utility(config)
-    elif select == i18n_format("tool_share_mode"):
+    elif select == "tool_share_mode":
         share_mode(config)
         return utility(config)
-    elif select == i18n_format("tool_pushplus"):
+    elif select == "tool_pushplus":
         pushplus_config(config)
         return utility(config)
-    elif select == i18n_format("tool_phone_prefill"):
+    elif select == "tool_phone_prefill":
         save_phone(config)
         return utility(config)
-    elif select == i18n_format("tool_proxy_setting"):
+    elif select == "tool_proxy_setting":
         use_proxy(config)
         return utility(config)
-    elif select == i18n_format("tool_capacha_mode"):
+    elif select == "tool_capacha_mode":
         captcha_mode(config)
         return utility(config)
-    elif select == i18n_format("tool_webhook"):
+    elif select == "tool_webhook":
         webhook_config(config)
         return utility(config)
-    elif select == i18n_format("tool_set_offset"):
+    elif select =="tool_set_offset":
         set_offset(config)
         return utility(config)
-    elif select == i18n_format("back"):
+    elif select == "back":
         return
-    elif select == i18n_format("tool_hide_module"):
-        name = noneprompt.InputPrompt(
-            i18n_format("input_hide_tool"),
-            validator=lambda x: x != "" and x.isidentifier(),
-        ).prompt(default="")
+    elif select == "tool_hide_module":
+        try:
+            name = noneprompt.InputPrompt(
+                i18n_format("input_hide_tool"),
+                validator=lambda x: x != "" and x.isidentifier(),
+            ).prompt(default="")
+        except noneprompt.CancelledError:
+            logger.info(i18n_format("cancelled"))
+            return
         if name == "bw_2024":
             bw_2024(config)
         else:
