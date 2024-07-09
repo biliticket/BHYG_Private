@@ -1,0 +1,15 @@
+[project]
+name = "BHYG"
+version = "1.0.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "ZianTT", email = "love@ziantt.com"},
+]
+dependencies = []
+requires-python = ">=3.12,<3.13"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false
