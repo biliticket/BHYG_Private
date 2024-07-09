@@ -1,15 +1,16 @@
 [project]
 name = "BHYG"
-version = "1.0.0"
 description = "Default template for PDM package"
-authors = [
-    {name = "ZianTT", email = "love@ziantt.com"},
-]
+authors = [{ name = "ZianTT", email = "love@ziantt.com" }]
 dependencies = []
 requires-python = ">=3.12,<3.13"
 readme = "README.md"
-license = {text = "MIT"}
+license = { text = "MIT" }
+dynamic = ["version"]
 
+[tool.pdm.version]
+source = "file"
+path = "bhyg/__init__.py"
 
 [tool.pdm]
 distribution = false
