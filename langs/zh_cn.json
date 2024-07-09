@@ -286,6 +286,7 @@
     "clip_paste_success": "已成功从剪贴板获取到内容",
     "super_mode_on_msg": "超级模式😎😎😎无所畏惧☝☝☝🤓🤓🤓👉👉👉",
     "super_mode_on": "超级模式已开启",
-    "super_mode_off": "超级模式已关闭"
+    "super_mode_off": "超级模式已关闭",
+    "super_delay": "请输入超级模式延迟时间（单位秒）"
   }
 }
