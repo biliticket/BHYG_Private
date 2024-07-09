@@ -106,14 +106,14 @@ def verify_code_login(session, headers):
     challenge = captcha["data"]["geetest"]["challenge"]
     token = captcha["data"]["token"]
     while True:
-        tel = noneprompt.InputPrompt(
-            question=i18n_format("input_phone_num"),
-            validator=lambda x: x.isdigit() and len(x) == 11,
-        ).prompt()
-        if not tel.isdigit() and len(tel) != 11:
-            logger.error(i18n_format("wrong_input"))
-        else:
-            break
+        try:
+            tel = noneprompt.InputPrompt(
+                question=i18n_format("input_phone_num"),
+                validator=lambda x: x.isdigit() and len(x) == 11,
+            ).prompt()
+        except noneprompt.CancelledError:
+            return
+        break
     logger.info(i18n_format("input_auto_verify"))
     cap_data = _verify(gt, challenge, token)
     while cap_data == False:
@@ -198,7 +198,7 @@ def verify_code_login_app(session, headers):
             question=i18n_format("input_phone_num"), validator=lambda x: len(x) == 11
         ).prompt()
     except noneprompt.CancelledError as e:
-        raise KeyboardInterrupt("Cancelled by user.") from e
+        return
     # logger.info(i18n_format("input_auto_verify"))
     # cap_data = _verify(gt, challenge, token)
     # while cap_data == False:
@@ -247,7 +247,7 @@ def verify_code_login_app(session, headers):
                 question=i18n_format("input_sms_code"), validator=lambda x: len(x) == 6
             ).prompt()
         except noneprompt.CancelledError as e:
-            raise KeyboardInterrupt("Cancelled by user.") from e
+            return
         # https://passport.bilibili.com/x/passport-login/login/sms
         data = {
             "cid": 86,
@@ -282,7 +282,7 @@ def password_login(session, headers):
             question=i18n_format("input_user_password"), is_password=True
         ).prompt()
     except noneprompt.CancelledError as e:
-        raise KeyboardInterrupt("Cancelled by user.") from e
+        return
     captcha = session.get(
         "https://passport.bilibili.com/x/passport-login/captcha", headers=headers
     ).json()
@@ -398,7 +398,7 @@ def password_login(session, headers):
                         validator=lambda x: len(x) == 6,
                     ).prompt()
                 except noneprompt.CancelledError as e:
-                    raise KeyboardInterrupt("Cancelled by user.") from e
+                    return
                 data = {
                     "type": "loginTelCheck",
                     "tmp_code": tmp_token,
@@ -449,7 +449,7 @@ def sns_login(session, headers):
             .data
         )
     except noneprompt.CancelledError as e:
-        raise KeyboardInterrupt("Cancelled by user.") from e
+        return
     # https://passport.bilibili.com/x/passport-login/web/sns/state/generate
     state = session.get(
         "https://passport.bilibili.com/x/passport-login/web/sns/state/generate",
@@ -475,7 +475,7 @@ def sns_login(session, headers):
             question=i18n_format("input_redirect")
         ).prompt()
     except noneprompt.CancelledError as e:
-        raise KeyboardInterrupt("Cancelled by user.") from e
+        return
     # get params from redirect
     try:
         redirect = redirect.split("?")[1]
@@ -545,11 +545,15 @@ def interactive_login(sentry_sdk=None):
                 .data
             )  # 默认扫码
         except noneprompt.CancelledError as e:
-            raise KeyboardInterrupt("Cancelled by user.") from e
+            return
         if method == "bi_login_cookie":
-            cookie_str = noneprompt.InputPrompt(
-                question=i18n_format("bi_input_cookie"), is_password=True
-            ).prompt()
+            try:
+                cookie_str = noneprompt.InputPrompt(
+                    question=i18n_format("bi_input_cookie"), is_password=True
+                ).prompt()
+            except noneprompt.CancelledError:
+                logger.error(i18n_format("cancelled"))
+                return
             # verify cookie
             try:
                 session.get(

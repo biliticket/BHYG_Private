@@ -54,6 +54,7 @@ def set_language(force_reload: bool):
                 .data
             )
         except noneprompt.CancelledError as e:
+            logger.info("Cancelled by user.")
             raise KeyboardInterrupt("Cancelled by user") from e
         _ = LANGUAGE_FILE.write_text(i18n_lang, encoding="utf-8")
         i18n = json.loads(

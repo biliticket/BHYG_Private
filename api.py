@@ -99,9 +99,12 @@ class BilibiliHyg:
                 else:
                     self.risk = True
                     logger.error(i18n_format("net_method"))
-                    if noneprompt.ConfirmPrompt(
-                        question=i18n_format("res_return")
-                    ).prompt():
+                    try:
+                        if noneprompt.ConfirmPrompt(
+                            question=i18n_format("res_return")
+                        ).prompt():
+                            return -1, 0
+                    except noneprompt.CancelledError:
                         return -1, 0
             screens = response.json()["data"]["screen_list"]
             # 找到 字段id为screen_id的screen
@@ -212,10 +215,13 @@ class BilibiliHyg:
         if "phone" in self.config:
             phone = self.config["phone"]
         else:
-            phone = noneprompt.InputPrompt(
-                question=i18n_format("input_phone_num"),
-                validator=lambda x: x.isdigit(),
-            ).prompt()
+            try:
+                phone = noneprompt.InputPrompt(
+                    question=i18n_format("input_phone_num"),
+                    validator=lambda x: x.isdigit(),
+                ).prompt()
+            except noneprompt.CancelledError:
+                return False
         self.captcha_data = {
             "code": phone,
         }
@@ -393,7 +399,7 @@ class BilibiliHyg:
             "clickPosition": self.generate_clickPosition(),
         }
         if "super" not in self.config:
-            data["order_type"] = self.config["order_type"],
+            data["order_type"] = (self.config["order_type"],)
         if self.config["id_bind"] == 0:
             data["buyer"] = self.config["buyer"]
             data["tel"] = self.config["tel"]
@@ -642,7 +648,7 @@ class BilibiliHyg:
             return True
         elif result["errno"] == 219:
             logger.info(i18n_format("ticket_sto_less"))
-            self.sold_out=True
+            self.sold_out = True
         else:
             logger.error(i18n_format("unknown_error") + str(result))
         return False

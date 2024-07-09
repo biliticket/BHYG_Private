@@ -63,9 +63,12 @@ def run(gt, challenge, token, mode="local_gt", key=None):
             pyperclip.copy(gt + " " + challenge)
         except pyperclip.PyperclipException:
             logger.error(i18n_format("manual_copy"))
-        validate = noneprompt.InputPrompt(
-            question=i18n_format("input_captcha")
-        ).prompt()
+        try:
+            validate = noneprompt.InputPrompt(
+                question=i18n_format("input_captcha")
+            ).prompt()
+        except noneprompt.CancelledError:
+            return
         data = {
             "success": True,
             "challenge": challenge,
