@@ -178,15 +178,15 @@ def utility(config):
                     logger.info("预约失败，重试412")
                 elif reserve.json()["code"] == 429:
                     logger.info("预约失败，重试429")
-                elif reserve.json()["code"] == -702:
+                elif abs(reserve.json()["code"]) == 702:
                     logger.info("请求频率过高，请稍后再试")
-                elif reserve.json()["code"] == -75574:
+                elif abs(reserve.json()["code"]) == 75574:
                     logger.info("没了")
                     break
-                elif reserve.json()["code"] == -76647:
+                elif abs(reserve.json()["code"]) == 76647:
                     logger.info("上限了")
                     break
-                elif reserve.json()["code"] == -76650:
+                elif abs(reserve.json()["code"]) == 76650:
                     logger.info("操作频繁")
                 else:
                     logger.info(f"{reserve.json()['code']} {reserve.json()['message']}")
