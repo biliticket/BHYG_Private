@@ -216,6 +216,8 @@ def load_config():
             config = {}
             if "super" in temp:
                 config["super"] = temp["super"]
+            if "super_delay" in temp:
+                config["super_delay"] = temp["super_delay"]
             if "gaia_vtoken" in temp:
                 config["gaia_vtoken"] = temp["gaia_vtoken"]
             if "ua" in temp:
