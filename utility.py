@@ -190,7 +190,7 @@ def utility(config):
                     logger.info("操作频繁")
                 else:
                     logger.info(f"{reserve.json()['code']} {reserve.json()['message']}")
-                time.sleep(0.9)
+                time.sleep(0.95)
         return
 
     def add_buyer(headers):
