@@ -149,7 +149,7 @@ def main():
                     .data
                 )
             except noneprompt.CancelledError as e:
-                raise KeyboardInterrupt("Cancelled by user") from e
+                return
             if mode_str == "mode_direct":
                 config["mode"] = "direct"
                 logger.info(i18n_format("mode_direct_on"))
@@ -161,9 +161,13 @@ def main():
                 logger.info(i18n_format("mode_time_on"))
         if "status_delay" not in config and config["mode"] == "detect":
             while True:
-                config["status_delay"] = noneprompt.InputPrompt(
-                    question=i18n_format("input_status_delay")
-                ).prompt(default="0.2")
+                try:
+                    config["status_delay"] = noneprompt.InputPrompt(
+                        question=i18n_format("input_status_delay")
+                    ).prompt(default="0.2")
+                except noneprompt.CancelledError:
+                    logger.info(i18n_format("cancelled"))
+                    return
                 if config["status_delay"] == "":
                     config["status_delay"] = 0.2
                 try:
@@ -176,7 +180,8 @@ def main():
         if "co_delay" not in config:
             while True:
                 config["co_delay"] = noneprompt.InputPrompt(
-                    question=i18n_format("input_co_delay")
+                    question=i18n_format("input_co_delay"),
+                    default_text="0",
                 ).prompt(default="0")
                 if config["co_delay"] == "":
                     config["co_delay"] = 0

@@ -146,36 +146,46 @@ def load_config():
         shutil.rmtree("data")
     if os.path.exists("data"):
         use_login = True
-        run_info = (
-            noneprompt.ListPrompt(
-                i18n_format("select_setting"),
-                choices=[
-                    noneprompt.Choice(
-                        i18n_format("select_keep_all"), data="select_keep_all"
-                    ),
-                    noneprompt.Choice(
-                        i18n_format("select_keep_login"), data="select_keep_login"
-                    ),
-                    noneprompt.Choice(
-                        i18n_format("select_new_boot"), data="select_new_boot"
-                    ),
-                    noneprompt.Choice(i18n_format("select_tools"), data="select_tools"),
-                    noneprompt.Choice(
-                        i18n_format("select_tools_relogin"), data="select_tools_relogin"
-                    ),
-                    noneprompt.Choice(i18n_format("select_reset"), data="select_reset"),
-                    noneprompt.Choice(
-                        "语言设置/Language setting", data="语言设置/Language setting"
-                    ),
-                ],
-            )
-            .prompt(
-                default=noneprompt.Choice(
-                    i18n_format("select_keep_all"), data="select_keep_all"
+        try:
+            run_info = (
+                noneprompt.ListPrompt(
+                    i18n_format("select_setting"),
+                    choices=[
+                        noneprompt.Choice(
+                            i18n_format("select_keep_all"), data="select_keep_all"
+                        ),
+                        noneprompt.Choice(
+                            i18n_format("select_keep_login"), data="select_keep_login"
+                        ),
+                        noneprompt.Choice(
+                            i18n_format("select_new_boot"), data="select_new_boot"
+                        ),
+                        noneprompt.Choice(
+                            i18n_format("select_tools"), data="select_tools"
+                        ),
+                        noneprompt.Choice(
+                            i18n_format("select_tools_relogin"),
+                            data="select_tools_relogin",
+                        ),
+                        noneprompt.Choice(
+                            i18n_format("select_reset"), data="select_reset"
+                        ),
+                        noneprompt.Choice(
+                            "语言设置/Language setting",
+                            data="语言设置/Language setting",
+                        ),
+                    ],
+                    default_select=1,
                 )
+                .prompt(
+                    default=noneprompt.Choice(
+                        i18n_format("select_keep_all"), data="select_keep_all"
+                    )
+                )
+                .data
             )
-            .data
-        )
+        except noneprompt.CancelledError as e:
+            raise KeyboardInterrupt("Cancelled by user.") from e
 
         if run_info == "select_new_boot":
             logger.info(i18n_format("select_new_boot_msg"))
@@ -246,17 +256,20 @@ def load_config():
             use_login = False
             config = {}
         elif run_info == "select_reset":
-            choice = (
-                noneprompt.ListPrompt(
-                    i18n_format("select_reset_msg"),
-                    choices=[
-                        noneprompt.Choice(i18n_format("no"), data=False),
-                        noneprompt.Choice(i18n_format("yes"), data=True),
-                    ],
+            try:
+                choice = (
+                    noneprompt.ListPrompt(
+                        i18n_format("select_reset_msg"),
+                        choices=[
+                            noneprompt.Choice(i18n_format("no"), data=False),
+                            noneprompt.Choice(i18n_format("yes"), data=True),
+                        ],
+                    )
+                    .prompt(default=noneprompt.Choice(i18n_format("no"), data=False))
+                    .data
                 )
-                .prompt(default=noneprompt.Choice(i18n_format("no"), data=False))
-                .data
-            )
+            except noneprompt.CancelledError:
+                return
             if choice:
                 os.remove("language")
                 os.remove("data")
