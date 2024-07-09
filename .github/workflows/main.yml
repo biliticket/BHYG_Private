@@ -19,6 +19,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
   build:
+    needs: [codecov]
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-13, macos-latest]
