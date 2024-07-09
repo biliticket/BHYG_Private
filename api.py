@@ -633,7 +633,7 @@ class BilibiliHyg:
                 return True
             else:
                 logger.error(i18n_format("fake_ticket"))
-        elif result["errno"] == 100051 or result["errno"] == 100051:
+        elif result["errno"] == 100051 or result["errno"] == 100050:
             self.token = self.get_token()
         elif result["errno"] == 100079 or result["errno"] == 100048:
             logger.info(result["msg"])
