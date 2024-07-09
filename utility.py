@@ -22,7 +22,6 @@ def utility(config):
         check_policy(uid=config["uid"], res="super")
         if "super" in config:
             config.pop("super")
-            config.pop("super_delay")
             logger.info(i18n_format("super_mode_off"))
         else:
             config["super"] = True
