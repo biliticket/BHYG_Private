@@ -48,7 +48,10 @@ def run(hyg):
         while 1:
             if time.time() - token_time > 300:
                 token_time = time.time()
-                hyg.get_token()
+                try:
+                    hyg.get_token()
+                except:
+                    continue
             hyg.risk = False
             if hyg.risk:
                 status = -1

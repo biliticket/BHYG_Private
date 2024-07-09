@@ -642,7 +642,12 @@ class BilibiliHyg:
             else:
                 logger.error(i18n_format("fake_ticket"))
         elif result["errno"] == 100051 or result["errno"] == 100050:
-            self.token = self.get_token()
+            while True:
+                try:
+                    self.token = self.get_token()
+                    break
+                except:
+                    pass
         elif result["errno"] == 100079 or result["errno"] == 100048:
             logger.info(result["msg"])
             logger.success(i18n_format("rob_already_ok"))
