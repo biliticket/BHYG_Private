@@ -22,9 +22,19 @@ def utility(config):
         check_policy(uid=config["uid"], res="super")
         if "super" in config:
             config.pop("super")
+            config.pop("super_delay")
             logger.info(i18n_format("super_mode_off"))
         else:
             config["super"] = True
+            try:
+                super_delay = noneprompt.InputPrompt(
+                    i18n_format("super_delay"),
+                    validator=lambda x: x.replace(".", "", 1).isdigit(),
+                ).prompt()
+                config["super_delay"] = float(super_delay)
+            except noneprompt.CancelledError:
+                logger.info(i18n_format("cancelled"))
+                return
             logger.info(i18n_format("super_mode_on"))
         save(config)
         return

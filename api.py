@@ -562,6 +562,8 @@ class BilibiliHyg:
             if "super" not in self.config:
                 logger.info(i18n_format("wait_4_96s"))
                 time.sleep(4.96)
+            elif "super_delay" in self.config:
+                time.sleep(self.config["super_delay"])
             self.waited = True
         result = self.create_order()
         logger.debug(result)
