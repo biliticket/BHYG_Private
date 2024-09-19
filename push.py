@@ -13,14 +13,14 @@ class PUSH():
          }
         #webhook
         try:
-         self.webhook=config['webhook']
+         self.webhook=config['webhook_token']
         except:
             logger.error("webhook_not_set")
             #logger.error(i18n_format("webhook_not_set"))
             self.webhook=''
         #push_plus
         try:
-            self.pushplus=config['pushplus']
+            self.pushplus=config['pushplus_token']
         except:
             logger.error("pushplus_not_set")
             #logger.error(i18n_format("pushplus_not_set"))
@@ -40,6 +40,13 @@ class PUSH():
             self.smtp_mail_pass=""
             self.smtp_sender=""
             self.smtp_receivers=['']
+        #bark
+        try:
+            self.bark_token=config['bark_token']
+        except:
+            logger.error("bark_not_set")
+            #logger.error(i18n_format("bark_not_set"))
+            self.bark_token=""
         
                   
     def push(self,message):
@@ -54,8 +61,14 @@ class PUSH():
             else:
                 logger.error("unsupport_webhook")
                 #logger.error(i18n_format("unsupport_webhook"))
-        if self.config['pushplus']!='':
+        if self.pushplus!='':
             self.pushplus()
+        if self.bark!='':
+            self.bark() 
+        if self.smtp_mail_host and self.smtp_mail_pass and self.smtp_sender and self.smtp_receivers: 
+            self.smtp()
+        if self.wx_push!='': 
+            self.wx_push()  
 
     def ding_push(self):
         # 构建请求数据
@@ -78,7 +91,7 @@ class PUSH():
     def pushplus(self):
        
       
-      token = self['push_plus'] #在pushpush网站中可以找到
+      token = self.pushplus_token #在pushpush网站中可以找到
       
       url = 'http://www.pushplus.plus/send'
       data = {
@@ -97,15 +110,15 @@ class PUSH():
         from email.mime.text import MIMEText
         #设置服务器所需信息
         #163邮箱服务器地址
-        mail_host = 'smtp.aliyun.com'  
+        mail_host = self.smtp_mail_host 
         #163用户名
-        mail_user = 'dorayaki@aliyun.com'  
+        mail_user = self.smtp_mail_user  
         #密码(部分邮箱为授权码) 
-        mail_pass = '20001116ye'   
+        mail_pass = self.smtp_mail_pass   
         #邮件发送方邮箱地址
-        sender = 'dorayaki@aliyun.com'  
+        sender = self.smtp_sender  
         #邮件接受方邮箱地址，注意需要[]包裹，这意味`着你可以写多个邮件地址群发
-        receivers = ['dorayaki@aliyun.com']  
+        receivers = self.smtp_receivers  
 
         #设置email信息
         #邮件内容设置
@@ -115,7 +128,7 @@ class PUSH():
         #发送方信息
         message['From'] = sender 
         #接受方信息     
-        message['To'] = receivers[0]  
+        message['To'] = receivers  
 
         #登录并发送邮件
         try:
@@ -136,12 +149,31 @@ class PUSH():
             logger.error(e)
         
     def bark(self):
-        pass
+        data={
+            "title":"BHYG有新推送消息",
+            "body":self.message,
+            "level":"timeSensitive",
+            #推送中断级别。 
+#active：默认值，系统会立即亮屏显示通知
+#timeSensitive：时效性通知，可在专注状态下显示通知。
+#passive：仅将通知添加到通知列表，不会亮屏提醒。"""   
+            "badge":1,
+            "icon":"https://ys.mihoyo.com/main/favicon.ico",
+            "group":"BHYG", 
+            "isArchive":1
+        }
+        url=self.bark_token
+        try:
+          info=requests.post(url,json=data).json()
+          logger.info("bark_send_success")
+          #logger.info(i18n_format("bark_send_success"))
+        except Exception as e:
+          logger.error(e)
 
 if __name__ == "__main__":
     config={}
-    config['webhook']=''
-    config['pushplus']=''
-    
+    config['webhook_token']=''
+    config['pushplus_token']=''
+    config['bark_token']=""
     self=PUSH(config)
     PUSH.push(self,"test")
