@@ -222,15 +222,17 @@ class PUSH():
 
 if __name__ == "__main__":
     config={}
-    config['dingding_token']="26680d667cc6860559f53e8fd53cbf455c3674d11eacbc4eecdddd9725783851"
+    #只需要填入token即可，不要全部链接
+    config['dingding_token']=""
     config['wx_token']=''
-    config['pushplus_token']='4a0c9b63e67344999364da63390f33b5'
-    config['bark_token']="hAdbx27XRCDgBQPc4XMFKQ"  #只需要填入token即可，不要全部链接
-    config['smtp_mail_host']='smtp.aliyun.com' 
-    config['smtp_mail_user']='dorayaki@aliyun.com' 
-    config['smtp_mail_pass']='20001116ye' 
-    config['smtp_sender']='dorayaki@aliyun.com'
-    config['smtp_receivers']=['dorayaki@aliyun.com','dorayaki@aliyun.com']
-    config['ftqq_token']='SCT114640Tv93lmZ41fh7ifAzLAKjQl8F7'
-    self=PUSH(config)
-    PUSH.push(self,"test")
+    config['pushplus_token']=''
+    config['bark_token']=""  
+    config['smtp_mail_host']='' 
+    config['smtp_mail_user']='' 
+    config['smtp_mail_pass']='' 
+    config['smtp_sender']=''
+    config['smtp_receivers']=['']  #可群发
+    config['ftqq_token']=''
+    push_self=PUSH(config)  #传config创建对象
+    PUSH.push(push_self,"test")  #以后每次调用就可以了
+    PUSH.push(push_self,"test2")
