@@ -4,12 +4,14 @@ from loguru import logger
 #from globals import load_config
 
 class PUSH():
-    def __init__(self,config,message):
+    def __init__(self,config):
         self.config = config
         self.headers = {
         "Content-Type": "application/json",
         "Charset": "UTF-8"
          }
+                  
+    def push(self,message):
         self.message = message
         if self.config['webhook']!='':
            
@@ -23,8 +25,7 @@ class PUSH():
                 #logger.error(i18n_format("unsupport_webhook"))
         elif self.config['pushplus']!='':
             self.pushplus()
-          
-    
+
     def ding_push(self):
         # 构建请求数据
         msg = {
@@ -58,12 +59,18 @@ class PUSH():
       info=requests.post(url, json=data,headers=self.headers).json()
       logger.info(info.text)
 
-    def wx_push():
+    def wx_push(self):
         pass
-
+    
+    def smtp(self):
+        pass
+        
+    def bark(self):
+        pass
 if __name__ == "__main__":
     config={}
     config['webhook']=''
     config['pushplus']=''
     
-    PUSH(config,"test")
+    self=PUSH(config)
+    PUSH.push(self,"test")
