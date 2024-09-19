@@ -7,31 +7,32 @@ from loguru import logger
 class PUSH():
     def __init__(self,config):
         self.config = config
+        self.title="BHYG有新推送消息"
         self.headers = {
         "Content-Type": "application/json",
         "Charset": "UTF-8"
          }
-        #webhook
+        #dingding
         try:
-         self.webhook=config['webhook_token']
+         self.dingding_token=config['dingding_token']
         except:
-            logger.error("webhook_not_set")
+            logger.error("dingding_not_set")
             #logger.error(i18n_format("webhook_not_set"))
-            self.webhook=''
+            self.dingding_token=''
         #push_plus
         try:
-            self.pushplus=config['pushplus_token']
+            self.pushplus_token=config['pushplus_token']
         except:
             logger.error("pushplus_not_set")
             #logger.error(i18n_format("pushplus_not_set"))
-            self.pushplus=''
+            self.pushplus_token=''
         #smtp
         try:
             self.smtp_mail_host=config['smtp_mail_host']
             self.smtp_mail_user=config['smtp_mail_user']
             self.smtp_mail_pass=config['smtp_mail_pass']
             self.smtp_sender=config['smtp_sender']
-            self.smtp_receivers=config['receivers']
+            self.smtp_receivers=config['smtp_receivers']
         except:
             logger.error("smtp_not_set")
             #logger.error(i18n_format("smtp_not_set"))
@@ -47,30 +48,39 @@ class PUSH():
             logger.error("bark_not_set")
             #logger.error(i18n_format("bark_not_set"))
             self.bark_token=""
+        #ftqq
+        try:
+            self.ftqq_token=config['ftqq_token']
+        except:
+            logger.error("ftqq_not_set")
+            #logger.error(i18n_format("ftqq_not_set"))
+            self.ftqq_token=""
+        #wx
+        try:
+            self.wx_token=config['wx_token']
+        except:
+            logger.error("webhook_not_set")
+            #logger.error(i18n_format("wx_not_set"))
+            self.wx_token=""
         
                   
     def push(self,message):
         self.message = message
-        if self.webhook!='':
-           
-            if re.search('dingtalk',config['webhook']):
-                self.ding_push()
-            
-            elif re.search('weixin',config['webhook']):
-                self.wx_push()
-            else:
-                logger.error("unsupport_webhook")
-                #logger.error(i18n_format("unsupport_webhook"))
-        if self.pushplus!='':
+        if self.dingding_token!='':
+            self.ding_push()
+        if self.pushplus_token!='':
             self.pushplus()
-        if self.bark!='':
+        if self.bark_token!='':
             self.bark() 
         if self.smtp_mail_host and self.smtp_mail_pass and self.smtp_sender and self.smtp_receivers: 
             self.smtp()
-        if self.wx_push!='': 
+        if self.ftqq_token:
+            self.ftqq()
+        if self.wx_token:
             self.wx_push()  
 
     def ding_push(self):
+        url=f"https://oapi.dingtalk.com/robot/send?access_token={self.dingding_token}"
         # 构建请求数据
         msg = {
         "msgtype": "text",
@@ -84,7 +94,7 @@ class PUSH():
         # 对请求的数据进行json封装
         message_json = json.dumps(msg)
         # 发送请求
-        info = requests.post(url=self.config['webhook'], data=message_json, headers=self.headers)
+        info = requests.post(url, data=message_json, headers=self.headers)
         # 打印返回的结果
         logger.info(info.text)
         
@@ -99,13 +109,50 @@ class PUSH():
         "title":self.message,
         "content":self.message
       }
-      data=json.dumps(data).encode(encoding='utf-8')
-      info=requests.post(url, json=data,headers=self.headers).json()
-      logger.info(info.text)
+      
+      try:
+        info=requests.post(url, json=data,headers=self.headers)
+        logger.debug(info.text)
+        #logger.info(i18n_format("pushplus_send_success"))
+        logger.info("pushplus_send_success")
+      except Exception as e:
+        logger.error(e)
+      
+    def ftqq(self):
+        data={
+            "title":self.title,
+            "desp":self.message,
+            "noip":1
+        }
+        url=f"https://sctapi.ftqq.com/{self.ftqq_token}.send"
+        try:
+         info=requests.post(url, data=data,headers=self.headers)
+         logger.debug(info.text)
+         #logger.info(i18n_format("bark_send_success"))
+         logger.info("bark_send_success")
+        except Exception as e:
+            logger.error(e)
+        
+
 
     def wx_push(self):
-        pass
-    
+        url = f'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key={self.wx_token}'
+        data = {
+          'msgtype': 'text',
+          'text': {
+              'content': self.message
+             }
+          }
+        try:
+            info=requests.post(url, json=data,headers=self.headers)
+            logger.debug(info.text)
+            #logger.info(i18n_format("wx_send_success"))
+            logger.info("wx_send_success")
+        except Exception as e:
+            logger.error(e)
+        
+
+
     def smtp(self):
         from email.mime.text import MIMEText
         #设置服务器所需信息
@@ -124,14 +171,16 @@ class PUSH():
         #邮件内容设置
         message = MIMEText(self.message,'plain','utf-8')
         #邮件主题       
-        message['Subject'] = 'BHYG有新推送消息' 
+        message['Subject'] = self.title 
         #发送方信息
         message['From'] = sender 
-        #接受方信息     
-        message['To'] = receivers  
+        #接受方信息 
+        for receiver in receivers:
+          message['To'] = receiver    
+        
 
-        #登录并发送邮件
-        try:
+          #登录并发送邮件
+          try:
             smtpObj = smtplib.SMTP() 
             #连接到服务器
             smtpObj.connect(mail_host,25)
@@ -144,13 +193,13 @@ class PUSH():
             smtpObj.quit() 
             #logger.info(i18n_format("send_success"))
             logger.info("send_success")
-        except smtplib.SMTPException as e:
-            print('error',e) #打印错误
-            logger.error(e)
+          except smtplib.SMTPException as e:
+            logger.error(e) #打印错误
+            
         
     def bark(self):
         data={
-            "title":"BHYG有新推送消息",
+            "title":self.title,
             "body":self.message,
             "level":"timeSensitive",
             #推送中断级别。 
@@ -162,18 +211,26 @@ class PUSH():
             "group":"BHYG", 
             "isArchive":1
         }
-        url=self.bark_token
+        url=f'https://api.day.app/{self.bark_token}'
         try:
-          info=requests.post(url,json=data).json()
+          info=requests.post(url,json=data)
           logger.info("bark_send_success")
+          logger.debug(info.text)
           #logger.info(i18n_format("bark_send_success"))
         except Exception as e:
           logger.error(e)
 
 if __name__ == "__main__":
     config={}
-    config['webhook_token']=''
-    config['pushplus_token']=''
-    config['bark_token']=""
+    config['dingding_token']="26680d667cc6860559f53e8fd53cbf455c3674d11eacbc4eecdddd9725783851"
+    config['wx_token']=''
+    config['pushplus_token']='4a0c9b63e67344999364da63390f33b5'
+    config['bark_token']="hAdbx27XRCDgBQPc4XMFKQ"  #只需要填入token即可，不要全部链接
+    config['smtp_mail_host']='smtp.aliyun.com' 
+    config['smtp_mail_user']='dorayaki@aliyun.com' 
+    config['smtp_mail_pass']='20001116ye' 
+    config['smtp_sender']='dorayaki@aliyun.com'
+    config['smtp_receivers']=['dorayaki@aliyun.com','dorayaki@aliyun.com']
+    config['ftqq_token']='SCT114640Tv93lmZ41fh7ifAzLAKjQl8F7'
     self=PUSH(config)
     PUSH.push(self,"test")
