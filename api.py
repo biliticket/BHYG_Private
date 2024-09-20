@@ -8,7 +8,7 @@ import hmac
 import qrcode
 import requests
 from loguru import logger
-
+from push import PUSH
 from i18n import *
 
 from utils import save, load
@@ -22,6 +22,7 @@ class BilibiliHyg:
         self.waited = False
         self.sdk = sdk
         self.config = config
+        self.push_self=PUSH(config)
         self.config["gaia_vtoken"] = None
         self.session = requests.Session()
         if "user-agent" in self.config:
@@ -488,6 +489,7 @@ class BilibiliHyg:
             self.order_id = order_id
             logger.info(i18n_format("bill_pay_hint"))
             logger.info(i18n_format("bill_qr") + pay_url)
+            PUSH.push(self.push_self,i18n_format("bill_qr") + pay_url)
             qr = qrcode.QRCode()
             qr.add_data(pay_url)
             qr.print_ascii(invert=True)
@@ -598,40 +600,8 @@ class BilibiliHyg:
             if self.fake_ticket(pay_token, order_id=orderid):
                 self.sdk.capture_message("Get order!")
                 # self.logout()
-                if "pushplus" in self.config:
-                    # https://www.pushplus.plus/send/
-                    url = "https://www.pushplus.plus/send"
-                    response = requests.post(
-                        url,
-                        json={
-                            "token": self.config["pushplus"],
-                            "title": i18n_format("BHYG_notify"),
-                            "content": i18n_format("rob_ok_paying") + self.order_id,
-                        },
-                    ).json()
-                    if response["code"] == 200:
-                        logger.success(
-                            i18n_format("notify_ok") + " " + response["data"]
-                        )
-                    else:
-                        logger.error(i18n_format("notify_fail") + " " + response)
-                if "webhook" in self.config:
-                    url = self.config["webhook"]
-                    response = requests.post(
-                        url,
-                        json={
-                            "msg_type": "text",
-                            "text": {
-                                "content": i18n_format("rob_ok_paying") + self.order_id,
-                            },
-                        },
-                    ).json()
-                    if response["code"] == 200:
-                        logger.success(
-                            i18n_format("notify_ok") + " " + response["data"]
-                        )
-                    else:
-                        logger.error(i18n_format("notify_fail") + " " + response)
+                PUSH.push(self.push_self,i18n_format("pay_success"))
+                
                 if "hunter" in self.config:
                     return True
                 logger.info(i18n_format("unpaid_bill"))

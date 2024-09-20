@@ -191,10 +191,26 @@ def load_config():
             logger.info(i18n_format("select_new_boot_msg"))
             temp = load()
             config = {}
-            if "pushplus" in temp:
-                config["pushplus"] = temp["pushplus"]
-            if "webhook" in temp:
-                config["webhook"] = temp["webhook"]
+            if "dingding_token" in temp:
+                config["dingding_token"] = temp["dingding_token"]
+            if "wx_token" in temp:
+                config["wx_token"] = temp["wx_token"]
+            if "pushplus_token" in temp:
+                config["pushplus_token"] = temp["pushplus_token"]
+            if "bark_token" in temp:
+                config["bark_token"] = temp["bark_token"]
+            if "smtp_mail_host" in temp:
+                config["smtp_mail_host"] = temp["smtp_mail_host"]
+            if "smtp_mail_user" in temp:
+                config["smtp_mail_user"] = temp["smtp_mail_user"]
+            if "smtp_mail_pass" in temp:
+                config["smtp_mail_pass"] = temp["smtp_mail_pass"]
+            if "smtp_sender" in temp:
+                config["smtp_sender"] = temp["smtp_sender"]
+            if "smtp_receivers" in temp:
+                config["smtp_receivers"] = temp["smtp_receivers"]
+            if "ftqq_token" in temp:
+                config["ftqq_token"] = temp["ftqq_token"]
             if "ua" in temp:
                 config["ua"] = temp["pushplus"]
             if "captcha" in temp:
@@ -224,10 +240,26 @@ def load_config():
                 config["ua"] = temp["ua"]
             if "cookie" in temp:
                 config["cookie"] = temp["cookie"]
-            if "pushplus" in temp:
-                config["pushplus"] = temp["pushplus"]
-            if "webhook" in temp:
-                config["webhook"] = temp["webhook"]
+            if "dingding_token" in temp:
+                config["dingding_token"] = temp["dingding_token"]
+            if "wx_token" in temp:
+                config["wx_token"] = temp["wx_token"]
+            if "pushplus_token" in temp:
+                config["pushplus_token"] = temp["pushplus_token"]
+            if "bark_token" in temp:
+                config["bark_token"] = temp["bark_token"]
+            if "smtp_mail_host" in temp:
+                config["smtp_mail_host"] = temp["smtp_mail_host"]
+            if "smtp_mail_user" in temp:
+                config["smtp_mail_user"] = temp["smtp_mail_user"]
+            if "smtp_mail_pass" in temp:
+                config["smtp_mail_pass"] = temp["smtp_mail_pass"]
+            if "smtp_sender" in temp:
+                config["smtp_sender"] = temp["smtp_sender"]
+            if "smtp_receivers" in temp:
+                config["smtp_receivers"] = temp["smtp_receivers"]
+            if "ftqq_token" in temp:
+                config["ftqq_token"] = temp["ftqq_token"]
             if "phone" in temp:
                 config["phone"] = temp["phone"]
             if "captcha" in temp:
