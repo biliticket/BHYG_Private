@@ -298,16 +298,39 @@ def utility(config):
             logger.info(i18n_format("cancelled"))
             return
         if token == "":
-            if "pushplus" in config:
+            if "pushplus_token" in config:
                 config.pop("pushplus")
             logger.info(i18n_format("pushplus_off"))
             save(config)
             return
-        config["pushplus"] = token
+        config["pushplus_token"] = token
         logger.info(i18n_format("pushplus_on"))
         save(config)
 
-    def webhook_config(config):
+    def bark_config(config):
+        try:
+            try:
+                clip_value = pyperclip.paste()
+                logger.info(i18n_format("clip_paste_success"))
+            except pyperclip.PyperclipException:
+                clip_value = ""
+            token = noneprompt.InputPrompt(
+                question=i18n_format("bark_token"),
+                default_text=clip_value,
+            ).prompt()
+        except noneprompt.CancelledError:
+            logger.info(i18n_format("cancelled"))
+            return
+        if token == "":
+            if "bark_token" in config:
+                config.pop("bark_token")
+            logger.info(i18n_format("bark_off"))
+            save(config)
+            return
+        config["bark_token"] = token
+        logger.info(i18n_format("bark_on"))
+        save(config)
+    def dingding_config(config):
         try:
             try:
                 clip_value = pyperclip.paste()
@@ -315,21 +338,105 @@ def utility(config):
             except pyperclip.PyperclipException:
                 clip_value = ""
             webhook = noneprompt.InputPrompt(
-                question=i18n_format("webhook"), default_text=clip_value
+                question=i18n_format("dingding"), default_text=clip_value
             ).prompt()
         except noneprompt.CancelledError:
             logger.info(i18n_format("cancelled"))
             return
         if webhook == "":
-            if "webhook" in config:
-                config.pop("webhook")
-            logger.info(i18n_format("webhook_off"))
+            if "dingding_token" in config:
+                config.pop("dingding_token")
+            logger.info(i18n_format("dingding_off"))
             save(config)
             return
-        config["webhook"] = webhook
-        logger.info(i18n_format("webhook_on"))
+        config["dingding_token"] = webhook
+        logger.info(i18n_format("dingding_on"))
         save(config)
 
+    def wx_config(config):
+        try:
+            try:
+                clip_value = pyperclip.paste()
+                logger.info(i18n_format("clip_paste_success"))
+            except pyperclip.PyperclipException:
+                clip_value = ""
+            webhook = noneprompt.InputPrompt(
+                question=i18n_format("wxpush"), default_text=clip_value
+            ).prompt()
+        except noneprompt.CancelledError:
+            logger.info(i18n_format("cancelled"))
+            return
+        if webhook == "":
+            if "wx_token" in config:
+                config.pop("wx_token")
+            logger.info(i18n_format("dingding_off"))
+            save(config)
+            return
+        config["wx_token"] = webhook
+        logger.info(i18n_format("wxpush_on"))
+        save(config)
+        
+    def ftqq_config(config):
+        try:
+            try:
+                clip_value = pyperclip.paste()
+                logger.info(i18n_format("clip_paste_success"))
+            except pyperclip.PyperclipException:
+                clip_value = ""
+            webhook = noneprompt.InputPrompt(
+                question=i18n_format("ftqq"), default_text=clip_value
+            ).prompt()
+        except noneprompt.CancelledError:
+            logger.info(i18n_format("cancelled"))
+            return
+        if webhook == "":
+            if "ftqq_token" in config:
+                config.pop("ftqq_token")
+            logger.info(i18n_format("ftqq_off"))
+            save(config)
+            return
+        config["ftqq_token"] = webhook
+        logger.info(i18n_format("ftqq_on"))
+        save(config) 
+
+    def smtp_config(config):
+        try:
+            try:
+                clip_value = pyperclip.paste()
+                logger.info(i18n_format("clip_paste_success"))
+            except pyperclip.PyperclipException:
+                clip_value = ""
+            smtp_mail_host = noneprompt.InputPrompt(
+                question=i18n_format("smtp_mail_host"), default_text=clip_value
+            ).prompt()
+            smtp_mail_user=noneprompt.InputPrompt(
+                question=i18n_format("smtp_mail_user"), default_text=clip_value
+            ).prompt()
+            smtp_mail_pass=noneprompt.InputPrompt(
+                question=i18n_format("smtp_mail_pass"), default_text=clip_value
+            ).prompt()
+            smtp_sender=noneprompt.InputPrompt(
+                question=i18n_format("smtp_sender"), default_text=clip_value
+            ).prompt()
+            smtp_receivers=noneprompt.InputPrompt(
+                question=i18n_format("smtp_receivers"), default_text=clip_value
+            ).prompt()  #可传多个收件人，要按照['']格式传进来，如['114514@123.com','141414@123.com']  @violite 24.9.20
+        except noneprompt.CancelledError:
+            logger.info(i18n_format("cancelled"))
+            return
+        if not smtp_mail_host and smtp_mail_pass and smtp_sender and smtp_receivers and smtp_mail_user:
+            if "smtp_mail_pass" in config:  #太多项目了，偷个懒只检测有没有密码作为开关 @violite 24.9.20
+                config.pop("smtp_mail_pass")
+            logger.info(i18n_format("smtp_off"))
+            save(config)
+            return
+        config["smtp_mail_host"] = smtp_mail_host
+        config["smtp_mail_user"]=smtp_mail_user
+        config["smtp_mail_pass"]=smtp_mail_pass
+        config["smtp_sender"]=smtp_sender
+        config["smtp_receivers"]=smtp_receivers
+        logger.info(i18n_format("smtp_on"))
+        save(config)                 
     def save_phone(config):
         try:
             phone = noneprompt.InputPrompt(
@@ -462,7 +569,7 @@ def utility(config):
             question=i18n_format("select_tool"),
             choices=[
                 noneprompt.Choice(i18n_format(x), data=x)
-                for x in ["tool_add_buyer", "tool_modify_ua", "tool_modify_gaia", "tool_hunter_mode", "tool_hunter_off", "tool_share_mode", "tool_pushplus", "tool_phone_prefill", "tool_proxy_setting", "tool_capacha_mode", "tool_webhook", "tool_set_offset", "tool_hide_module", "back",]],
+                for x in ["tool_add_buyer", "tool_modify_ua", "tool_modify_gaia", "tool_hunter_mode", "tool_hunter_off", "tool_share_mode", "tool_phone_prefill", "tool_proxy_setting", "tool_capacha_mode","tool_pushplus", "tool_bark","tool_dingding","tool_wx_push","tool_ftqq","tool_smtp", "tool_set_offset", "tool_hide_module", "back",]],
         )
         .prompt()
         .data
@@ -485,9 +592,6 @@ def utility(config):
     elif select == "tool_share_mode":
         share_mode(config)
         return utility(config)
-    elif select == "tool_pushplus":
-        pushplus_config(config)
-        return utility(config)
     elif select == "tool_phone_prefill":
         save_phone(config)
         return utility(config)
@@ -497,8 +601,23 @@ def utility(config):
     elif select == "tool_capacha_mode":
         captcha_mode(config)
         return utility(config)
-    elif select == "tool_webhook":
-        webhook_config(config)
+    elif select == "tool_pushplus":
+        pushplus_config(config)
+        return utility(config)
+    elif select == "tool_bark":
+        bark_config(config)
+        return utility(config)
+    elif select == "tool_dingding":
+        dingding_config(config)
+        return utility(config)
+    elif select == "tool_wx_push":
+        wx_config(config)
+        return utility(config)
+    elif select == "tool_ftqq":
+        ftqq_config(config)
+        return utility(config)
+    elif select == "tool_smtp":
+        smtp_config(config)
         return utility(config)
     elif select =="tool_set_offset":
         set_offset(config)

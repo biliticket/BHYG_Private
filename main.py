@@ -13,6 +13,7 @@ import requests
 from loguru import logger
 
 from api import BilibiliHyg
+from push import PUSH
 from globals import *
 
 from utils import save, load, check_policy
@@ -36,6 +37,7 @@ def run(hyg):
                 if "hunter" not in hyg.config:
                     hyg.sdk.capture_message("Pay success!")
                     logger.success(i18n_format("pay_success"))
+                    PUSH(hyg.push_self,i18n_format("pay_success"))
                     return
                 else:
                     hyg.config["hunter"] += 1
@@ -43,6 +45,7 @@ def run(hyg):
                     logger.success(
                         i18n_format("hunter_prompt").format(hyg.config["hunter"])
                     )
+                    PUSH(hyg.push_self,i18n_format("hunter_prompt").format(hyg.config["hunter"]))
     elif hyg.config["mode"] == "detect":
         token_time = time.time()
         while 1:
@@ -122,6 +125,7 @@ def main():
         check_key = check_policy()
         logger.info(i18n_format("tips"))
         config = load_config()
+        push_self= PUSH(config)
         if config == None:
             return
         if check_key:
@@ -594,7 +598,8 @@ def main():
         save(config)
         sentry_sdk.set_context("config", config)
         sentry_sdk.capture_message("config complete")
-        BHYG = BilibiliHyg(config, sentry_sdk, kdl_client, session)
+        BHYG = BilibiliHyg(config, sentry_sdk, kdl_client, session,push_self)
+        
         BHYG.waited = True
         run(BHYG)
     except KeyboardInterrupt:

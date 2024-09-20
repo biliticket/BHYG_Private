@@ -695,3 +695,10 @@ class BilibiliHyg:
         }
         resp = requests.post(url, params=params, headers=headers).json()
         return resp["data"]["ticket"]
+
+
+
+
+
+           
+    
