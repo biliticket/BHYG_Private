@@ -55,6 +55,8 @@ class BilibiliHyg:
                 )
             while self.get_time() < self.config["time"]:
                 pass
+            while self.get_ticket_status()[1] != 1:
+                pass
         logger.info(i18n_format("get_token_finish"))
         self.token = self.get_token()
         logger.info(i18n_format("will_pay_bill"))

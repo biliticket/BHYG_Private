@@ -318,7 +318,7 @@ def main():
             config["sku_id"] = str(tickets[int(sku_id)]["id"])
             config["pay_money"] = str(tickets[int(sku_id)]["price"])
             config["ticket_desc"] = str(tickets[int(sku_id)]["desc"])
-            config["time"] = int(tickets[int(sku_id)]["saleStart"])
+            config["time"] = int(tickets[int(sku_id)]["saleStart"])-int(response["data"]["current_time"])+time.time()
             if tickets[int(sku_id)]["discount_act"] is not None:
                 logger.info(
                     i18n_format("show_act").format(
