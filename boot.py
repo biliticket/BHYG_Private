@@ -29,11 +29,6 @@ import noneprompt
 
 
 def cleanup_meipass() -> None:
-    from sentry_sdk import Hub
-
-    client = Hub.current.client
-    if client is not None:
-        client.close(timeout=2.0)
     logger.info(i18n_format("exit_sleep_15s"))
     try:
         time.sleep(15)
