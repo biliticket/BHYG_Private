@@ -470,40 +470,31 @@ def main():
             #                        elif user_female and not user_male:
             #                            logger.error("我朝，有女同啊！")
             else:
-                index = noneprompt.CheckboxPrompt(
+                index = noneprompt.ListPrompt(
                     question=i18n_format("select_buyer"),
                     choices=[
                         noneprompt.Choice(
-                            name="{}. {} {} {}".format(
-                                i,
-                                buyer_infos[i]["name"][0]
-                                + "*" * (len(buyer_infos[i]["name"]) - 2)
-                                + buyer_infos[i]["name"][-1],
-                                buyer_infos[i]["personal_id"][:4]
-                                + "**********"
-                                + buyer_infos[i]["personal_id"][-4:],
-                                buyer_infos[i]["tel"][:3]
-                                + "****"
-                                + buyer_infos[i]["tel"][-4:],
-                            ),
+                            f"{i['name'][0] + '*' * (len(i['name']) - 2) + i['name'][-1]} {i['personal_id'][:4] + '**********' + i['personal_id'][-4:]} {i['tel'][:3] + '****' + i['tel'][-4:]}",
                             data=i,
                         )
+                        for i in buyer_infos
                     ],
                 ).prompt()
-                config["buyer_info"].append(buyer_infos[i.data] for i in index)
+                config["buyer_info"].append(index.data)
+                logger.debug(index.data)
                 logger.info(
-                    i18n_format("selected_buyer").format(
-                        buyer_infos[int(index.split(".")[0])]["name"][0]
-                        + "*" * (len(buyer_infos[int(index.split(".")[0])]["name"]) - 2)
-                        + buyer_infos[int(index.split(".")[0])]["name"][-1],
-                        buyer_infos[int(index.split(".")[0])]["personal_id"][:4]
-                        + "**********"
-                        + buyer_infos[int(index.split(".")[0])]["personal_id"][-4:],
-                        buyer_infos[int(index.split(".")[0])]["tel"][:3]
-                        + "****"
-                        + buyer_infos[int(index.split(".")[0])]["tel"][-4:],
+                        i18n_format("selected_buyer").format(
+                            index.data["name"][0]
+                            + "*" * (len(index.data["name"]) - 2)
+                            + index.data["name"][-1],
+                            index.data["personal_id"][:4]
+                            + "**********"
+                            + index.data["personal_id"][-4:],
+                            index.data["tel"][:3]
+                            + "****"
+                            + index.data["tel"][-4:],
+                        )
                     )
-                )
                 if (
                     "phone" not in config or config["phone"] == ""
                 ):  # 如果未预约填写手机号

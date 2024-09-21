@@ -63,7 +63,7 @@ def check_policy(uid=None, res=None):
                 return
     for _ in range(3):
         try:
-            policy = requests.get("https://bhyg.bitf1a5h.eu.org/policy.json").json()
+            policy = requests.get("https://bhyg.bitf1a5h.eu.org/policy.json",headers={"X-BHYG-Req":"1"}).json()
             break
         except Exception:
             logger.error(i18n_format("policy_error"))
