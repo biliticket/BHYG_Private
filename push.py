@@ -12,55 +12,45 @@ class PUSH():
         "Content-Type": "application/json",
         "Charset": "UTF-8"
          }
-        #dingding
-        try:
-         self.dingding_token=config['dingding_token']
-        except:
-            logger.error("dingding_not_set")
-            #logger.error(i18n_format("webhook_not_set"))
+        if 'dingding_token' in config:
+            self.dingding_token=config['dingding_token']
+        else:
             self.dingding_token=''
-        #push_plus
-        try:
+        if 'pushplus_token' in config:
             self.pushplus_token=config['pushplus_token']
-        except:
-            logger.error("pushplus_not_set")
-            #logger.error(i18n_format("pushplus_not_set"))
+        else:
             self.pushplus_token=''
-        #smtp
-        try:
+        if 'smtp_mail_host' in config:
             self.smtp_mail_host=config['smtp_mail_host']
-            self.smtp_mail_user=config['smtp_mail_user']
-            self.smtp_mail_pass=config['smtp_mail_pass']
-            self.smtp_sender=config['smtp_sender']
-            self.smtp_receivers=config['smtp_receivers']
-        except:
-            logger.error("smtp_not_set")
-            #logger.error(i18n_format("smtp_not_set"))
+        else:
             self.smtp_mail_host=""
+        if 'smtp_mail_user' in config:
+            self.smtp_mail_user=config['smtp_mail_user']
+        else:
             self.smtp_mail_user=""
+        if 'smtp_mail_pass' in config:
+            self.smtp_mail_pass=config['smtp_mail_pass']
+        else:
             self.smtp_mail_pass=""
+        if 'smtp_sender' in config:
+            self.smtp_sender=config['smtp_sender']
+        else:
             self.smtp_sender=""
+        if 'smtp_receivers' in config:
+            self.smtp_receivers=config['smtp_receivers']
+        else:
             self.smtp_receivers=['']
-        #bark
-        try:
+        if 'bark_token' in config:
             self.bark_token=config['bark_token']
-        except:
-            logger.error("bark_not_set")
-            #logger.error(i18n_format("bark_not_set"))
+        else:
             self.bark_token=""
-        #ftqq
-        try:
+        if 'ftqq_token' in config:
             self.ftqq_token=config['ftqq_token']
-        except:
-            logger.error("ftqq_not_set")
-            #logger.error(i18n_format("ftqq_not_set"))
+        else:
             self.ftqq_token=""
-        #wx
-        try:
+        if 'wx_token' in config:
             self.wx_token=config['wx_token']
-        except:
-            logger.error("webhook_not_set")
-            #logger.error(i18n_format("wx_not_set"))
+        else:
             self.wx_token=""
         
                   
