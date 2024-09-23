@@ -4,6 +4,7 @@ import time
 import urllib.parse
 import hashlib
 import hmac
+import secrets
 
 import qrcode
 import requests
@@ -393,11 +394,11 @@ class BilibiliHyg:
             "screen_id": self.config["screen_id"],
             "sku_id": self.config["sku_id"],
             "token": self.token,
-            "deviceId": "",
+            "deviceId": secrets.token_hex(),
             "project_id": self.config["project_id"],
             "pay_money": self.config["all_price"],
             "count": self.config["count"],
-            "timestamp": int(time.time()),
+            "timestamp": int(time.time()*1000),
             "newRisk": "true",
             "requestSource": "neul-next",
             "clickPosition": self.generate_clickPosition(),
