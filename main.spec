@@ -38,6 +38,7 @@ a = Analysis(
         "geetest",
         "globals",
         "utils",
+        "push"
     ],
     hookspath=[],
     hooksconfig={},
