@@ -149,6 +149,7 @@ class BilibiliHyg:
             "sku_id": self.config["sku_id"],
             "token": "",
             "newRisk": "true",
+            "ignoreRequestLimit": "true",
             "requestSource": "neul-next",
         }
         if "act_id" in self.config:
