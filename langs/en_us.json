@@ -253,7 +253,7 @@
     "offset_off": "Time offset is off",
     "offset_error": "Failed to get time offset",
     "cover_time_offset": "Time offset overwritten",
-    "auto_time_offset": "Auto time offset used, default is NTP time + 0.5s",
+    "auto_time_offset": "Auto time offset used, default is system time.",
     "manual_verify": "Please manually complete the verification at https://bhyg.bitf1a5h.eu.org/",
     "manual_copy": "Please copy the verification code manually. If you are using Linux, please run `sudo apt-get install xclip`",
     "input_captcha": "Enter the verification code",

@@ -249,7 +249,7 @@
     "offset_off": "时间偏移量已关闭",
     "offset_error": "时间偏移量获取失败",
     "cover_time_offset": "已覆盖时间偏移量",
-    "auto_time_offset": "已使用自动时间偏移量，默认为NTP时间+0.5s",
+    "auto_time_offset": "已使用自动时间偏移量，默认为系统时间",
     "manual_verify": "请手动在https://bhyg.bitf1a5h.eu.org/ 完成验证码",
     "manual_copy": "请手动复制验证码，若您为linux，请运行`sudo apt-get install xclip`",
     "input_captcha": "请输入验证码",
