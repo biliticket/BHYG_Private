@@ -26,7 +26,7 @@ import json
 import importlib
 import shutil
 import noneprompt
-
+from push import PUSH
 
 def cleanup_meipass() -> None:
     logger.info(i18n_format("exit_sleep_15s"))
