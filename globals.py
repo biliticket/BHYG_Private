@@ -325,6 +325,8 @@ def load_config():
     if "cover_time_offset" in config:
         logger.info(i18n_format("cover_time_offset"))
         logger.info(i18n_format("time_offset").format(config["time_offset"]))
+        config["time_offset"] = config["cover_time_offset"]
+    config["time_offset"] = 0
     while True:
         if "cookie" not in config or not use_login:
             config["cookie"] = interactive_login(sentry_sdk)
