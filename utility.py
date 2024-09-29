@@ -434,7 +434,7 @@ def utility(config):
         config["smtp_mail_user"]=smtp_mail_user
         config["smtp_mail_pass"]=smtp_mail_pass
         config["smtp_sender"]=smtp_sender
-        config["smtp_receivers"]=smtp_receivers
+        config["smtp_receivers"]=list(smtp_receivers.split(","))
         logger.info(i18n_format("smtp_on"))
         save(config)                 
     def save_phone(config):

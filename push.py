@@ -1,7 +1,7 @@
 import smtplib
 import requests,json,re
 from loguru import logger
-#from i18n import *
+from i18n import *
 #from globals import load_config
 
 class PUSH():
@@ -39,7 +39,7 @@ class PUSH():
         if 'smtp_receivers' in config:
             self.smtp_receivers=config['smtp_receivers']
         else:
-            self.smtp_receivers=['']
+            self.smtp_receivers=""
         if 'bark_token' in config:
             self.bark_token=config['bark_token']
         else:
@@ -62,7 +62,7 @@ class PUSH():
             self.pushplus()
         if self.bark_token!='':
             self.bark() 
-        if self.smtp_mail_host and self.smtp_mail_pass and self.smtp_sender and self.smtp_receivers: 
+        if self.smtp_mail_host and self.smtp_mail_pass and self.smtp_sender : 
             self.smtp()
         if self.ftqq_token:
             self.ftqq()
@@ -103,8 +103,8 @@ class PUSH():
       try:
         info=requests.post(url, json=data,headers=self.headers)
         logger.debug(info.text)
-        #logger.info(i18n_format("pushplus_send_success"))
-        logger.info("pushplus_send_success")
+        logger.info(i18n_format("pushplus_send_success"))
+        #logger.info("pushplus_send_success")
       except Exception as e:
         logger.error(e)
       
@@ -118,8 +118,8 @@ class PUSH():
         try:
          info=requests.post(url, data=data,headers=self.headers)
          logger.debug(info.text)
-         #logger.info(i18n_format("bark_send_success"))
-         logger.info("bark_send_success")
+         logger.info(i18n_format("ftqq_send_success"))
+         #logger.info("bark_send_success")
         except Exception as e:
             logger.error(e)
         
@@ -136,8 +136,8 @@ class PUSH():
         try:
             info=requests.post(url, json=data,headers=self.headers)
             logger.debug(info.text)
-            #logger.info(i18n_format("wx_send_success"))
-            logger.info("wx_send_success")
+            logger.info(i18n_format("wx_send_success"))
+            #logger.info("wx_send_success")
         except Exception as e:
             logger.error(e)
         
@@ -155,7 +155,7 @@ class PUSH():
         #邮件发送方邮箱地址
         sender = self.smtp_sender  
         #邮件接受方邮箱地址，注意需要[]包裹，这意味`着你可以写多个邮件地址群发
-        receivers = self.smtp_receivers  
+        receivers = list(self.smtp_receivers.split(","))  
 
         #设置email信息
         #邮件内容设置
@@ -164,6 +164,7 @@ class PUSH():
         message['Subject'] = self.title 
         #发送方信息
         message['From'] = sender 
+        
         #接受方信息 
         for receiver in receivers:
           message['To'] = receiver    
@@ -181,8 +182,8 @@ class PUSH():
                 sender,receivers,message.as_string()) 
             #退出
             smtpObj.quit() 
-            #logger.info(i18n_format("send_success"))
-            logger.info("send_success")
+            logger.info(i18n_format("smtp_send_success"))
+            #logger.info("send_success")
           except smtplib.SMTPException as e:
             logger.error(e) #打印错误
             
@@ -204,9 +205,9 @@ class PUSH():
         url=f'https://api.day.app/{self.bark_token}'
         try:
           info=requests.post(url,json=data)
-          logger.info("bark_send_success")
-          logger.debug(info.text)
-          #logger.info(i18n_format("bark_send_success"))
+          #logger.info("bark_send_success")
+          #logger.debug(info.text)
+          logger.info(i18n_format("bark_send_success"))
         except Exception as e:
           logger.error(e)
 

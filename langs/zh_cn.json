@@ -287,6 +287,36 @@
     "super_mode_on_msg": "超级模式😎😎😎无所畏惧☝☝☝🤓🤓🤓👉👉👉",
     "super_mode_on": "超级模式已开启",
     "super_mode_off": "超级模式已关闭",
-    "super_delay": "请输入超级模式延迟时间（单位秒）"
-  }
-}
+    "super_delay": "请输入超级模式延迟时间（单位秒）",
+    "pushplus_send_success": "PushPlus推送成功" ,
+    "bark_send_success":"Bark推送成功",
+    "wx_send_success":"企业微信推送成功",
+    "smtp_send_success":"SMTP推送成功",
+    "ftqq_send_success":"方糖QQ推送成功",
+    "smtp_mail_host":"请输入SMTP邮件服务器地址",
+    "smtp_mail_user":"请输入SMTP邮件用户名",
+    "smtp_mail_pass":"请输入SMTP邮件密码",
+    "smtp_sender":"请输入发件人邮箱",
+    "smtp_receivers":"请输入收件人邮箱,可群发，按照 123456@123.com,123456@123.com 的格式输入",
+    "smtp_off":"SMTP已关闭",
+    "smtp_on": "SMTP已开启",
+    "ftqq_on":"方糖推送已开启",
+    "ftqq_off":"方糖推送关闭",
+    "ftqq":"请输入您的ftqq_token",
+    "wxpush_on":"企业微信推送开启",
+    "wxpush_off":"企业微信推送关闭",
+    "wxpush":"请输入您的企业微信推送的webhook",
+    "bark_on":"Bark推送已开启",
+    "bark_off":"Bark推送已关闭",
+    "bark_token":"请输入您的Bark推送的token",
+    "dingding_on":"钉钉推送已开启",
+    "dingding_off":"钉钉推送已关闭",
+    "dingding":"请输入您的钉钉推送的webhook",
+    "tool_dingding":"钉钉推送",
+    "tool_bark":"Bark推送",
+    "tool_ftqq":"方糖推送",
+    "tool_wx_push":"企业微信推送",
+    "tool_smtp":"SMTP邮箱推送"
+
+     }
+    }
