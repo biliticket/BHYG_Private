@@ -21,7 +21,7 @@ from utils import save, load
 import time
 from i18n import *
 
-ver_int = 1000
+ver_int = 1002
 version = "v{}.{}.{}".format(
     (ver_int // 10000) % 100, (ver_int // 100) % 100, ver_int % 100
 )
@@ -325,10 +325,8 @@ def load_config():
     if "cover_time_offset" in config:
         logger.info(i18n_format("cover_time_offset"))
         logger.info(i18n_format("time_offset").format(config["time_offset"]))
-    else:
-        logger.info(i18n_format("auto_time_offset"))
-        config["time_offset"] = -0.5
-        logger.info(i18n_format("time_offset").format(-0.5))
+        config["time_offset"] = config["cover_time_offset"]
+    config["time_offset"] = 0
     while True:
         if "cookie" not in config or not use_login:
             config["cookie"] = interactive_login(sentry_sdk)
