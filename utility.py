@@ -230,10 +230,15 @@ def utility(config):
             ).prompt()
         except noneprompt.CancelledError as e:
             raise KeyboardInterrupt("Cancelled by user.") from e
+        for i in range(4): #下面传入的id_type
+            if id_type == ["id_idcard","id_passport","id_Hong_Kong","id_Taiwan"][i]:
+                id_type = i
+                break
+            
         data = {
             "name": name,
             "tel": tel,
-            "id_type": id_type["id_type"].split(".")[0],
+            "id_type": id_type,
             "personal_id": personal_id,
             "is_default": "0",
             "src": "ticket",
