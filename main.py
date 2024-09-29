@@ -23,8 +23,7 @@ import noneprompt
 from i18n import *
 
 common_project_id = [
-    {"name": "上海·BilibiliWorld 2024", "id": 85939},
-    {"name": "上海·BILIBILI MACRO LINK 2024", "id": 85938},
+    {"name": "杭州·COMICUP30", "id": 92785},
 ]
 
 

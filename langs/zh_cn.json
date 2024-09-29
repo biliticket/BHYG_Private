@@ -271,7 +271,6 @@
     "already_save_phone": "已经预填账号绑定手机号 {}****{}",
     "cleaning_files": "正在清理 {}",
     "cleaning_fail": "清理失败 {}: {}",
-    "captcha_mode_not_supported": "不支持的验证码模式",
     "captcha_mode_gt": "您当前使用的是本地GT模块验证码模式（推荐）",
     "captcha_mode_rrocr": "您当前使用的是RROCR验证码模式",
     "captcha_mode_manual": "您当前使用的是手动验证码模式",
