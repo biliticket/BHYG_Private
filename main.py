@@ -36,7 +36,7 @@ def run(hyg):
                 if "hunter" not in hyg.config:
                     hyg.sdk.capture_message("Pay success!")
                     logger.success(i18n_format("pay_success"))
-                    PUSH(hyg.push_self,i18n_format("pay_success"))
+                    PUSH.push(hyg.push_self,i18n_format("pay_success"))
                     return
                 else:
                     hyg.config["hunter"] += 1
