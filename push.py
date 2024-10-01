@@ -86,7 +86,11 @@ class PUSH():
         # 发送请求
         info = requests.post(url, data=message_json, headers=self.headers)
         # 打印返回的结果
-        logger.info(info.text)
+        if info.json()['errcode'] == 0:
+            logger.info(i18n_format("dingding_send_success"))
+            #logger.info("dingding_send_success")==0:
+        else:
+            logger.info(info.text)
         
     def pushplus(self):
        
