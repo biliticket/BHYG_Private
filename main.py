@@ -44,7 +44,7 @@ def run(hyg):
                     logger.success(
                         i18n_format("hunter_prompt").format(hyg.config["hunter"])
                     )
-                    PUSH(hyg.push_self,i18n_format("hunter_prompt").format(hyg.config["hunter"]))
+                    PUSH.push(hyg.push_self,i18n_format("hunter_prompt").format(hyg.config["hunter"]))
     elif hyg.config["mode"] == "detect":
         token_time = time.time()
         while 1:
