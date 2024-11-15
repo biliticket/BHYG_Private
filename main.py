@@ -23,7 +23,7 @@ import noneprompt
 from i18n import *
 
 common_project_id = [
-    {"name": "杭州·COMICUP30", "id": 92785},
+    {"name": "上海·TOGENASHI TOGEARI Live「凛音の理」", "id": 94306},
 ]
 
 
