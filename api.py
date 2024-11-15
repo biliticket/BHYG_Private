@@ -291,6 +291,9 @@ class BilibiliHyg:
         if response["data"]["act"] is not None:
             logger.info(i18n_format("info_discount"))
             self.config["act_id"] = response["data"]["act"]["act_id"]
+
+        if response["data"]["pay_money"] != self.config["all_price"]:
+            self.config["all_price"] = response["data"]["pay_money"]
         return
 
     def get_token(self):
