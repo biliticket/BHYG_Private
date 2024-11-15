@@ -282,7 +282,6 @@ def main():
                 break
             logger.info(i18n_format("project_name").format(response["data"]["name"]))
             config["id_bind"] = response["data"]["id_bind"]
-            config["is_paper_ticket"] = response["data"]["has_paper_ticket"]
             screens = response["data"]["screen_list"]
             screen_id = (
                 noneprompt.ListPrompt(
@@ -318,6 +317,7 @@ def main():
             config["sku_id"] = str(tickets[int(sku_id)]["id"])
             config["pay_money"] = str(tickets[int(sku_id)]["price"])
             config["ticket_desc"] = str(tickets[int(sku_id)]["desc"])
+            config["is_paper_ticket"] = screens[int(screen_id)]["delivery_type"] != 1
             config["time"] = int(tickets[int(sku_id)]["saleStart"])-int(response["data"]["current_time"])+req_time
             if tickets[int(sku_id)]["discount_act"] is not None:
                 logger.info(
@@ -330,10 +330,10 @@ def main():
             else:
                 config["order_type"] = "1"
             if config["is_paper_ticket"]:
-                if response["data"]["express_free_flag"]:
+                if screens[int(screen_id)]["express_free_flag"]:
                     config["express_fee"] = 0
                 else:
-                    config["express_fee"] = response["data"]["express_fee"]
+                    config["express_fee"] = screens[int(screen_id)]["express_fee"]
                 url = "https://show.bilibili.com/api/ticket/addr/list"
                 resp_ticket = session.get(url, headers=headers)
                 if resp_ticket.status_code == 412:
@@ -589,6 +589,7 @@ def main():
         save(config)
         sentry_sdk.set_context("config", config)
         sentry_sdk.capture_message("config complete")
+        logger.debug(config)
         BHYG = BilibiliHyg(config, sentry_sdk, kdl_client, session)
         
         BHYG.waited = True
