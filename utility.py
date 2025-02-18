@@ -475,53 +475,6 @@ def utility(config):
             logger.info(i18n_format("save_offset"))
             save(config)
 
-    def use_proxy(config):
-        try:
-            confirm_proxy = noneprompt.ConfirmPrompt(
-                question=i18n_format("input_is_use_proxy"),
-                default_choice=False,
-            ).prompt()
-        except noneprompt.CancelledError:
-            logger.info(i18n_format("cancelled"))
-            return
-        if confirm_proxy:
-            while True:
-                try:
-                    try:
-                        try:
-                            clip_value = pyperclip.paste()
-                            logger.info(i18n_format("clip_paste_success"))
-                        except pyperclip.PyperclipException:
-                            clip_value = ""
-                        config["proxy_auth"] = (
-                            noneprompt.InputPrompt(
-                                question=i18n_format("input_proxy"),
-                                default_text=clip_value,
-                            )
-                            .prompt()
-                            .split(" ")
-                        )
-                    except noneprompt.CancelledError:
-                        logger.info(i18n_format("cancelled"))
-                        return
-                    assert len(config["proxy_auth"]) == 3
-                    break
-                except:
-                    logger.error(i18n_format("wrong_proxy_format"))
-                    continue
-            try:
-                config["proxy_channel"] = noneprompt.InputPrompt(
-                    question=i18n_format("input_proxy_channel"),
-                    validator=lambda x: x.isdigit(),
-                ).prompt()
-            except noneprompt.CancelledError:
-                logger.info(i18n_format("cancelled"))
-                return
-            config["proxy"] = True
-        else:
-            config["proxy"] = False
-        save(config)
-
     def captcha_mode(config):
         try:
             cap_pass = (
@@ -574,7 +527,7 @@ def utility(config):
             question=i18n_format("select_tool"),
             choices=[
                 noneprompt.Choice(i18n_format(x), data=x)
-                for x in ["tool_add_buyer", "tool_modify_ua", "tool_modify_gaia", "tool_hunter_mode", "tool_hunter_off", "tool_share_mode", "tool_phone_prefill", "tool_proxy_setting", "tool_capacha_mode","tool_pushplus", "tool_bark","tool_dingding","tool_wx_push","tool_ftqq","tool_smtp", "tool_set_offset", "tool_hide_module", "back",]],
+                for x in ["tool_add_buyer", "tool_modify_ua", "tool_modify_gaia", "tool_hunter_mode", "tool_hunter_off", "tool_share_mode", "tool_phone_prefill", "tool_capacha_mode","tool_pushplus", "tool_bark","tool_dingding","tool_wx_push","tool_ftqq","tool_smtp", "tool_set_offset", "tool_hide_module", "back",]],
         )
         .prompt()
         .data
@@ -599,9 +552,6 @@ def utility(config):
         return utility(config)
     elif select == "tool_phone_prefill":
         save_phone(config)
-        return utility(config)
-    elif select == "tool_proxy_setting":
-        use_proxy(config)
         return utility(config)
     elif select == "tool_capacha_mode":
         captcha_mode(config)

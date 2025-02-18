@@ -36,9 +36,6 @@ class BilibiliHyg:
             }
 
         self.headers["Cookie"] = self.config["cookie"]
-        if self.config["proxy"]:
-            if self.config["proxy_channel"] != "0":
-                self.headers["kdl-tps-channel"] = config["proxy_channel"]
 
         self.client = client
         self.session = session
@@ -78,38 +75,19 @@ class BilibiliHyg:
             requests.exceptions.ConnectionError,
         ):
             logger.error(i18n_format("network_timeout"))
-            if self.config["proxy"]:
-                if self.ip == self.client.tps_current_ip(sign_type="hmacsha1"):
-                    logger.info(
-                        i18n_format("manual_change_ip").format(
-                            self.client.change_tps_ip(sign_type="hmacsha1")
-                        )
-                    )
-                self.session.close()
-                return self.get_ticket_status()
             return -1, 0
         try:
             if response.status_code == 412:
                 logger.error(i18n_format("wind_control"))
-                if self.config["proxy"]:
-                    if self.ip == self.client.tps_current_ip(sign_type="hmacsha1"):
-                        logger.info(
-                            i18n_format("manual_change_ip").format(
-                                self.client.change_tps_ip(sign_type="hmacsha1")
-                            )
-                        )
-                    self.session.close()
-                    return self.get_ticket_status()
-                else:
-                    self.risk = True
-                    logger.error(i18n_format("net_method"))
-                    try:
-                        if noneprompt.ConfirmPrompt(
-                            question=i18n_format("res_return")
-                        ).prompt():
-                            return -1, 0
-                    except noneprompt.CancelledError:
+                self.risk = True
+                logger.error(i18n_format("net_method"))
+                try:
+                    if noneprompt.ConfirmPrompt(
+                        question=i18n_format("res_return")
+                    ).prompt():
                         return -1, 0
+                except noneprompt.CancelledError:
+                    return -1, 0
             screens = response.json()["data"]["screen_list"]
             # 找到 字段id为screen_id的screen
             screen = {}
@@ -158,15 +136,6 @@ class BilibiliHyg:
         response = self.session.post(url, headers=self.headers, data=data)
         if response.status_code == 412:
             logger.error(i18n_format("not_handled_412"))
-            if self.config["proxy"]:
-                if self.ip == self.client.tps_current_ip(sign_type="hmacsha1"):
-                    logger.info(
-                        i18n_format("manual_change_ip").format(
-                            self.client.change_tps_ip(sign_type="hmacsha1")
-                        )
-                    )
-                self.session.close()
-                return self.get_prepare()
         if response.json()["errno"] != 0 and response.json()["errno"] != -401:
             logger.error(response.json()["msg"])
         return response.json()["data"]
@@ -275,15 +244,6 @@ class BilibiliHyg:
         response = self.session.get(url, headers=self.headers)
         if response.status_code == 412:
             logger.error(i18n_format("not_handled_412"))
-            if self.config["proxy"]:
-                if self.ip == self.client.tps_current_ip(sign_type="hmacsha1"):
-                    logger.info(
-                        i18n_format("manual_change_ip").format(
-                            self.client.change_tps_ip(sign_type="hmacsha1")
-                        )
-                    )
-                self.session.close()
-                return self.confirm_info(token)
         response = response.json()
         logger.info(i18n_format("info_confirmed"))
         logger.debug(response)
@@ -427,31 +387,13 @@ class BilibiliHyg:
             requests.exceptions.ConnectionError,
         ):
             logger.error(i18n_format("network_timeout"))
-            if self.config["proxy"]:
-                if self.ip == self.client.tps_current_ip(sign_type="hmacsha1"):
-                    logger.info(
-                        i18n_format("manual_change_ip").format(
-                            self.client.change_tps_ip(sign_type="hmacsha1")
-                        )
-                    )
-                self.session.close()
             return self.create_order()
         if response.status_code == 412:
             logger.error(i18n_format("wind_control"))
-            if self.config["proxy"]:
-                if self.ip == self.client.tps_current_ip(sign_type="hmacsha1"):
-                    logger.info(
-                        i18n_format("manual_change_ip").format(
-                            self.client.change_tps_ip(sign_type="hmacsha1")
-                        )
-                    )
-                self.session.close()
-                return self.create_order()
-            else:
-                self.risk = True
-                logger.error(i18n_format("pause_60s"))
-                time.sleep(60)
-                return {}
+            self.risk = True
+            logger.error(i18n_format("pause_60s"))
+            time.sleep(60)
+            return {}
         return response.json()
 
     def fake_ticket(self, pay_token, order_id=None):
@@ -469,14 +411,6 @@ class BilibiliHyg:
         response = self.session.get(url, headers=self.headers)
         if response.status_code == 412:
             logger.error(i18n_format("not_handled_412"))
-            if self.config["proxy"]:
-                if self.ip == self.client.tps_current_ip(sign_type="hmacsha1"):
-                    logger.info(
-                        i18n_format("manual_change_ip").format(
-                            self.client.change_tps_ip(sign_type="hmacsha1")
-                        )
-                    )
-                self.session.close()
         response = response.json()
         logger.debug(response)
         if response["errno"] == 0:
@@ -524,14 +458,6 @@ class BilibiliHyg:
         response = self.session.get(url, headers=self.headers)
         if response.status_code == 412:
             logger.error(i18n_format("not_handled_412"))
-            if self.config["proxy"]:
-                if self.ip == self.client.tps_current_ip(sign_type="hmacsha1"):
-                    logger.info(
-                        i18n_format("manual_change_ip").format(
-                            self.client.change_tps_ip(sign_type="hmacsha1")
-                        )
-                    )
-                self.session.close()
         response = response.json()
         if response["data"]["status"] == 1:
             return True

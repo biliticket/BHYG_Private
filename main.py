@@ -198,9 +198,6 @@ def main():
                     break
                 except ValueError:
                     logger.error(i18n_format("wrong_input"))
-        if "proxy" not in config:
-            logger.info(i18n_format("no_proxy_by_default"))
-            config["proxy"] = False
         if "captcha" not in config:
             logger.info(i18n_format("captcha_mode_gt_by_default"))
             config["captcha"] = "local_gt"
@@ -215,22 +212,6 @@ def main():
         else:
             logger.error(i18n_format("captcha_mode_not_supported"))
             return
-        if config["proxy"] == True:
-            auth = kdl.Auth(config["proxy_auth"][0], config["proxy_auth"][1])
-            kdl_client = kdl.Client(auth)
-            session.proxies = {
-                "http": config["proxy_auth"][2],
-                "https": config["proxy_auth"][2],
-            }
-            if config["proxy_channel"] != "0":
-                headers["kdl-tps-channel"] = config["proxy_channel"]
-            session.keep_alive = False
-            session.get("https://show.bilibili.com")
-            logger.info(
-                i18n_format("test_proxy").format(
-                    kdl_client.tps_current_ip(sign_type="hmacsha1")
-                )
-            )
         if (
             "project_id" not in config
             or "screen_id" not in config
@@ -259,13 +240,6 @@ def main():
                 req_time=time.time()
                 if response.status_code == 412:
                     logger.error(i18n_format("not_handled_412"))
-                    if config["proxy"]:
-                        logger.info(
-                            i18n_format("manual_change_ip").format(
-                                kdl_client.change_tps_ip(sign_type="hmacsha1")
-                            )
-                        )
-                        session.close()
                 response = response.json()
                 if response["errno"] == 3:
                     logger.error(i18n_format("project_id_not_found"))
@@ -338,13 +312,6 @@ def main():
                 resp_ticket = session.get(url, headers=headers)
                 if resp_ticket.status_code == 412:
                     logger.error(i18n_format("not_handled_412"))
-                    if config["proxy"]:
-                        logger.info(
-                            i18n_format("manual_change_ip").format(
-                                kdl_client.change_tps_ip(sign_type="hmacsha1")
-                            )
-                        )
-                        session.close()
                 addr_list = resp_ticket.json()["data"]["addr_list"]
                 if len(addr_list) == 0:
                     logger.error(i18n_format("add_address"))

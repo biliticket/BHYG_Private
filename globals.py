@@ -219,12 +219,6 @@ def load_config():
                 config["rrocr"] = temp["rrocr"]
             if "time_offset" in temp:
                 config["time_offset"] = temp["time_offset"]
-            if "proxy" in temp:
-                config["proxy"] = temp["proxy"]
-                if "proxy_auth" in temp:
-                    config["proxy_auth"] = temp["proxy_auth"]
-                if "proxy_channel" in temp:
-                    config["proxy_channel"] = temp["proxy_channel"]
             use_login = False
         elif run_info == "select_keep_login":
             logger.info(i18n_format("select_keep_login_msg"))
@@ -268,12 +262,6 @@ def load_config():
                 config["rrocr"] = temp["rrocr"]
             if "time_offset" in temp:
                 config["time_offset"] = temp["time_offset"]
-            if "proxy" in temp:
-                config["proxy"] = temp["proxy"]
-                if "proxy_auth" in temp:
-                    config["proxy_auth"] = temp["proxy_auth"]
-                if "proxy_channel" in temp:
-                    config["proxy_channel"] = temp["proxy_channel"]
             use_login = True
         elif run_info == "select_keep_all":
             logger.info(i18n_format("select_keep_all_msg"))
