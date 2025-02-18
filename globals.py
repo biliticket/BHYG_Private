@@ -353,9 +353,6 @@ def load_config():
                 }
             )
             config["uid"] = user["data"]["mid"]
-            if "hunter" in config:
-                logger.success(i18n_format("hunter_mode"))
-                logger.info(i18n_format("hunter_grade").format(config["hunter"]))
             save(config)
             break
         else:

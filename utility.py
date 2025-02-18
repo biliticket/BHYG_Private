@@ -265,15 +265,6 @@ def utility(config):
         ).prompt()
         config["gaia_vtoken"] = gaia_vtoken
 
-    def hunter_mode():
-        config["hunter"] = 0
-        logger.info(i18n_format("hunter_mode_on"))
-
-    def hunter_mode_off():
-        if "hunter" in config:
-            config.pop("hunter")
-        logger.info(i18n_format("hunter_mode_off"))
-
     def share_mode(config):
         import json
 
@@ -527,7 +518,7 @@ def utility(config):
             question=i18n_format("select_tool"),
             choices=[
                 noneprompt.Choice(i18n_format(x), data=x)
-                for x in ["tool_add_buyer", "tool_modify_ua", "tool_modify_gaia", "tool_hunter_mode", "tool_hunter_off", "tool_share_mode", "tool_phone_prefill", "tool_capacha_mode","tool_pushplus", "tool_bark","tool_dingding","tool_wx_push","tool_ftqq","tool_smtp", "tool_set_offset", "tool_hide_module", "back",]],
+                for x in ["tool_add_buyer", "tool_modify_ua", "tool_modify_gaia", "tool_share_mode", "tool_phone_prefill", "tool_capacha_mode","tool_pushplus", "tool_bark","tool_dingding","tool_wx_push","tool_ftqq","tool_smtp", "tool_set_offset", "tool_hide_module", "back",]],
         )
         .prompt()
         .data
@@ -540,12 +531,6 @@ def utility(config):
         return utility(config)
     elif select == "tool_modify_gaia":
         modify_gaia_vtoken()
-        return utility(config)
-    elif select == "tool_hunter_mode":
-        hunter_mode()
-        return utility(config)
-    elif select == "tool_hunter_off":
-        hunter_mode_off()
         return utility(config)
     elif select == "tool_share_mode":
         share_mode(config)

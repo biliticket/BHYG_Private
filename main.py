@@ -5,7 +5,6 @@ import os
 import threading
 import time
 
-import kdl
 
 import noneprompt
 
@@ -27,24 +26,16 @@ common_project_id = [
 ]
 
 
-def run(hyg):
+def run(hyg): # 核心抢票逻辑
     if "super" in hyg.config:
         logger.info(i18n_format("super_mode_on_msg"))
     if hyg.config["mode"] == "direct" or hyg.config["mode"] == "time":
         while True:
             if hyg.try_create_order():
-                if "hunter" not in hyg.config:
-                    hyg.sdk.capture_message("Pay success!")
-                    logger.success(i18n_format("pay_success"))
-                    PUSH.push(hyg.push_self,i18n_format("pay_success"))
-                    return
-                else:
-                    hyg.config["hunter"] += 1
-                    save(hyg.config)
-                    logger.success(
-                        i18n_format("hunter_prompt").format(hyg.config["hunter"])
-                    )
-                    PUSH.push(hyg.push_self,i18n_format("hunter_prompt").format(hyg.config["hunter"]))
+                hyg.sdk.capture_message("Pay success!")
+                logger.success(i18n_format("pay_success"))
+                PUSH.push(hyg.push_self,i18n_format("pay_success"))
+                return
     elif hyg.config["mode"] == "detect":
         token_time = time.time()
         while 1:
@@ -72,19 +63,9 @@ def run(hyg):
                 hyg.sold_out = False
                 while time.time() - start_time < 20 and not hyg.sold_out:
                     if hyg.try_create_order():
-                        if "hunter" not in hyg.config:
-                            hyg.sdk.capture_message("Pay success!")
-                            logger.success(i18n_format("pay_success"))
-                            return
-                        else:
-                            hyg.config["hunter"] += 1
-                            save(hyg.config)
-                            logger.success(
-                                i18n_format("hunter_prompt").format(
-                                    hyg.config["hunter"]
-                                )
-                            )
-                        break
+                        hyg.sdk.capture_message("Pay success!")
+                        logger.success(i18n_format("pay_success"))
+                        return
             elif status == 1:
                 logger.warning(i18n_format("not_begin"))
             elif status == 3:
@@ -107,16 +88,11 @@ def run(hyg):
             time.sleep(hyg.config["status_delay"])
 
 
-def main():
-    #    easter_egg = False
-    #    user_male = False
-    #    user_female = False
+def main(): # 主程序启动逻辑
     from globals import version
 
     set_language(False)
     print(i18n_format("start_up").format(version))
-    global kdl_client
-    kdl_client = None
     try:
         sentry_sdk = init(version)
         session = requests.session()
@@ -557,7 +533,7 @@ def main():
         sentry_sdk.set_context("config", config)
         sentry_sdk.capture_message("config complete")
         logger.debug(config)
-        BHYG = BilibiliHyg(config, sentry_sdk, kdl_client, session)
+        BHYG = BilibiliHyg(config, sentry_sdk, session)
         
         BHYG.waited = True
         run(BHYG)

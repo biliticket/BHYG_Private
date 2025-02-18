@@ -13,7 +13,6 @@ import json
 import qrcode
 import requests
 import sentry_sdk
-import kdl
 import ntplib
 import machineid
 import pyperclip

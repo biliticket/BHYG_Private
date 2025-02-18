@@ -19,7 +19,7 @@ from globals import *
 class BilibiliHyg:
     global sdk
 
-    def __init__(self, config, sdk, client, session):
+    def __init__(self, config, sdk, session):
         self.waited = False
         self.sdk = sdk
         self.config = config
@@ -37,10 +37,7 @@ class BilibiliHyg:
 
         self.headers["Cookie"] = self.config["cookie"]
 
-        self.client = client
         self.session = session
-        if self.client != None:
-            self.ip = self.client.tps_current_ip(sign_type="hmacsha1")
         if self.config["mode"] == "time":
             logger.info(i18n_format("now_mode_time_on"))
             logger.info(i18n_format("wait_get_token"))
@@ -534,9 +531,6 @@ class BilibiliHyg:
                 self.sdk.capture_message("Get order!")
                 # self.logout()
                 PUSH.push(self.push_self,i18n_format("pay_success"))
-                
-                if "hunter" in self.config:
-                    return True
                 logger.info(i18n_format("unpaid_bill"))
                 while self.order_status(self.order_id):
                     time.sleep(2)
