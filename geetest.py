@@ -14,7 +14,7 @@ from loguru import logger
 from i18n import i18n_format
 
 
-def run(gt, challenge, token, mode="local_gt", key=None):
+def run(gt, challenge, token, mode="local_gt"):
     if mode == "local_gt":
         try:
             validator = Validator()
@@ -29,40 +29,9 @@ def run(gt, challenge, token, mode="local_gt", key=None):
             return data
         except Exception as e:
             print(f"Error: {e}")
-    elif mode == "rrocr":
-        # http://api.rrocr.com/api/recognize.html
-        param = {
-            "appkey": key,
-            "gt": gt,
-            "challenge": challenge,
-            "referer": "https://show.bilibili.com",
-        }
-        try:
-            response = requests.post(
-                "http://api.rrocr.com/api/recognize.html", data=param
-            ).json()
-        except Exception as e:
-            print(f"Error: {e}")
-            return
-        if response["status"] == 0:
-            data = {
-                "success": True,
-                "challenge": response["data"]["challenge"],
-                "validate": response["data"]["validate"],
-                "seccode": response["data"]["validate"],
-            }
-            return data
-        else:
-            print(f"Error: {response['msg']}")
     elif mode == "manual":
         logger.info(i18n_format("manual_verify"))
         logger.info(gt + " " + challenge)
-        import pyperclip
-
-        try:
-            pyperclip.copy(gt + " " + challenge)
-        except pyperclip.PyperclipException:
-            logger.error(i18n_format("manual_copy"))
         try:
             validate = noneprompt.InputPrompt(
                 question=i18n_format("input_captcha")

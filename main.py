@@ -21,71 +21,67 @@ import noneprompt
 
 from i18n import *
 
-common_project_id = [
-    {"name": "上海·TOGENASHI TOGEARI Live「凛音の理」", "id": 94306},
-]
-
-
 def run(hyg): # 核心抢票逻辑
     if "super" in hyg.config:
         logger.info(i18n_format("super_mode_on_msg"))
-    if hyg.config["mode"] == "direct" or hyg.config["mode"] == "time":
-        while True:
-            if hyg.try_create_order():
-                hyg.sdk.capture_message("Pay success!")
-                logger.success(i18n_format("pay_success"))
-                PUSH.push(hyg.push_self,i18n_format("pay_success"))
-                return
-    elif hyg.config["mode"] == "detect":
-        token_time = time.time()
-        while 1:
-            if time.time() - token_time > 300:
-                token_time = time.time()
-                try:
-                    hyg.get_token()
-                except:
-                    continue
-            hyg.risk = False
-            if hyg.risk:
-                status = -1
-            status, clickable = hyg.get_ticket_status()
-            if status == 2 or clickable:
-                logger.info(i18n_format("begin_buy"))
-                if status == 1:
+    match hyg.config["mode"]:
+        case "direct" | "time":
+            while True:
+                if hyg.try_create_order():
+                    hyg.sdk.capture_message("Pay success!")
+                    logger.success(i18n_format("pay_success"))
+                    PUSH.push(hyg.push_self,i18n_format("pay_success"))
+                    return
+        case "detect":
+            token_time = time.time()
+            while 1:
+                if time.time() - token_time > 300:
+                    token_time = time.time()
+                    try:
+                        hyg.get_token()
+                    except:
+                        continue
+                hyg.risk = False
+                if hyg.risk:
+                    status = -1
+                status, clickable = hyg.get_ticket_status()
+                if status == 2 or clickable:
+                    logger.info(i18n_format("begin_buy"))
+                    if status == 1:
+                        logger.warning(i18n_format("not_begin"))
+                    elif status == 3:
+                        logger.warning(i18n_format("has_end_buy"))
+                    elif status == 5:
+                        logger.warning(i18n_format("cannot_buy"))
+                    elif status == 102:
+                        logger.warning(i18n_format("has_end"))
+                    start_time = time.time()
+                    hyg.sold_out = False
+                    while time.time() - start_time < 20 and not hyg.sold_out:
+                        if hyg.try_create_order():
+                            hyg.sdk.capture_message("Pay success!")
+                            logger.success(i18n_format("pay_success"))
+                            return
+                elif status == 1:
                     logger.warning(i18n_format("not_begin"))
                 elif status == 3:
                     logger.warning(i18n_format("has_end_buy"))
+                elif status == 4:
+                    logger.warning(i18n_format("sold_out"))
                 elif status == 5:
                     logger.warning(i18n_format("cannot_buy"))
-                elif status == 102:
-                    logger.warning(i18n_format("has_end"))
-                start_time = time.time()
-                hyg.sold_out = False
-                while time.time() - start_time < 20 and not hyg.sold_out:
-                    if hyg.try_create_order():
-                        hyg.sdk.capture_message("Pay success!")
-                        logger.success(i18n_format("pay_success"))
-                        return
-            elif status == 1:
-                logger.warning(i18n_format("not_begin"))
-            elif status == 3:
-                logger.warning(i18n_format("has_end_buy"))
-            elif status == 4:
-                logger.warning(i18n_format("sold_out"))
-            elif status == 5:
-                logger.warning(i18n_format("cannot_buy"))
-            elif status == 8:
-                logger.warning(i18n_format("pro_tem_sold_out"))
-            elif status == 6:
-                logger.error(i18n_format("free_not_supported"))
-                sentry_sdk.capture_message("Exit by in-app exit")
-                return
+                elif status == 8:
+                    logger.warning(i18n_format("pro_tem_sold_out"))
+                elif status == 6:
+                    logger.error(i18n_format("free_not_supported"))
+                    sentry_sdk.capture_message("Exit by in-app exit")
+                    return
 
-            elif status == -1:
-                continue
-            else:
-                logger.error(i18n_format("unk_status") + str(status))
-            time.sleep(hyg.config["status_delay"])
+                elif status == -1:
+                    continue
+                else:
+                    logger.error(i18n_format("unk_status") + str(status))
+                time.sleep(hyg.config["status_delay"])
 
 
 def main(): # 主程序启动逻辑
@@ -107,435 +103,16 @@ def main(): # 主程序启动逻辑
             check_policy(uid=config["uid"])
         if "super" in config:
             check_policy(uid=config["uid"], res="super")
-        import random
 
         headers = {
-            "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/618.1.15.10.15 (KHTML, like Gecko) Mobile/21F90 BiliApp/77900100 os/ios model/iPhone 15 mobi_app/iphone build/77900100 osVer/17.5.1 network/2 channel/AppStore c_locale/zh-Hans_CN s_locale/zh-Hans_CH disable_rcmd/0 "
-            + str(random.randint(0, 9999)),
+            "User-Agent": "Mozilla/5.0 (Linux; Android 15;; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/132.0.6834.163 Mobile Safari/537.36 os/android model/BHYG66 build/8300300 osVer/15 sdkInt/35 network/1 BiliApp/8300300 mobi_app/android channel/master Buvid/XUB12BCB16D20812E103A164ED829711BA789 sessionID/27d578d0 innerVer/8300310 c_locale/zh_CN s_locale/zh_CN disable_rcmd/0 themeId/2 sh/40",
             "Cookie": config["cookie"],
         }
         if "user-agent" in config:
             headers["User-Agent"] = config["user-agent"]
         session = requests.Session()
-        if "mode" not in config:
-            try:
-                mode_str = (
-                    noneprompt.ListPrompt(
-                        question=i18n_format("choose_mode"),
-                        choices=[
-                            noneprompt.Choice(name=i18n_format(x), data=x)
-                            for x in ["mode_time", "mode_direct", "mode_detect"]
-                        ],
-                    )
-                    .prompt()
-                    .data
-                )
-            except noneprompt.CancelledError as e:
-                return
-            if mode_str == "mode_direct":
-                config["mode"] = "direct"
-                logger.info(i18n_format("mode_direct_on"))
-            elif mode_str == "mode_detect":
-                config["mode"] = "detect"
-                logger.info(i18n_format("mode_detect_on"))
-            else:
-                config["mode"] = "time"
-                logger.info(i18n_format("mode_time_on"))
-        if "status_delay" not in config and config["mode"] == "detect":
-            while True:
-                try:
-                    config["status_delay"] = noneprompt.InputPrompt(
-                        question=i18n_format("input_status_delay")
-                    ).prompt(default="0.2")
-                except noneprompt.CancelledError:
-                    logger.info(i18n_format("cancelled"))
-                    return
-                if config["status_delay"] == "":
-                    config["status_delay"] = 0.2
-                try:
-                    config["status_delay"] = float(config["status_delay"])
-                    if config["status_delay"] < 0:
-                        raise ValueError
-                    break
-                except ValueError:
-                    logger.error(i18n_format("wrong_input"))
-        if "co_delay" not in config:
-            while True:
-                config["co_delay"] = noneprompt.InputPrompt(
-                    question=i18n_format("input_co_delay"),
-                    default_text="0",
-                ).prompt(default="0")
-                if config["co_delay"] == "":
-                    config["co_delay"] = 0
-                try:
-                    config["co_delay"] = float(config["co_delay"])
-                    if config["co_delay"] < 0:
-                        raise ValueError
-                    break
-                except ValueError:
-                    logger.error(i18n_format("wrong_input"))
-        if "captcha" not in config:
-            logger.info(i18n_format("captcha_mode_gt_by_default"))
-            config["captcha"] = "local_gt"
-        if "rrocr" not in config:
-            config["rrocr"] = None
-        if config["captcha"] == "local_gt":
-            logger.info(i18n_format("captcha_mode_gt"))
-        elif config["captcha"] == "rrocr":
-            logger.info(i18n_format("captcha_mode_rrocr"))
-        elif config["captcha"] == "manual":
-            logger.info(i18n_format("captcha_mode_manual"))
-        else:
-            logger.error(i18n_format("captcha_mode_not_supported"))
-            return
-        if (
-            "project_id" not in config
-            or "screen_id" not in config
-            or "sku_id" not in config
-            or "pay_money" not in config
-            or "id_bind" not in config
-        ):
-            while True:
-                logger.info(i18n_format("common_project_id"))
-                for i in range(len(common_project_id)):
-                    logger.info(
-                        common_project_id[i]["name"]
-                        + " id: "
-                        + str(common_project_id[i]["id"])
-                    )
-                if len(common_project_id) == 0:
-                    logger.info(i18n_format("empty"))
-                config["project_id"] = noneprompt.InputPrompt(
-                    i18n_format("input_project_id"), validator=lambda x: x.isdigit()
-                ).prompt(default="0")
-                url = (
-                    "https://show.bilibili.com/api/ticket/project/getV2?version=134&id="
-                    + config["project_id"]
-                )
-                response = session.get(url, headers=headers)
-                req_time=time.time()
-                if response.status_code == 412:
-                    logger.error(i18n_format("not_handled_412"))
-                response = response.json()
-                if response["errno"] == 3:
-                    logger.error(i18n_format("project_id_not_found"))
-                    continue
-                if response["data"] == {}:
-                    logger.error(i18n_format("server_no_response"))
-                    continue
-                if "screen_list" not in response["data"]:
-                    logger.error(i18n_format("no_screen"))
-                    continue
-                if len(response["data"]["screen_list"]) == 0:
-                    logger.error(i18n_format("no_screen"))
-                    continue
-                break
-            logger.info(i18n_format("project_name").format(response["data"]["name"]))
-            config["id_bind"] = response["data"]["id_bind"]
-            screens = response["data"]["screen_list"]
-            screen_id = (
-                noneprompt.ListPrompt(
-                    i18n_format("select_screen"),
-                    choices=[
-                        noneprompt.Choice(f"{i}. {screens[i]['name']}", data=i)
-                        for i in range(len(screens))
-                    ],
-                )
-                .prompt()
-                .data
-            )
-            logger.info(
-                i18n_format("show_screen").format(screens[int(screen_id)]["name"])
-            )
-            tickets = screens[int(screen_id)]["ticket_list"]  # type: ignore
-            sku_id = (
-                noneprompt.ListPrompt(
-                    i18n_format("select_sku"),
-                    choices=[
-                        noneprompt.Choice(
-                            f"{i}. {tickets[i]['desc']} {tickets[i]['price'] / 100}元",
-                            data=i,
-                        )
-                        for i in range(len(tickets))
-                    ],
-                )
-                .prompt()
-                .data
-            )
-            logger.info(i18n_format("show_sku").format(tickets[int(sku_id)]["desc"]))
-            config["screen_id"] = str(screens[int(screen_id)]["id"])
-            config["sku_id"] = str(tickets[int(sku_id)]["id"])
-            config["pay_money"] = str(tickets[int(sku_id)]["price"])
-            config["ticket_desc"] = str(tickets[int(sku_id)]["desc"])
-            config["is_paper_ticket"] = screens[int(screen_id)]["delivery_type"] != 1
-            config["time"] = int(tickets[int(sku_id)]["saleStart"])-int(response["data"]["current_time"])+req_time
-            if tickets[int(sku_id)]["discount_act"] is not None:
-                logger.info(
-                    i18n_format("show_act").format(
-                        tickets[int(sku_id)]["discount_act"]["act_id"]
-                    )
-                )
-                config["act_id"] = tickets[int(sku_id)]["discount_act"]["act_id"]
-                config["order_type"] = tickets[int(sku_id)]["discount_act"]["act_type"]
-            else:
-                config["order_type"] = "1"
-            if config["is_paper_ticket"]:
-                if screens[int(screen_id)]["express_free_flag"]:
-                    config["express_fee"] = 0
-                else:
-                    config["express_fee"] = screens[int(screen_id)]["express_fee"]
-                url = "https://show.bilibili.com/api/ticket/addr/list"
-                resp_ticket = session.get(url, headers=headers)
-                if resp_ticket.status_code == 412:
-                    logger.error(i18n_format("not_handled_412"))
-                addr_list = resp_ticket.json()["data"]["addr_list"]
-                if len(addr_list) == 0:
-                    logger.error(i18n_format("add_address"))
-                else:
-                    addr = addr_list[
-                        (
-                            noneprompt.ListPrompt(
-                                question=i18n_format("please_select_address"),
-                                choices=[
-                                    noneprompt.Choice(
-                                        name=f"{i}. {addr_list[i]['prov'] + addr_list[i]['city'] + addr_list[i]['area'] + addr_list[i]['addr']} {addr_list[i]['name']} {addr_list[i]['phone']}",
-                                        data=i,
-                                    )
-                                    for i in range(len(addr_list))
-                                ],
-                            )
-                            .prompt()
-                            .data
-                        )
-                    ]
-                    logger.info(
-                        i18n_format("already_select_address").format(
-                            addr["prov"] + addr["city"] + addr["area"] + addr["addr"],
-                            addr["name"],
-                            addr["phone"],
-                        )
-                    )
-                    config["deliver_info"] = json.dumps(
-                        {
-                            "name": addr["name"],
-                            "tel": addr["phone"],
-                            "addr_id": addr["addr"],
-                            "addr": addr["prov"]
-                            + addr["city"]
-                            + addr["area"]
-                            + addr["addr"],
-                        },
-                        ensure_ascii=False,
-                    )
-            logger.debug(
-                "您的screen_id 和 sku_id 和 pay_money 分别为："
-                + config["screen_id"]
-                + " "
-                + config["sku_id"]
-                + " "
-                + config["pay_money"]
-            )
-            logger.debug("您的开始销售时间为：" + str(config["time"]))
-        if config["id_bind"] != 0 and ("buyer_info" not in config):
-            url = "https://show.bilibili.com/api/ticket/buyer/list"
-            response = session.get(url, headers=headers)
-            if response.status_code == 412:
-                logger.error(i18n_format("not_handled_412"))
-            buyer_infos = response.json()["data"]["list"]
-            config["buyer_info"] = []
-            if len(buyer_infos) == 0:
-                logger.error(i18n_format("buyer_empty"))
-                return
-            else:
-                multiselect = True
-            if config["id_bind"] == 1:
-                logger.info(i18n_format("id_bind_single"))
-                multiselect = False
-            if multiselect:
-                buyers = noneprompt.CheckboxPrompt(
-                    i18n_format("select_buyer"),
-                    choices=[
-                        noneprompt.Choice(
-                            f"{i['name'][0] + '*' * (len(i['name']) - 2) + i['name'][-1]} {i['personal_id'][:4] + '**********' + i['personal_id'][-4:]} {i['tel'][:3] + '****' + i['tel'][-4:]}",
-                            data=i,
-                        )
-                        for i in buyer_infos
-                    ],
-                    validator=lambda x: len(x) > 0,
-                ).prompt()
-                config["buyer_info"] = []
-                for select in buyers:
-                    config["buyer_info"].append(select.data)
-                    logger.info(
-                        i18n_format("selected_buyer").format(
-                            select.data["name"][0]
-                            + "*" * (len(select.data["name"]) - 2)
-                            + select.data["name"][-1],
-                            select.data["personal_id"][:4]
-                            + "**********"
-                            + select.data["personal_id"][-4:],
-                            select.data["tel"][:3] + "****" + select.data["tel"][-4:],
-                        )
-                    )
-                if (
-                    "phone" not in config or config["phone"] == ""
-                ):  # 如果未预约填写手机号
-                    config["phone"] = buyer_infos[0][
-                        "tel"
-                    ]  # 自动保存默认购票人的手机号
-                    logger.info(
-                        i18n_format("auto_save_phone").format(  # 用作预填手机号
-                            config["phone"][:3], config["phone"][-4:]
-                        )  # 可用于手机号短信验证
-                    )  # 小影 2024.7.6
-                else:  # 目前问题就是能通过cookie
-                    logger.info(
-                        i18n_format(
-                            "already_save_phone"
-                        ).format(  # 获取账号绑定的手机号
-                            config["phone"][:3], config["phone"][-4:]
-                        )  # 这样就更完美了 @@ZianTT
-                    )
-            #                    if int(buyer_infos[int(select)]["personal_id"][16]) % 2 == 0:
-            #                        user_female = True
-            #                    else:
-            #                        user_male = True
-            #                if easter_egg:
-            #                    if len(buyerids) == 1:
-            #                        logger.info("单身是这样的🤣 情(xiàn)侣(chōng)们只需要相互做搭子就可以逛的很开心, 可是一个人去逛漫展的人们需要考虑的事情就多了。")
-            #                    else:
-            #                        if user_male and user_female:
-            #                            logger.error("小情侣不得house😡")
-            #                        elif user_male and not user_female:
-            #                            logger.error("我朝，有南通啊！")
-            #                            if len(buyerids) == 4:
-            #                                logger.error("我朝，开impart啊！")
-            #                        elif user_female and not user_male:
-            #                            logger.error("我朝，有女同啊！")
-            else:
-                index = noneprompt.ListPrompt(
-                    question=i18n_format("select_buyer"),
-                    choices=[
-                        noneprompt.Choice(
-                            f"{i['name'][0] + '*' * (len(i['name']) - 2) + i['name'][-1]} {i['personal_id'][:4] + '**********' + i['personal_id'][-4:]} {i['tel'][:3] + '****' + i['tel'][-4:]}",
-                            data=i,
-                        )
-                        for i in buyer_infos
-                    ],
-                ).prompt()
-                config["buyer_info"].append(index.data)
-                logger.debug(index.data)
-                logger.info(
-                        i18n_format("selected_buyer").format(
-                            index.data["name"][0]
-                            + "*" * (len(index.data["name"]) - 2)
-                            + index.data["name"][-1],
-                            index.data["personal_id"][:4]
-                            + "**********"
-                            + index.data["personal_id"][-4:],
-                            index.data["tel"][:3]
-                            + "****"
-                            + index.data["tel"][-4:],
-                        )
-                    )
-                if (
-                    "phone" not in config or config["phone"] == ""
-                ):  # 如果未预约填写手机号
-                    config["phone"] = buyer_infos[0][
-                        "tel"
-                    ]  # 自动保存默认购票人的手机号
-                    logger.info(
-                        i18n_format("auto_save_phone").format(  # 用作预填手机号
-                            config["phone"][:3], config["phone"][-4:]
-                        )  # 可用于手机号短信验证
-                    )  # 小影 2024.7.6
-                else:  # 目前问题就是能通过cookie
-                    logger.info(
-                        i18n_format(
-                            "already_save_phone"
-                        ).format(  # 获取账号绑定的手机号
-                            config["phone"][:3], config["phone"][-4:]
-                        )  # 这样就更完美了
-                    )
-            if "count" not in config:
-                config["count"] = len(config["buyer_info"])
-            config["buyer_info"] = json.dumps(config["buyer_info"])
-        if config["id_bind"] == 0 and ("buyer" not in config or "tel" not in config):
-            logger.info(i18n_format("add_contact_info"))
-            try:
-                config["buyer"] = noneprompt.InputPrompt(
-                    question=i18n_format("add_contact_name")
-                ).prompt()
-                config["tel"] = noneprompt.InputPrompt(
-                    question=i18n_format("add_contact_tel"),
-                    validator=lambda x: len(x) == 11,
-                ).prompt()
-            except noneprompt.CancelledError as e:
-                raise KeyboardInterrupt("Cancelled by user") from e
-            if "phone" not in config or config["phone"] == "":  # 如果未预约填写手机号
-                config["phone"] = config[
-                    "tel"
-                ]  # 自动保存填写的手机号(这种票应该用不到手机号验证吧)
-                logger.info(
-                    i18n_format("auto_save_phone").format(  # 用作预填手机号
-                        config["phone"][:3], config["phone"][-4:]
-                    )  # 可用于手机号短信验证
-                )  # 小影 2024.7.6
-            else:  # 目前问题就是能通过cookie
-                logger.info(
-                    i18n_format("already_save_phone").format(  # 获取账号绑定的手机号
-                        config["phone"][:3], config["phone"][-4:]
-                    )  # 这样就更完美了
-                )
-            if "count" not in config:
-                config["count"] = noneprompt.InputPrompt(
-                    question=i18n_format("add_buy_tickets"),
-                    default_text="1",
-                    validator=lambda x: x.isdigit() and int(x) > 0,
-                ).prompt()
-        if config["is_paper_ticket"]:
-            if config["express_fee"] == 0:
-                config["all_price"] = int(config["pay_money"]) * int(config["count"])
-                logger.info(
-                    i18n_format("show_all_price_paper_ticket").format(
-                        config["count"],
-                        config["ticket_desc"],
-                        int(config["pay_money"]) / 100,
-                        0,
-                        config["all_price"] / 100,
-                    )
-                )
-            else:
-                config["all_price"] = (
-                    int(config["pay_money"]) * int(config["count"])
-                    + config["express_fee"]
-                )
-                logger.info(
-                    i18n_format("show_all_price_paper_ticket").format(
-                        config["count"],
-                        config["ticket_desc"],
-                        int(config["pay_money"]) / 100,
-                        config["express_fee"] / 100,
-                        config["all_price"] / 100,
-                    )
-                )
-        else:
-            config["all_price"] = int(config["pay_money"]) * int(config["count"])
-            logger.info(
-                i18n_format("show_all_price_e_ticket").format(
-                    config["count"],
-                    config["ticket_desc"],
-                    int(config["pay_money"]) / 100,
-                    config["all_price"] / 100,
-                )
-            )
-        save(config)
-        sentry_sdk.set_context("config", config)
-        sentry_sdk.capture_message("config complete")
-        logger.debug(config)
-        BHYG = BilibiliHyg(config, sentry_sdk, session)
         
-        BHYG.waited = True
+        BHYG = BilibiliHyg(config, sentry_sdk)
         run(BHYG)
     except KeyboardInterrupt:
         logger.info(i18n_format("exit_manual"))
@@ -552,11 +129,6 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         logger.info(i18n_format("exit_manual"))
-    from sentry_sdk import Hub
-
-    client = Hub.current.client
-    if client is not None:
-        client.close(timeout=2.0)
     logger.info(i18n_format("exit_sleep_15s"))
     try:
         time.sleep(15)

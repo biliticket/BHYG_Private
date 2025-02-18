@@ -215,8 +215,6 @@ def load_config():
                 config["ua"] = temp["pushplus"]
             if "captcha" in temp:
                 config["captcha"] = temp["captcha"]
-            if "rrocr" in temp:
-                config["rrocr"] = temp["rrocr"]
             if "time_offset" in temp:
                 config["time_offset"] = temp["time_offset"]
             use_login = False
@@ -258,8 +256,6 @@ def load_config():
                 config["phone"] = temp["phone"]
             if "captcha" in temp:
                 config["captcha"] = temp["captcha"]
-            if "rrocr" in temp:
-                config["rrocr"] = temp["rrocr"]
             if "time_offset" in temp:
                 config["time_offset"] = temp["time_offset"]
             use_login = True

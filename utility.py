@@ -6,7 +6,6 @@ import requests
 import noneprompt
 
 import sentry_sdk
-import pyperclip
 
 from utils import save, check_policy
 
@@ -281,14 +280,8 @@ def utility(config):
 
     def pushplus_config(config):
         try:
-            try:
-                clip_value = pyperclip.paste()
-                logger.info(i18n_format("clip_paste_success"))
-            except pyperclip.PyperclipException:
-                clip_value = ""
             token = noneprompt.InputPrompt(
                 question=i18n_format("pushplus_token"),
-                default_text=clip_value,
             ).prompt()
         except noneprompt.CancelledError:
             logger.info(i18n_format("cancelled"))
@@ -305,14 +298,8 @@ def utility(config):
 
     def bark_config(config):
         try:
-            try:
-                clip_value = pyperclip.paste()
-                logger.info(i18n_format("clip_paste_success"))
-            except pyperclip.PyperclipException:
-                clip_value = ""
             token = noneprompt.InputPrompt(
-                question=i18n_format("bark_token"),
-                default_text=clip_value,
+                question=i18n_format("bark_token")
             ).prompt()
         except noneprompt.CancelledError:
             logger.info(i18n_format("cancelled"))
@@ -328,13 +315,8 @@ def utility(config):
         save(config)
     def dingding_config(config):
         try:
-            try:
-                clip_value = pyperclip.paste()
-                logger.info(i18n_format("clip_paste_success"))
-            except pyperclip.PyperclipException:
-                clip_value = ""
             webhook = noneprompt.InputPrompt(
-                question=i18n_format("dingding"), default_text=clip_value
+                question=i18n_format("dingding")
             ).prompt()
         except noneprompt.CancelledError:
             logger.info(i18n_format("cancelled"))
@@ -351,13 +333,8 @@ def utility(config):
 
     def wx_config(config):
         try:
-            try:
-                clip_value = pyperclip.paste()
-                logger.info(i18n_format("clip_paste_success"))
-            except pyperclip.PyperclipException:
-                clip_value = ""
             webhook = noneprompt.InputPrompt(
-                question=i18n_format("wxpush"), default_text=clip_value
+                question=i18n_format("wxpush")
             ).prompt()
         except noneprompt.CancelledError:
             logger.info(i18n_format("cancelled"))
@@ -374,13 +351,8 @@ def utility(config):
         
     def ftqq_config(config):
         try:
-            try:
-                clip_value = pyperclip.paste()
-                logger.info(i18n_format("clip_paste_success"))
-            except pyperclip.PyperclipException:
-                clip_value = ""
             webhook = noneprompt.InputPrompt(
-                question=i18n_format("ftqq"), default_text=clip_value
+                question=i18n_format("ftqq")
             ).prompt()
         except noneprompt.CancelledError:
             logger.info(i18n_format("cancelled"))
@@ -397,25 +369,20 @@ def utility(config):
 
     def smtp_config(config):
         try:
-            try:
-                clip_value = pyperclip.paste()
-                logger.info(i18n_format("clip_paste_success"))
-            except pyperclip.PyperclipException:
-                clip_value = ""
             smtp_mail_host = noneprompt.InputPrompt(
-                question=i18n_format("smtp_mail_host"), default_text=clip_value
+                question=i18n_format("smtp_mail_host")
             ).prompt()
             smtp_mail_user=noneprompt.InputPrompt(
-                question=i18n_format("smtp_mail_user"), default_text=clip_value
+                question=i18n_format("smtp_mail_user")
             ).prompt()
             smtp_mail_pass=noneprompt.InputPrompt(
-                question=i18n_format("smtp_mail_pass"), default_text=clip_value
+                question=i18n_format("smtp_mail_pass")
             ).prompt()
             smtp_sender=noneprompt.InputPrompt(
-                question=i18n_format("smtp_sender"), default_text=clip_value
+                question=i18n_format("smtp_sender")
             ).prompt()
             smtp_receivers=noneprompt.InputPrompt(
-                question=i18n_format("smtp_receivers"), default_text=clip_value
+                question=i18n_format("smtp_receivers")
             ).prompt()  #可传多个收件人，要按照['']格式传进来，如['114514@123.com','141414@123.com']  @violite 24.9.20
         except noneprompt.CancelledError:
             logger.info(i18n_format("cancelled"))
@@ -473,7 +440,7 @@ def utility(config):
                     question=i18n_format("input_use_captcha_mode"),
                     choices=[
                         noneprompt.Choice(name=i18n_format(x), data=x)
-                        for x in ["local_gt", "rrocr", "manual"]
+                        for x in ["local_gt", "manual"]
                     ],
                 )
                 .prompt()
@@ -485,19 +452,6 @@ def utility(config):
         if cap_pass == "local_gt":
             config["captcha"] = "local_gt"
             sentry_sdk.set_tag("captcha", "local_gt")
-        elif cap_pass == "rrocr":
-            config["captcha"] = "rrocr"
-            while True:
-                try:
-                    config["rrocr"] = noneprompt.InputPrompt(
-                        question=i18n_format("input_rrocr_key")
-                    ).prompt()
-                except noneprompt.CancelledError:
-                    logger.info(i18n_format("cancelled"))
-                    return
-                if config["rrocr"] != "":
-                    break
-            sentry_sdk.set_tag("captcha", "rrocr")
         elif cap_pass == "manual":
             config["captcha"] = "manual"
             sentry_sdk.set_tag("captcha", "manual")

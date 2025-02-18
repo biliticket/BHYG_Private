@@ -316,7 +316,13 @@
     "tool_bark":"Bark推送",
     "tool_ftqq":"方糖推送",
     "tool_wx_push":"企业微信推送",
-    "tool_smtp":"SMTP邮箱推送"
+    "tool_smtp":"SMTP邮箱推送",
+    "show_area": "{}-{}: {}",
+    "area_red": "红色",
+    "area_blue": "蓝色",
+    "area_green": "绿色",
+    "area_yellow": "黄色",
+    "show_area_info": "有以下区域可选："
 
      }
     }

@@ -15,7 +15,6 @@ import requests
 import sentry_sdk
 import ntplib
 import machineid
-import pyperclip
 import jwt
 import base64
 import platform
