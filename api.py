@@ -132,44 +132,6 @@ class BilibiliHyg:
         while not self.select_buyer_info():
             pass
 
-        if config["is_paper_ticket"]:
-            if config["express_fee"] == 0:
-                config["all_price"] = int(config["pay_money"]) * int(config["count"])
-                logger.info(
-                    i18n_format("show_all_price_paper_ticket").format(
-                        config["count"],
-                        config["ticket_desc"],
-                        int(config["pay_money"]) / 100,
-                        0,
-                        config["all_price"] / 100,
-                    )
-                )
-            else:
-                config["all_price"] = (
-                    int(config["pay_money"]) * int(config["count"])
-                    + config["express_fee"]
-                )
-                logger.info(
-                    i18n_format("show_all_price_paper_ticket").format(
-                        config["count"],
-                        config["ticket_desc"],
-                        int(config["pay_money"]) / 100,
-                        config["express_fee"] / 100,
-                        config["all_price"] / 100,
-                    )
-                )
-        else:
-            config["all_price"] = int(config["pay_money"]) * int(config["count"])
-            logger.info(
-                i18n_format("show_all_price_e_ticket").format(
-                    config["count"],
-                    config["ticket_desc"],
-                    int(config["pay_money"]) / 100,
-                    config["all_price"] / 100,
-                )
-            )
-
-
         self.config = config
         save(self.config)
         logger.debug(config)
@@ -704,12 +666,15 @@ class BilibiliHyg:
             "screen_id": self.config["screen_id"],
             "order_type": self.config["order_type"],
             "count": self.config["count"],
-            "sku_id": self.config["sku_id"],
             "token": "",
             "newRisk": "true",
             "ignoreRequestLimit": "true",
             "requestSource": "neul-next",
         }
+        if self.config["is_select_seat"]:
+            data["seats"] = self.config["selected_seats"]
+        else:
+            data["sku_id"] = self.config["sku_id"]
         if "act_id" in self.config:
             data["act_id"] = self.config["act_id"]
         response = self.session.post(url, headers=self.headers, data=data)
@@ -829,9 +794,8 @@ class BilibiliHyg:
         if response["data"]["act"] is not None:
             logger.info(i18n_format("info_discount"))
             self.config["act_id"] = response["data"]["act"]["act_id"]
-
-        if response["data"]["pay_money"] != self.config["all_price"]:
-            self.config["all_price"] = response["data"]["pay_money"]
+        self.config["count"] = response["data"]["count"]
+        self.config["all_price"] = response["data"]["pay_money"]
         return
 
     def get_token(self):
@@ -841,6 +805,11 @@ class BilibiliHyg:
             time.sleep(2)
             return self.get_token()
         if info["token"]:
+            if self.config["is_select_seat"]:
+                if info["failed_seats"] != []:
+                    logger.warning(
+                        i18n_format("info_some_seat_fail")
+                    )
             logger.success(
                 i18n_format("info_bill_ok")
                 + "https://show.bilibili.com/platform/confirmOrder.html?token="
@@ -933,7 +902,6 @@ class BilibiliHyg:
         data = {
             "project_id": self.config["project_id"],
             "screen_id": self.config["screen_id"],
-            "sku_id": self.config["sku_id"],
             "token": self.token,
             "deviceId": secrets.token_hex(),
             "project_id": self.config["project_id"],
@@ -944,6 +912,10 @@ class BilibiliHyg:
             "requestSource": "neul-next",
             "clickPosition": self.generate_clickPosition(),
         }
+        if self.config["is_select_seat"]:
+            data["seats"] = self.config["selected_seats"]
+        else:
+            data["sku_id"] = self.config["sku_id"]
         if "super" not in self.config:
             data["order_type"] = (self.config["order_type"],)
         if self.config["id_bind"] == 0:
@@ -1053,6 +1025,10 @@ class BilibiliHyg:
                 + response["data"]["sub_status_name"]
             )
             return False
+        
+    def reselect(self):
+        # TODO: 座位被占用
+        pass
 
     def logout(self):
         # https://passport.bilibili.com/login/exit/v2
@@ -1103,8 +1079,8 @@ class BilibiliHyg:
         elif result["errno"] == 100016:
             logger.error(i18n_format("not_salable"))
         elif result["errno"] == 101006:
-            # TODO: 座位被占用
-            pass
+            self.reselect_seat()
+            self.waited = False
         elif result["errno"] == 0:
             logger.success(i18n_format("bill_push_ok"))
             pay_token = result["data"]["token"]
