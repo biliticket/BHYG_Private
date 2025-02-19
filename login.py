@@ -222,11 +222,13 @@ def verify_code_login_app(session, headers):
         # "gee_challenge": cap_data["challenge"],
         # "gee_validate": cap_data["validate"],
         # "gee_seccode": cap_data["seccode"] + "|jordan",
-        "channel": "bili",
+        "channel": "master",
         "buvid": buvid,
         "local_id": buvid,
-        "statistics": '{"appId":1,"platform":3,"version":"8.0.0","abtest":""}',
+        "statistics": '{"appId":1,"platform":3,"version":"8.30.0","abtest":""}',
         "ts": round(time.time()),
+        "platform": "android",
+        "mobi_app": "android"
     }
     logger.debug(data)
     # https://passport.bilibili.com/x/passport-login/sms/send
@@ -239,6 +241,7 @@ def verify_code_login_app(session, headers):
         logger.error(f"{send['code']}: {send['message']}")
         return verify_code_login_app(session, headers)
     else:
+        print(send)
         logger.success(i18n_format("sms_code_send_ok"))
         send_token = send["data"]["captcha_key"]
     while True:
@@ -535,7 +538,7 @@ def interactive_login(sentry_sdk=None):
                             "bi_login_qrcode",
                             "bi_login_user_pass",
                             "bi_login_web_sms",
-                            "bi_login_app_sms",
+                            # "bi_login_app_sms",
                             "bi_login_sns",
                         ]
                     ],

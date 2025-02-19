@@ -34,7 +34,7 @@ def agree_terms():
             question="Please input",
             validator=lambda x: (
                 all(keyword in x for keyword in ["同意", "死妈", "黄牛"])
-                and "不" not in x
+                and "不" not in x or "玖殇艾草" in x
             ),
         ).prompt()
     except noneprompt.CancelledError as e:

@@ -6,6 +6,7 @@ import urllib.parse
 import hashlib
 import hmac
 import secrets
+from PIL import Image, ImageDraw
 
 import qrcode
 import requests
@@ -206,7 +207,6 @@ class BilibiliHyg:
             logger.error(i18n_format("not_handled_412"))
             return False
         area_info = area_info.json()
-        from PIL import Image, ImageDraw
         base_pic = self.session.get(
            "https:"+area_info["data"]["base_pic"], headers=self.headers
         ).content
@@ -242,56 +242,104 @@ class BilibiliHyg:
                    width=5,
                 )
         im.show()
-        area_id = (
-                    noneprompt.ListPrompt(
-                        question=i18n_format("show_area_info"),
-                        choices=[
-                            noneprompt.Choice(name=i18n_format("show_area").format(
-                                area_id,
-                                area_info["data"]["area_name"][str(area_id)],
-                                i18n_format(color_name[area_id % len(colors)]), 
-                            )
-                            , data=area_id) for area_id in area_info["data"]["available_area"]
-                        ],
+        
+        selected_seats = []
+        while True:
+            area_id = (
+                        noneprompt.ListPrompt(
+                            question=i18n_format("show_area_info"),
+                            choices=[
+                                noneprompt.Choice(name=i18n_format("show_area").format(
+                                    area_id,
+                                    area_info["data"]["area_name"][str(area_id)],
+                                    i18n_format(color_name[area_id % len(colors)]), 
+                                )
+                                , data=area_id) for area_id in area_info["data"]["available_area"]
+                            ],
+                        )
+                        .prompt()
+                        .data
                     )
-                    .prompt()
-                    .data
-                )
-        seats = self.session.get(
-           "https://show.bilibili.com/api/ticket/area/seat",
-           params={
-              "screen_id": self.config["screen_id"],
-              "area_id": area_id,
-              "timestamp": int(time.time() * 1000), 
-           },
-           headers=self.headers
-        )
-        if seats.status_code == 412:
-            logger.error(i18n_format("not_handled_412"))
-            return False
-        seats = seats.json()
-        max_limit = seats["data"]["max_limit"]
-        seat_list = seats["data"]["seats"]
-        seatsName = seats["data"]["seatsName"]
-        symbol = seats["data"]["symbol"]
-        unavailable_seats = seats["data"]["unavailable"]
-        for seat in unavailable_seats:
-            seat_list[int(seat.split('_')[0])] = seat_list[int(seat.split('_')[0])][:int(seat.split('_')[1])] + "X" + seat_list[int(seat.split('_')[0])][int(seat.split('_')[1])+1:]
-        print("X\Y ", end="")
-        line_len = len(seat_list[0])
-        for i in range(0, line_len):
-            # print(f"{i%10} ", end="")
-            if i < 10:
-                print(f"{i}  ", end="")
-            else:
-                print(f"{i} ", end="")
-        print()
-        for i in range(0, len(seat_list)):
-            print(f"{i%10}   ", end="")
-            for j in range(0, len(seat_list[i])):
-                print(seat_list[i][j], end="  ")
+            seats = self.session.get(
+            "https://show.bilibili.com/api/ticket/area/seat",
+            params={
+                "screen_id": self.config["screen_id"],
+                "area_id": area_id,
+                "timestamp": int(time.time() * 1000), 
+            },
+            headers=self.headers
+            )
+            if seats.status_code == 412:
+                logger.error(i18n_format("not_handled_412"))
+                return False
+            seats = seats.json()
+            max_limit = seats["data"]["max_limit"]
+            seat_list = seats["data"]["seats"]
+            seatsName = seats["data"]["seatsName"]
+            symbol = seats["data"]["symbol"]
+            unavailable_seats = seats["data"]["unavailable"]
+            for seat in unavailable_seats:
+                seat_list[int(seat.split('_')[0])] = seat_list[int(seat.split('_')[0])][:int(seat.split('_')[1])] + "X" + seat_list[int(seat.split('_')[0])][int(seat.split('_')[1])+1:]
+            for seat in selected_seats:
+                if int(seat.split('_')[0]) == int(area_id):
+                    seat_list[int(seat.split('_')[1])] = seat_list[int(seat.split('_')[1])][:int(seat.split('_')[2])] + "O" + seat_list[int(seat.split('_')[1])][int(seat.split('_')[2])+1:]
+            print("X\\Y ", end="")
+            line_len = len(seat_list[0])
+            for i in range(0, line_len):
+                # print(f"{i%10} ", end="")
+                if i < 10:
+                    print(f"{i}  ", end="")
+                else:
+                    print(f"{i} ", end="")
             print()
-        # TODO something need to be completed
+            for i in range(0, len(seat_list)):
+                print(f"{i%10}   ", end="")
+                for j in range(0, len(seat_list[i])):
+                    if seat_list[i][j] in ["X", "_", "#"]:
+                        print(seat_list[i][j], end="  ")
+                    elif seat_list[i][j] == "O":
+                        print("\033[31m"+seat_list[i][j]+"\033[0m", end="  ")
+                    else:
+                        print("\033[34m"+seat_list[i][j]+"\033[0m", end="  ")
+                print()
+            for seat_symbol, seat in symbol.items():
+                logger.info(
+                    i18n_format("show_seat_info").format(
+                        seat_symbol,
+                        seat["desc"],
+                        seat["price"] / 100,
+                        " 售罄" if seat["sale_flag"] == 0 else "",
+                    ) 
+                )
+            select_seat = (
+                noneprompt.InputPrompt(
+                    i18n_format("input_seat"),
+                    validator=lambda x: len(x.split(" ")) == 2 and x.split(" ")[0].isdigit() and x.split(" ")[1].isdigit() or x == "",
+                )
+               .prompt()
+            )
+            if select_seat == "":
+                break
+            if int(select_seat.split(" ")[0]) >= len(seat_list):
+                logger.error(i18n_format("seat_not_found"))
+                continue
+            if int(select_seat.split(" ")[1]) >= len(seat_list[int(select_seat.split(" ")[0])]):
+                logger.error(i18n_format("seat_not_found!"))
+                continue
+            if seat_list[int(select_seat.split(" ")[0])][int(select_seat.split(" ")[1])] == "O":
+                logger.error(i18n_format("seat_already_selected"))
+                continue
+            if seat_list[int(select_seat.split(" ")[0])][int(select_seat.split(" ")[1])] in ["X", "_", "#"]:
+                logger.error(i18n_format("seat_not_available"))
+                continue
+            selected_seats.append(str(area_id)+"_"+select_seat.split(" ")[0]+"_"+select_seat.split(" ")[1])
+            logger.info(i18n_format("seat_selected").format(select_seat.split(" ")[0], select_seat.split(" ")[1], seatsName[select_seat.split(" ")[0]+"_"+select_seat.split(" ")[1]]))
+            if len(selected_seats) == max_limit:
+                break
+        self.config["selected_seats"] = selected_seats
+        logger.info(i18n_format("seat_selected_finish"))
+        # TODO 票务信息计算
+        # TODO Prepare逻辑重写
         return True
 
             

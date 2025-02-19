@@ -322,7 +322,9 @@
     "area_blue": "蓝色",
     "area_green": "绿色",
     "area_yellow": "黄色",
-    "show_area_info": "有以下区域可选："
+    "show_area_info": "有以下区域可选：",
+    "show_seat_info": "{}: {} ￥{}{}",
+    "seat_selected": "已选择座位：{},{}({})"
 
      }
     }
