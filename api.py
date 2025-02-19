@@ -121,7 +121,6 @@ class BilibiliHyg:
         if (
             "project_id" not in config
             or "screen_id" not in config
-            or "sku_id" not in config
             or "pay_money" not in config
             or "id_bind" not in config
         ):
@@ -276,11 +275,11 @@ class BilibiliHyg:
             select_seat = (
                 noneprompt.InputPrompt(
                     i18n_format("input_seat"),
-                    validator=lambda x: len(x.split(" ")) == 2 and x.split(" ")[0].isdigit() and x.split(" ")[1].isdigit() or x == "",
+                    validator=lambda x: len(x.split(" ")) == 2 and x.split(" ")[0].isdigit() and x.split(" ")[1].isdigit() or (x == "" and len(selected_seats)!=0),
                 )
                .prompt()
             )
-            if select_seat == "":
+            if select_seat == "" and len(selected_seats) !=0:
                 break
             if int(select_seat.split(" ")[0]) >= len(seat_list):
                 logger.error(i18n_format("seat_not_found"))
@@ -300,8 +299,6 @@ class BilibiliHyg:
                 break
         self.config["selected_seats"] = selected_seats
         logger.info(i18n_format("seat_selected_finish"))
-        # TODO 票务信息计算
-        # TODO Prepare逻辑重写
         return True
 
             
@@ -347,6 +344,7 @@ class BilibiliHyg:
         logger.info(i18n_format("project_name").format(response["data"]["name"]))
         self.config["id_bind"] = response["data"]["id_bind"]
         self.config["is_pick_seat"]  = response["data"]["pick_seat"]
+        self.config["is_paper_ticket"] = response["data"]["has_paper_ticket"]
         # 场次选择区
         screens = response["data"]["screen_list"]
         screen_id = (
@@ -367,6 +365,8 @@ class BilibiliHyg:
         self.config["screen_id"] = str(screens[int(screen_id)]["id"])
         # 票种选择区
         if self.config["is_pick_seat"]:
+            self.config["time"] = screens[int(screen_id)]["sale_start"]
+            self.config["order_type"] = "1"
             # 选座逻辑区
             while not self.pick_seat():
                 pass
@@ -386,22 +386,19 @@ class BilibiliHyg:
                 .data
             )
             logger.info(i18n_format("show_sku").format(tickets[int(sku_id)]["desc"]))
-        # 选择结束，开始整理
-        self.config["sku_id"] = str(tickets[int(sku_id)]["id"])
-        self.config["pay_money"] = str(tickets[int(sku_id)]["price"])
-        self.config["ticket_desc"] = str(tickets[int(sku_id)]["desc"])
-        self.config["is_paper_ticket"] = screens[int(screen_id)]["delivery_type"] != 1
-        self.config["time"] = int(tickets[int(sku_id)]["saleStart"])-int(response["data"]["current_time"])+req_time
-        if tickets[int(sku_id)]["discount_act"] is not None:
-            logger.info(
-                i18n_format("show_act").format(
-                    tickets[int(sku_id)]["discount_act"]["act_id"]
-                    )
-            )
-            self.config["act_id"] = tickets[int(sku_id)]["discount_act"]["act_id"]
-            self.config["order_type"] = tickets[int(sku_id)]["discount_act"]["act_type"]
-        else:
-            self.config["order_type"] = "1"
+            self.config["sku_id"] = str(tickets[int(sku_id)]["id"])
+            # 选择结束，开始整理
+            self.config["time"] = int(tickets[int(sku_id)]["saleStart"])-int(response["data"]["current_time"])+req_time
+            if tickets[int(sku_id)]["discount_act"] is not None:
+                logger.info(
+                    i18n_format("show_act").format(
+                        tickets[int(sku_id)]["discount_act"]["act_id"]
+                        )
+                )
+                self.config["act_id"] = tickets[int(sku_id)]["discount_act"]["act_id"]
+                self.config["order_type"] = tickets[int(sku_id)]["discount_act"]["act_type"]
+            else:
+                self.config["order_type"] = "1"
         if self.config["is_paper_ticket"]:
             if screens[int(screen_id)]["express_free_flag"]:
                 self.config["express_fee"] = 0
@@ -444,9 +441,6 @@ class BilibiliHyg:
                         },
                         ensure_ascii=False,
                     )
-        logger.debug(
-                f"您的screen_id 和 sku_id 和 pay_money 分别为：{self.config["screen_id"]} {self.config["sku_id"]} {self.config["pay_money"]}"
-        )
         logger.debug(f"您的开始销售时间为：{self.config['time']}")
         return True
     
@@ -671,8 +665,8 @@ class BilibiliHyg:
             "ignoreRequestLimit": "true",
             "requestSource": "neul-next",
         }
-        if self.config["is_select_seat"]:
-            data["seats"] = self.config["selected_seats"]
+        if self.config["is_pick_seat"]:
+            data["seats"] = json.dumps(self.config["selected_seats"])
         else:
             data["sku_id"] = self.config["sku_id"]
         if "act_id" in self.config:
@@ -805,7 +799,7 @@ class BilibiliHyg:
             time.sleep(2)
             return self.get_token()
         if info["token"]:
-            if self.config["is_select_seat"]:
+            if self.config["is_pick_seat"]:
                 if info["failed_seats"] != []:
                     logger.warning(
                         i18n_format("info_some_seat_fail")
@@ -912,8 +906,8 @@ class BilibiliHyg:
             "requestSource": "neul-next",
             "clickPosition": self.generate_clickPosition(),
         }
-        if self.config["is_select_seat"]:
-            data["seats"] = self.config["selected_seats"]
+        if self.config["is_pick_seat"]:
+            data["seats"] = json.dumps(self.config["selected_seats"])
         else:
             data["sku_id"] = self.config["sku_id"]
         if "super" not in self.config:
