@@ -952,7 +952,9 @@ class BilibiliHyg:
         if order_id:
             url += "&orderId=" + str(order_id)
         logger.debug(url)
-        response = self.session.get(url, headers=self.headers)
+        tmp_header = self.headers.copy()
+        tmp_header["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 Edg/133.0.0.0"
+        response = self.session.get(url, headers=tmp_header)
         if response.status_code == 412:
             logger.error(i18n_format("not_handled_412"))
         response = response.json()
