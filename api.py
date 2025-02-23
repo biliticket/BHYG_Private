@@ -169,7 +169,7 @@ class BilibiliHyg:
             return False
         area_info = area_info.json()
         logger.debug(area_info)
-        if area_info["code"] != 0:
+        if "errno" in area_info:
             logger.error(i18n_format("get_area_info_failed"))
             return False
         base_pic = self.session.get(
