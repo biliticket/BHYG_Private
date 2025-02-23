@@ -171,6 +171,7 @@ class BilibiliHyg:
         logger.debug(area_info)
         if area_info["errno"] != 0:
             logger.error(i18n_format("get_area_info_failed"))
+            time.sleep(1)
             return False
         base_pic = self.session.get(
            "https:"+area_info["data"]["base_pic"], headers=self.headers
@@ -210,7 +211,7 @@ class BilibiliHyg:
         
         selected_seats = []
         while True:
-            if len(selected_seats) > 1:
+            if len(selected_seats) > 0:
                 logger.warning(i18n_format("seat_select_multi_warn")) 
             area_id = (
                         noneprompt.ListPrompt(
@@ -372,6 +373,7 @@ class BilibiliHyg:
         self.config["screen_id"] = str(screens[int(screen_id)]["id"])
         # 票种选择区
         if self.config["is_pick_seat"]:
+            logger.warning(i18n_format("seat_select_warn"))
             self.config["time"] = screens[int(screen_id)]["sale_start"]
             self.config["order_type"] = "1"
             # 选座逻辑区
