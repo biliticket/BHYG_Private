@@ -5,7 +5,7 @@ qrcode
 requests
 sentry-sdk
 pycryptodome
-bili_ticket_gt_python==0.2.7
+#bili_ticket_gt_python==0.2.7
 ntplib
 py-machineid
 pyjwt[crypto]
