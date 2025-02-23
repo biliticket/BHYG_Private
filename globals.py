@@ -21,10 +21,13 @@ from utils import save, load
 import time
 from i18n import *
 
-ver_int = 1004
+ver_int = 1100
 version = "v{}.{}.{}".format(
     (ver_int // 10000) % 100, (ver_int // 100) % 100, ver_int % 100
 )
+
+version_beta = True
+version_beta_msg = "测试版，部分功能不可用，该版本移除了自动过码"
 
 
 def agree_terms():

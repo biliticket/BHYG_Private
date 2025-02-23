@@ -85,7 +85,9 @@ def run(hyg): # 核心抢票逻辑
 
 
 def main(): # 主程序启动逻辑
-    from globals import version
+    from globals import version, version_beta_msg, version_beta
+    if version_beta:
+        logger.warning(version_beta_msg)
 
     set_language(False)
     print(i18n_format("start_up").format(version))

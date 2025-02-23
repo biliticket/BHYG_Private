@@ -168,6 +168,10 @@ class BilibiliHyg:
             logger.error(i18n_format("not_handled_412"))
             return False
         area_info = area_info.json()
+        logger.debug(area_info)
+        if area_info["code"] != 0:
+            logger.error(i18n_format("get_area_info_failed"))
+            return False
         base_pic = self.session.get(
            "https:"+area_info["data"]["base_pic"], headers=self.headers
         ).content
@@ -206,6 +210,8 @@ class BilibiliHyg:
         
         selected_seats = []
         while True:
+            if len(selected_seats) > 1:
+                logger.warning(i18n_format("seat_select_multi_warn")) 
             area_id = (
                         noneprompt.ListPrompt(
                             question=i18n_format("show_area_info"),
@@ -293,6 +299,7 @@ class BilibiliHyg:
             if seat_list[int(select_seat.split(" ")[0])][int(select_seat.split(" ")[1])] in ["X", "_", "#"]:
                 logger.error(i18n_format("seat_not_available"))
                 continue
+            self.config["seat_type"] = seat_list[int(select_seat.split(" ")[0])][int(select_seat.split(" ")[1])]
             selected_seats.append(str(area_id)+"_"+select_seat.split(" ")[0]+"_"+select_seat.split(" ")[1])
             logger.info(i18n_format("seat_selected").format(select_seat.split(" ")[0], select_seat.split(" ")[1], seatsName[select_seat.split(" ")[0]+"_"+select_seat.split(" ")[1]]))
             if len(selected_seats) == max_limit:
@@ -1024,6 +1031,32 @@ class BilibiliHyg:
         
     def reselect(self):
         # TODO: 座位被占用
+        selected_seats = self.config["selected_seats"]
+        if len(selected_seats) > 1:
+            logger.error(i18n_format("unsupport_reselect"))
+            return False
+        area_id = selected_seats[0].split("_")[0]
+        seats = self.session.get(
+            "https://show.bilibili.com/api/ticket/area/seat",
+            params={
+                "screen_id": self.config["screen_id"],
+                "area_id": int(area_id),
+                "timestamp": int(time.time() * 1000), 
+            },
+            headers=self.headers
+            )
+        seats = seats.json()
+        if seats["code"] != 0:
+            logger.error(i18n_format("get_seat_fail"))
+            return False
+        seats = seats["data"]["seats"]
+        available_seats = []
+        for i in range(len(seats)):
+            for j in range(len(seats[i])):
+                if seats[i][j] == self.config["seat_type"]:
+                    available_seats.append(area_id + "_" + str(i) + "_" + str(j))
+        import random
+        self.config["selected_seats"] = [random.choice(available_seats)]
         pass
 
     def logout(self):
@@ -1075,7 +1108,9 @@ class BilibiliHyg:
         elif result["errno"] == 100016:
             logger.error(i18n_format("not_salable"))
         elif result["errno"] == 101006:
-            self.reselect_seat()
+            if self.reselect() == False:
+                logger.error(i18n_format("reselect_fail"))
+                return True
             self.waited = False
         elif result["errno"] == 0:
             logger.success(i18n_format("bill_push_ok"))
